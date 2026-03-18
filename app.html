@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>TalentLab — Empleos en Ciencia, Tecnología y Laboratorios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --navy:#0c1f3d;--navy2:#162b52;
+  --teal:#1b9e74;--tm:#3db88a;--tl:#d6f5ea;--td:#064d38;
+  --amber:#c97d00;--al:#fef0c0;--amber2:#f59e0b;
+  --blue:#1653a8;--bl:#dceeff;
+  --coral:#b83232;--cl:#fde0de;
+  --gray:#f0efe9;--g2:#dddbd4;--g3:#c5c3bb;
+  --border:#ccc9bf;--muted:#6b6860;--dark:#1c1b19;--white:#fff;
+  --sh:0 1px 4px rgba(0,0,0,.08),0 2px 12px rgba(0,0,0,.06);
+  --sh2:0 4px 24px rgba(0,0,0,.12),0 1px 4px rgba(0,0,0,.08);
+  --r:10px;--r2:20px;
+}
+html{scroll-behavior:smooth;background:var(--gray)}
+body{font-family:'DM Sans',sans-serif;color:var(--dark);font-size:14px;line-height:1.55;min-height:100vh;overflow-x:hidden;padding-bottom:64px}
+button,input,select,textarea{font-family:'DM Sans',sans-serif}
+h1,h2,h3{font-family:'DM Serif Display',serif;line-height:1.18}
+*:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}
+.page{display:none}.page.active{display:block;animation:fi .22s ease}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:300;background:var(--navy);display:flex;align-items:center;padding:0 16px;height:52px;gap:10px}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:20px;color:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:baseline;gap:2px}
+.nav-logo em{color:#6ee7be;font-style:normal}
+.nav-sub{font-size:8px;color:rgba(255,255,255,.3);letter-spacing:.06em;font-family:'DM Sans',sans-serif;margin-left:4px}
+.nav-r{display:flex;align-items:center;gap:6px;margin-left:auto}
+.nav-btn{padding:5px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;white-space:nowrap}
+.nb-ghost{background:transparent;border-color:rgba(255,255,255,.22);color:rgba(255,255,255,.8)}
+.nb-ghost:hover{background:rgba(255,255,255,.08)}
+.nb-solid{background:var(--teal);border-color:var(--teal);color:#fff}
+.nb-solid:hover{background:var(--td)}
+.nav-av{width:32px;height:32px;border-radius:50%;background:var(--teal);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid rgba(255,255,255,.2);overflow:hidden}
+.nav-av img{width:100%;height:100%;object-fit:cover}
+
+/* BOTTOM NAV */
+.bot-nav{position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--white);border-top:1.5px solid var(--border);display:flex;height:62px;box-shadow:0 -2px 14px rgba(0,0,0,.07)}
+.bn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--muted);border:none;background:none;padding:0;transition:color .15s}
+.bn.on{color:var(--teal)}
+.bn-ic{width:22px;height:22px;flex-shrink:0}
+.bn-lbl{font-size:10px;font-weight:600;letter-spacing:.01em}
+
+/* HERO */
+.hero{background:var(--navy);padding:28px 16px 24px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 120% 70% at 50% 120%,rgba(27,158,116,.25) 0%,transparent 60%)}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:6px;background:rgba(110,231,190,.12);border:1px solid rgba(110,231,190,.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:#6ee7be;margin-bottom:12px;position:relative;letter-spacing:.03em}
+.hero h1{font-size:clamp(24px,6.5vw,36px);color:#fff;margin-bottom:8px;position:relative}
+.hero h1 em{color:#6ee7be;font-style:italic}
+.hero-sub{color:rgba(255,255,255,.5);font-size:13px;margin-bottom:18px;position:relative}
+.search-wrap{display:flex;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,.18);position:relative}
+.search-wrap input{flex:1;border:none;outline:none;padding:13px 14px;font-size:14px;color:var(--dark);background:transparent;min-width:0}
+.search-wrap input::placeholder{color:var(--muted)}
+.search-go{background:var(--teal);border:none;color:#fff;padding:13px 16px;cursor:pointer;transition:background .15s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.search-go:hover{background:var(--td)}
+.search-go svg{width:18px;height:18px}
+
+/* FILTERS */
+.filter-row{background:var(--white);border-bottom:1.5px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;display:flex;align-items:center}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-section{display:flex;align-items:center;gap:6px;padding:9px 14px;flex-shrink:0;border-right:1px solid var(--border)}
+.filter-section:last-child{border-right:none}
+.filter-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);flex-shrink:0}
+.fchip{flex-shrink:0;padding:4px 11px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.fchip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.fchip:hover:not(.on){border-color:var(--teal);color:var(--teal)}
+
+/* PUESTO ROW */
+.puesto-row{background:var(--white);border-bottom:1.5px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;display:flex;gap:6px;padding:8px 14px}
+.puesto-row::-webkit-scrollbar{display:none}
+.pchip{flex-shrink:0;padding:4px 11px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.pchip svg{width:12px;height:12px}
+.pchip.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* SOURCE BAR */
+.source-bar{display:flex;gap:6px;padding:9px 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--gray);border-bottom:1px solid var(--border)}
+.source-bar::-webkit-scrollbar{display:none}
+.spill{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;border:1.5px solid var(--border);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;background:var(--white);color:var(--muted)}
+.spill.on{color:#fff;border-color:transparent}
+.spill .sd{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* STATUS BAR */
+.status-bar{display:none;padding:8px 14px;background:var(--tl);border-bottom:1px solid #a8d8c0;font-size:12px;color:var(--td);align-items:center;gap:8px;font-weight:600}
+.sspin{width:13px;height:13px;border:2px solid var(--teal);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+
+/* JOBS */
+.jobs-wrap{padding:12px 14px 8px}
+.jobs-count{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px}
+.jobs-list{display:flex;flex-direction:column;gap:9px}
+.jcard{background:var(--white);border-radius:var(--r);border:1.5px solid var(--border);padding:13px 14px;cursor:pointer;transition:all .18s;box-shadow:var(--sh);position:relative;overflow:hidden}
+.jcard::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.jcard.zj::after{background:#888780}
+.jcard.li::after{background:#0a66c2}
+.jcard.hr::after{background:var(--teal)}
+.jcard.tl::after{background:var(--navy)}
+.jcard:active{transform:scale(.985)}
+.jcard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.jcard-src{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.jcard-src-dot{width:6px;height:6px;border-radius:50%}
+.jcard-new{background:var(--tl);color:var(--td);font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px}
+.jcard-date{font-size:11px;color:var(--muted)}
+.jcard-title{font-family:'DM Serif Display',serif;font-size:15px;color:var(--dark);margin-bottom:3px;line-height:1.25}
+.jcard-co{font-size:12px;color:var(--muted);margin-bottom:7px}
+.jcard-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:7px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.jcard-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px}
+.tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+.tg{background:var(--tl);color:var(--td)}.ta{background:var(--al);color:var(--amber)}.tb{background:var(--bl);color:var(--blue)}.tn{background:var(--gray);color:var(--muted);border:1px solid var(--g2)}
+.jcard-foot{display:flex;justify-content:space-between;align-items:center;padding-top:7px;border-top:1px solid var(--gray)}
+.jsal{font-size:12px;font-weight:700;color:var(--teal)}
+
+/* GATE */
+.gate-wrap{padding:0 14px 14px}
+.gate-card{background:linear-gradient(135deg,var(--navy) 0%,#162b52 100%);border-radius:var(--r);padding:20px;text-align:center}
+.gate-card h3{font-family:'DM Serif Display',serif;font-size:18px;color:#fff;margin-bottom:6px}
+.gate-card p{font-size:13px;color:rgba(255,255,255,.55);margin-bottom:16px}
+.lm-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--white);font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;margin-bottom:8px}
+.lm-btn:hover{border-color:var(--teal);color:var(--teal)}
+
+/* OVERLAY/SHEET */
+.overlay{position:fixed;inset:0;background:rgba(12,31,61,.5);z-index:500;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.overlay.open{display:flex;animation:fio .2s}
+@keyframes fio{from{opacity:0}to{opacity:1}}
+.sheet{background:var(--white);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow-y:auto;animation:su .28s cubic-bezier(.32,1,.56,1)}
+@keyframes su{from{transform:translateY(100%)}to{transform:none}}
+.sh-handle{width:38px;height:4px;background:var(--g2);border-radius:2px;margin:12px auto 0}
+.sh-head{padding:14px 18px 12px;border-bottom:1.5px solid var(--gray);position:sticky;top:0;background:var(--white);z-index:1}
+.sh-title{font-family:'DM Serif Display',serif;font-size:18px;color:var(--dark);margin-bottom:2px;padding-right:36px}
+.sh-sub{font-size:12px;color:var(--muted)}
+.sh-close{position:absolute;right:14px;top:14px;width:30px;height:30px;border-radius:50%;background:var(--gray);border:none;cursor:pointer;font-size:14px;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.sh-body{padding:16px 18px}
+.jmeta{display:flex;gap:6px;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--gray);border-bottom:1px solid var(--gray);margin-bottom:14px}
+.jmi{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted)}
+.jmi svg{width:13px;height:13px;flex-shrink:0}
+.desc-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:7px}
+.desc-box{font-size:13px;color:var(--dark);line-height:1.75;white-space:pre-wrap;background:var(--gray);border-radius:var(--r);padding:13px;margin-bottom:14px;max-height:260px;overflow-y:auto}
+.ext-link{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--gray);border-radius:var(--r);border:1.5px solid var(--border);text-decoration:none;margin-bottom:13px}
+.ext-link-title{font-size:12px;font-weight:700;color:var(--dark);margin-bottom:1px}
+.ext-link-url{font-size:10px;color:var(--muted);word-break:break-all}
+.match-strip{border-radius:var(--r);padding:10px 13px;font-size:12px;margin-bottom:13px;font-weight:600}
+.apply-box{background:linear-gradient(135deg,var(--navy),#1a3566);border-radius:var(--r);padding:15px;margin-bottom:6px}
+.apply-title{font-size:12px;font-weight:700;color:#fff;margin-bottom:7px}
+.apply-perks{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:11px}
+.apply-perk{font-size:11px;color:rgba(255,255,255,.65)}
+.apply-btn{width:100%;padding:12px;background:var(--teal);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Serif Display',serif}
+.apply-btn:hover{background:var(--td)}
+.glossary-hint{margin-top:12px;padding:10px 0;border-top:1px solid var(--gray);display:flex;align-items:center;gap:8px}
+.glossary-hint-text{font-size:11px;color:var(--muted);flex:1}
+
+/* AUTH */
+.auth-wrap{min-height:calc(100vh - 116px);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px}
+.auth-card{background:var(--white);border-radius:var(--r2);padding:26px 20px;width:100%;max-width:400px;box-shadow:var(--sh2)}
+.auth-logo{font-family:'DM Serif Display',serif;font-size:22px;color:var(--navy);text-align:center;margin-bottom:3px}
+.auth-logo em{color:var(--teal);font-style:normal}
+.auth-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:20px}
+.auth-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:18px}
+.atab{flex:1;padding:9px;font-size:13px;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:2.5px solid transparent;margin-bottom:-2px;background:none;border-top:none;border-left:none;border-right:none;transition:all .12s}
+.atab.on{color:var(--teal);border-bottom-color:var(--teal)}
+.aform{display:none}.aform.on{display:block}
+.fg{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}
+.fg label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.fg input{border:1.5px solid var(--border);border-radius:var(--r);padding:11px 13px;font-size:14px;color:var(--dark);outline:none;background:#fff;transition:border-color .15s;-webkit-appearance:none;width:100%}
+.fg input:focus{border-color:var(--teal)}
+.auth-err{background:var(--cl);color:var(--coral);border-radius:var(--r);padding:9px 12px;font-size:12px;margin-bottom:11px;display:none;font-weight:600}
+.btn-full{width:100%;padding:12px;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s}
+.btn-teal{background:var(--teal);color:#fff}.btn-teal:hover{background:var(--td)}
+.btn-out{background:#fff;border:1.5px solid var(--border);color:var(--muted)}.btn-out:hover{border-color:var(--teal);color:var(--teal)}
+
+/* PERFIL */
+.ph-hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);padding:24px 16px 20px;text-align:center;position:relative}
+.ph-av{width:72px;height:72px;border-radius:50%;background:var(--teal);color:#fff;font-family:'DM Serif Display',serif;font-size:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;border:3px solid rgba(255,255,255,.2);overflow:hidden;cursor:pointer}
+.ph-av img{width:100%;height:100%;object-fit:cover}
+.ph-name{font-family:'DM Serif Display',serif;font-size:20px;color:#fff;margin-bottom:2px}
+.ph-title{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:12px}
+.ph-share-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;background:rgba(110,231,190,.15);border:1.5px solid rgba(110,231,190,.35);color:#6ee7be;font-size:12px;font-weight:700;cursor:pointer}
+.ph-share-btn svg{width:13px;height:13px}
+.score-strip{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--navy2);border-bottom:1px solid rgba(255,255,255,.08)}
+.score-cell{padding:12px 8px;text-align:center;border-right:1px solid rgba(255,255,255,.08)}
+.score-cell:last-child{border-right:none}
+.score-val{font-family:'DM Serif Display',serif;font-size:22px;line-height:1;margin-bottom:2px}
+.score-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.4)}
+.p-section{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);margin:10px 16px 0;overflow:hidden;box-shadow:var(--sh)}
+.ps-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--gray)}
+.ps-title{font-size:13px;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:7px}
+.ps-title svg{width:15px;height:15px;color:var(--teal)}
+.ps-body{padding:14px}
+.ps-empty{padding:18px 14px;text-align:center;color:var(--muted);font-size:12px}
+.add-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1.5px solid var(--teal);background:#fff;color:var(--teal);font-size:12px;font-weight:700;cursor:pointer}
+.add-btn:hover{background:var(--tl)}
+.add-btn svg{width:12px;height:12px}
+.pitem{padding:10px 0;border-bottom:1px solid var(--gray);display:flex;gap:10px;align-items:flex-start}
+.pitem:last-child{border-bottom:none}
+.pitem-dot{width:10px;height:10px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px}
+.pitem-main{flex:1;min-width:0}
+.pitem-title{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:1px}
+.pitem-sub{font-size:12px;color:var(--muted);margin-bottom:3px}
+.pitem-period{font-size:11px;color:var(--muted)}
+.pitem-desc{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+.pitem-del{background:none;border:none;color:var(--g3);cursor:pointer;padding:2px;flex-shrink:0;font-size:16px;line-height:1}
+.pitem-del:hover{color:var(--coral)}
+.skill-tags{display:flex;flex-wrap:wrap;gap:6px}
+.skill-tag{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--tl);border:1.5px solid #a8d8c0;font-size:12px;font-weight:600;color:var(--td)}
+.skill-tag-del{background:none;border:none;color:var(--td);cursor:pointer;font-size:14px;line-height:1;padding:0;opacity:.5}
+.skill-tag-del:hover{opacity:1}
+.skill-lvl{font-size:10px;padding:1px 6px;border-radius:10px;background:rgba(0,0,0,.08);font-weight:700}
+.suggestions{background:var(--al);border:1.5px solid #e0c050;border-radius:var(--r);padding:12px 14px;margin:10px 16px 0}
+.sug-title{font-size:12px;font-weight:700;color:var(--amber);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sug-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid rgba(201,125,0,.12)}
+.sug-item:last-child{border-bottom:none}
+.sug-text{font-size:12px;color:var(--amber);line-height:1.4;flex:1}
+.share-card{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r);padding:16px;margin:10px 16px 0}
+.share-card-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
+.share-card-sub{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:12px}
+.share-link-box{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:8px;padding:9px 12px;margin-bottom:10px}
+.share-link-text{flex:1;font-size:12px;color:rgba(255,255,255,.8);font-weight:600;word-break:break-all}
+.copy-btn{background:var(--teal);border:none;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+
+/* MODAL FORM */
+.mform{position:fixed;inset:0;background:rgba(12,31,61,.55);z-index:600;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.mform.open{display:flex;animation:fio .2s}
+.mform-card{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;animation:su .28s cubic-bezier(.32,1,.56,1);padding-bottom:env(safe-area-inset-bottom,20px)}
+.mf-handle{width:38px;height:4px;background:var(--g2);border-radius:2px;margin:12px auto 0}
+.mf-head{padding:14px 18px 12px;border-bottom:1px solid var(--gray);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1}
+.mf-title{font-family:'DM Serif Display',serif;font-size:17px;color:var(--navy)}
+.mf-close{background:var(--gray);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.mf-body{padding:16px 18px}
+.mf-fg{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}
+.mf-fg label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.mf-fg input,.mf-fg select,.mf-fg textarea{border:1.5px solid var(--border);border-radius:var(--r);padding:10px 12px;font-size:14px;color:var(--dark);outline:none;background:#fff;transition:border-color .15s;-webkit-appearance:none;width:100%}
+.mf-fg input:focus,.mf-fg select:focus,.mf-fg textarea:focus{border-color:var(--teal)}
+.mf-fg textarea{resize:vertical;min-height:70px}
+.mf-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mf-save{width:100%;padding:12px;background:var(--teal);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;margin-top:4px}
+.mf-save:hover{background:var(--td)}
+.mf-save:disabled{background:var(--g3);cursor:not-allowed}
+
+/* PUBLIC PROFILE */
+.pub-profile{max-width:680px;margin:0 auto;padding:20px 16px 40px}
+.pub-hero{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r);padding:24px;margin-bottom:14px;text-align:center}
+.pub-av{width:68px;height:68px;border-radius:50%;background:var(--teal);color:#fff;font-family:'DM Serif Display',serif;font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;border:3px solid rgba(255,255,255,.2);overflow:hidden}
+.pub-av img{width:100%;height:100%;object-fit:cover}
+.pub-name{font-family:'DM Serif Display',serif;font-size:22px;color:#fff;margin-bottom:3px}
+.pub-title{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:12px}
+.pub-scores{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.pub-score-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:#6ee7be}
+.pub-sec{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--sh)}
+.pub-sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:12px}
+
+/* GUÍAS */
+.guias-wrap{padding:14px 16px}
+.gc{background:var(--white);border-radius:var(--r);border:1.5px solid var(--border);margin-bottom:9px;overflow:hidden;box-shadow:var(--sh)}
+.gc-head{display:flex;align-items:center;gap:11px;padding:13px 14px;cursor:pointer}
+.gc-ic{width:42px;height:42px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gc-ic svg{width:22px;height:22px}
+.gc-title{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:1px}
+.gc-desc{font-size:11px;color:var(--muted)}
+.gc-arrow{margin-left:auto;color:var(--muted);flex-shrink:0;font-size:16px;transition:transform .2s}
+.gc.open .gc-arrow{transform:rotate(90deg)}
+.gc-body{display:none;padding:0 14px 14px}
+.gc.open .gc-body{display:block}
+.g-h4{font-size:14px;font-weight:700;color:var(--dark);margin:12px 0 8px}
+.g-row{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid var(--gray)}
+.g-row:last-child{border-bottom:none}
+.g-badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px;white-space:nowrap}
+.g-txt{font-size:12px;color:var(--muted);line-height:1.55}
+.g-txt strong{color:var(--dark);font-weight:600}
+.g-tip{border-radius:var(--r);padding:10px 12px;font-size:12px;line-height:1.5;margin-top:8px}
+.g-tip-teal{background:var(--tl);color:var(--td)}
+.g-tip-amber{background:var(--al);color:var(--amber)}
+.g-tip-blue{background:var(--bl);color:var(--blue)}
+.recibo-it{background:var(--gray);border-radius:8px;padding:11px;margin-bottom:7px}
+.recibo-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.recibo-name{font-size:13px;font-weight:700;color:var(--dark)}
+.recibo-tipo{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.recibo-desc{font-size:11px;color:var(--muted);line-height:1.4}
+.conv-it{padding:11px 0;border-bottom:1px solid var(--gray);display:flex;gap:9px;align-items:flex-start;cursor:pointer}
+.conv-it:last-child{border-bottom:none}
+.conv-n{background:var(--bl);color:var(--blue);font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;flex-shrink:0;margin-top:2px;white-space:nowrap}
+.conv-detail{display:none;font-size:12px;color:var(--muted);line-height:1.5;margin-top:4px;padding:8px;background:var(--gray);border-radius:7px}
+.glos-it{padding:9px 0;border-bottom:1px solid var(--gray)}
+.glos-it:last-child{border-bottom:none}
+.glos-term{font-size:13px;font-weight:700;color:var(--teal);margin-bottom:2px}
+.glos-def{font-size:12px;color:var(--muted);line-height:1.5}
+.ben-it{background:var(--gray);border-radius:8px;padding:11px;margin-bottom:7px;display:flex;gap:10px;align-items:flex-start}
+.ben-ic{flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+.ben-ic svg{width:20px;height:20px}
+.ben-title{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px}
+.ben-desc{font-size:11px;color:var(--muted);line-height:1.4}
+.cv-tip-it{border-radius:8px;padding:11px 13px;margin-bottom:7px;border-left:3px solid var(--teal);background:var(--gray)}
+.cv-tip-title{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px}
+.cv-tip-desc{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* TOAST */
+.toast{position:fixed;bottom:70px;left:12px;right:12px;background:var(--navy);color:#fff;padding:11px 15px;border-radius:var(--r);font-size:13px;font-weight:600;z-index:999;opacity:0;transform:translateY(6px);transition:all .22s;pointer-events:none;border-left:4px solid var(--teal);box-shadow:var(--sh2)}
+.toast.show{opacity:1;transform:none}
+
+/* LOADING */
+.full-loader{display:flex;align-items:center;justify-content:center;min-height:200px;flex-direction:column;gap:12px;color:var(--muted);font-size:13px}
+.spinner{width:32px;height:32px;border:3px solid var(--tl);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite}
+
+@media(min-width:600px){.jobs-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}}
+@media(min-width:900px){
+  body{max-width:920px;margin:0 auto}
+  .nav,.bot-nav{max-width:920px;left:50%;transform:translateX(-50%);right:auto;width:100%}
+  .jobs-list{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" style="text-decoration:none"><div class="nav-logo">Talent<em>Lab</em><span class="nav-sub">Ciencia &amp; Tecnología</span></div></a>
+  <div class="nav-r" id="nav-r">
+    <button class="nav-btn nb-ghost" onclick="goPage('auth');switchTab('login')">Ingresar</button>
+    <button class="nav-btn nb-solid" onclick="goPage('auth');switchTab('registro')">Registrarse</button>
+  </div>
+</nav>
+
+<div class="overlay" id="overlay" onclick="closeSheet()">
+  <div class="sheet" id="sheet" onclick="event.stopPropagation()">
+    <div class="sh-handle"></div>
+    <div id="sh-content"></div>
+  </div>
+</div>
+
+<div class="mform" id="mform" onclick="if(event.target===this)closeMform()">
+  <div class="mform-card">
+    <div class="mf-handle"></div>
+    <div class="mf-head">
+      <div class="mf-title" id="mf-title">Agregar</div>
+      <button class="mf-close" onclick="closeMform()">✕</button>
+    </div>
+    <div class="mf-body" id="mf-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- PAGE: EMPLEOS -->
+<div class="page active" id="page-empleos">
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>
+      Laboratorios · Farmacéutica · Biotecnología · I+D
+    </div>
+    <h1>Tu próximo empleo en<br><em>ciencia y tecnología</em></h1>
+    <p class="hero-sub">Buscá entre miles de posiciones especializadas del sector</p>
+    <div class="search-wrap">
+      <input type="text" id="sq" placeholder="Cargo, empresa o área..." autocomplete="off" onkeydown="if(event.key==='Enter')buscar()">
+      <button class="search-go" onclick="buscar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="filter-row">
+    <div class="filter-section">
+      <span class="filter-label">Provincia</span>
+      <span class="fchip on" onclick="setFilter('prov','all',this)">Todas</span>
+      <span class="fchip" onclick="setFilter('prov','caba',this)">CABA</span>
+      <span class="fchip" onclick="setFilter('prov','bsas',this)">GBA</span>
+      <span class="fchip" onclick="setFilter('prov','cba',this)">Córdoba</span>
+      <span class="fchip" onclick="setFilter('prov','sf',this)">Santa Fe</span>
+    </div>
+    <div class="filter-section">
+      <span class="filter-label">Ordenar</span>
+      <span class="fchip on" onclick="setFilter('sort','nuevo',this)">Más nuevo</span>
+      <span class="fchip" onclick="setFilter('sort','match',this)">Mayor match</span>
+    </div>
+    <div class="filter-section">
+      <span class="filter-label">Modalidad</span>
+      <span class="fchip on" onclick="setFilter('mod','all',this)">Todas</span>
+      <span class="fchip" onclick="setFilter('mod','presencial',this)">Presencial</span>
+      <span class="fchip" onclick="setFilter('mod','remoto',this)">Remoto</span>
+      <span class="fchip" onclick="setFilter('mod','hibrido',this)">Híbrido</span>
+    </div>
+  </div>
+  <div class="puesto-row">
+    <span class="pchip on" onclick="setPuesto('all',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Todos</span>
+    <span class="pchip" onclick="setPuesto('cc',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Control de Calidad</span>
+    <span class="pchip" onclick="setPuesto('reg',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Regulatorio</span>
+    <span class="pchip" onclick="setPuesto('ec',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>Ensayos Clínicos</span>
+    <span class="pchip" onclick="setPuesto('prod',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3v4M8 3v4M2 11h20"/></svg>Producción</span>
+    <span class="pchip" onclick="setPuesto('val',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>Validaciones</span>
+    <span class="pchip" onclick="setPuesto('seg',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Seguridad e Higiene</span>
+    <span class="pchip" onclick="setPuesto('rd',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0"/></svg>I+D</span>
+    <span class="pchip" onclick="setPuesto('log',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1"/></svg>Logística</span>
+  </div>
+  <div class="source-bar">
+    <div class="spill on" data-src="all" onclick="setSrc(this,'all')"><div class="sd" style="background:var(--muted)"></div>Todas las fuentes</div>
+    <div class="spill" data-src="ZonaJobs" onclick="setSrc(this,'ZonaJobs')"><div class="sd" style="background:#888780"></div>ZonaJobs</div>
+    <div class="spill" data-src="LinkedIn" onclick="setSrc(this,'LinkedIn')"><div class="sd" style="background:#0a66c2"></div>LinkedIn</div>
+    <div class="spill" data-src="HiringRoom" onclick="setSrc(this,'HiringRoom')"><div class="sd" style="background:var(--teal)"></div>HiringRoom</div>
+    <div class="spill" data-src="TalentLab" onclick="setSrc(this,'TalentLab')"><div class="sd" style="background:var(--navy)"></div>TalentLab</div>
+  </div>
+  <div class="status-bar" id="status-bar"><div class="sspin"></div><span id="status-msg">Buscando...</span></div>
+  <div class="jobs-wrap">
+    <div class="jobs-count" id="jobs-count"></div>
+    <div class="jobs-list" id="jobs-list">
+      <div class="full-loader"><div class="spinner"></div>Buscando avisos especializados...</div>
+    </div>
+    <div id="lm-wrap"></div>
+  </div>
+</div>
+
+<!-- PAGE: GUÍAS -->
+<div class="page" id="page-guias">
+  <div style="padding:18px 16px 6px">
+    <h2 style="font-size:22px;color:var(--navy);margin-bottom:3px">Guías laborales</h2>
+    <p style="font-size:12px;color:var(--muted)">Todo lo que necesitás saber para el sector</p>
+  </div>
+  <div class="guias-wrap"><div id="guias-list"></div></div>
+</div>
+
+<!-- PAGE: PERFIL -->
+<div class="page" id="page-perfil"><div id="perfil-content"></div></div>
+
+<!-- PAGE: AUTH -->
+<div class="page" id="page-auth">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">Talent<em>Lab</em></div>
+      <div class="auth-sub" id="auth-sub">Accedé a todos los avisos · Gratis</div>
+      <div class="auth-err" id="auth-err"></div>
+      <div class="auth-tabs">
+        <button class="atab on" id="tab-login" onclick="switchTab('login')">Ingresar</button>
+        <button class="atab" id="tab-registro" onclick="switchTab('registro')">Registrarme</button>
+      </div>
+      <div class="aform on" id="af-login">
+        <div class="fg"><label>Email</label><input type="email" id="l-email" placeholder="tu@email.com" autocomplete="email"></div>
+        <div class="fg"><label>Contraseña</label><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <button class="btn-full btn-teal" id="btn-login" onclick="doLogin()">Ingresar →</button>
+        <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:12px">¿No tenés cuenta? <span style="color:var(--teal);font-weight:700;cursor:pointer" onclick="switchTab('registro')">Registrate gratis</span></p>
+      </div>
+      <div class="aform" id="af-registro">
+        <div style="background:var(--tl);border-radius:var(--r);padding:9px 12px;font-size:12px;color:var(--td);font-weight:600;margin-bottom:13px">✅ Registrarse es completamente gratis</div>
+        <div class="fg"><label>Nombre completo</label><input type="text" id="r-name" placeholder="Tu nombre y apellido" autocomplete="name"></div>
+        <div class="fg"><label>Email</label><input type="email" id="r-email" placeholder="tu@email.com" autocomplete="email"></div>
+        <div class="fg"><label>Contraseña</label><input type="password" id="r-pass" placeholder="Mínimo 8 caracteres" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegistro()"></div>
+        <button class="btn-full btn-teal" id="btn-reg" onclick="doRegistro()">Crear cuenta gratis →</button>
+        <p style="text-align:center;font-size:11px;color:var(--muted);margin-top:11px;line-height:1.5">Al registrarte aceptás los Términos de uso y la Política de privacidad.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: PUBLIC PROFILE -->
+<div class="page" id="page-public">
+  <div style="background:var(--navy);padding:12px 16px;display:flex;align-items:center;gap:10px">
+    <button onclick="goPage('perfil')" style="background:rgba(255,255,255,.1);border:none;color:#fff;padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Volver
+    </button>
+    <span style="font-size:13px;color:rgba(255,255,255,.6)">Vista pública del perfil</span>
+  </div>
+  <div id="public-content"></div>
+</div>
+
+<nav class="bot-nav">
+  <button class="bn on" id="bn-empleos" onclick="goPage('empleos')">
+    <svg class="bn-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <span class="bn-lbl">Empleos</span>
+  </button>
+  <button class="bn" id="bn-guias" onclick="goPage('guias')">
+    <svg class="bn-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+    <span class="bn-lbl">Guías</span>
+  </button>
+  <button class="bn" id="bn-perfil" onclick="goPage('perfil')">
+    <svg class="bn-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="bn-lbl">Mi perfil</span>
+  </button>
+</nav>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// SUPABASE CONFIG — reemplazá con tus datos reales
+// Supabase → Settings → API → Project URL y anon key
+// ══════════════════════════════════════════════════════════
+const SUPABASE_URL  = 'https://TU_PROYECTO.supabase.co';
+const SUPABASE_ANON = 'TU_ANON_KEY';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ══════════════════════════════════════════════════════════
+// SCRAPERS
+// ══════════════════════════════════════════════════════════
+const APIS={
+  zj:'https://zonajobs-scraper-production.up.railway.app',
+  li:'https://linkedin-scraper-production-1b80.up.railway.app',
+  hr:'https://hiringroom-scraper-production.up.railway.app'
+};
+
+let USER=null, ALL_JOBS=[], SHOWN=0, EXT_ID=5000;
+const F={prov:'all',mod:'all',sort:'nuevo',src:'all',puesto:'all'};
+const PAGE_SIZE=12;
+const TL_SKILLS=['gmp','bpf','bpa','anmat','fda','ich','hplc','gc','elisa','pcr','karl fischer','lims','sop','capa','validaciones','regulatorio','microbiología'];
+const PUESTO_KEYWORDS={
+  cc:['control de calidad','analista cc','analista qc','microbiología','hplc'],
+  reg:['regulatorio','anmat','asuntos regulatorios','regulatory','dossier'],
+  ec:['ensayos clínicos','clinical','cra','crc','monitor'],
+  prod:['producción','operario','manufactura','acondicionamiento'],
+  val:['validaciones','validación','iq oq pq','csv','qualification'],
+  seg:['seguridad e higiene','seguridad laboral','sso','higiene'],
+  rd:['i+d','investigación y desarrollo','formulaciones','biotecnología'],
+  log:['logística','distribución','cadena de frío','almacén'],
+};
+
+// ── INIT ──────────────────────────────────────────────────
+(async()=>{
+  const {data:{session}} = await sb.auth.getSession();
+  if(session){
+    USER = {
+      id: session.user.id,
+      email: session.user.email,
+      name: session.user.user_metadata?.name || session.user.email.split('@')[0]
+    };
+    // Load profile from Supabase
+    const {data:prof} = await sb.from('profiles').select('*').eq('id',USER.id).single();
+    if(prof) USER.profile = prof;
+    updateNav();
+  }
+  buscar();
+  sb.auth.onAuthStateChange(async(event, session)=>{
+    if(event==='SIGNED_IN'&&session){
+      USER={id:session.user.id,email:session.user.email,name:session.user.user_metadata?.name||session.user.email.split('@')[0]};
+      const {data:prof}=await sb.from('profiles').select('*').eq('id',USER.id).single();
+      if(prof) USER.profile=prof;
+      updateNav();
+    } else if(event==='SIGNED_OUT'){
+      USER=null; updateNav();
+    }
+  });
+})();
+
+// ── NAV ───────────────────────────────────────────────────
+function goPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.bn').forEach(x=>x.classList.remove('on'));
+  document.getElementById('page-'+p).classList.add('active');
+  const b=document.getElementById('bn-'+p);if(b)b.classList.add('on');
+  window.scrollTo(0,0);
+  if(p==='perfil')renderPerfil();
+  if(p==='guias')renderGuias();
+}
+
+function updateNav(){
+  const r=document.getElementById('nav-r');
+  if(USER){
+    const ini=(USER.name||'U').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const foto = USER.profile?.foto_url;
+    r.innerHTML=`<div class="nav-av" onclick="goPage('perfil')" title="Mi perfil">${foto?`<img src="${foto}">`:`${ini}`}</div>`;
+  } else {
+    r.innerHTML=`<button class="nav-btn nb-ghost" onclick="goPage('auth');switchTab('login')">Ingresar</button><button class="nav-btn nb-solid" onclick="goPage('auth');switchTab('registro')">Registrarse</button>`;
+  }
+}
+
+// ── SCRAPING ──────────────────────────────────────────────
+async function buscar(){
+  const q=document.getElementById('sq').value.trim()||'laboratorio farmaceutico';
+  const sb2=document.getElementById('status-bar');
+  const sm=document.getElementById('status-msg');
+  sb2.style.display='flex'; ALL_JOBS=[]; SHOWN=0;
+  document.getElementById('jobs-list').innerHTML='<div class="full-loader"><div class="spinner"></div>Buscando avisos especializados...</div>';
+  const loc=locFromProv();
+
+  // Load TalentLab internal jobs from Supabase
+  const {data:tlJobs}=await sb.from('jobs').select('*').eq('status','activo').order('created_at',{ascending:false});
+  if(tlJobs) tlJobs.forEach(j=>{
+    ALL_JOBS.push({
+      id:++EXT_ID,src:'TalentLab',srcClass:'tl',isTL:true,tlId:j.id,
+      title:j.titulo,company:j.empresa||'TalentLab',location:j.ubicacion||'Argentina',
+      url:'',posted:fmtPosted(j.created_at),salary:j.salario||'',
+      modality:j.modalidad||'',description:j.descripcion||'',
+      match:calcMatch(j.titulo,j.descripcion),prov:provFrom(j.ubicacion),
+      mod:modFrom(j.modalidad),timestamp:new Date(j.created_at).getTime()
+    });
+  });
+
+  await Promise.allSettled([
+    fetch(`${APIS.zj}/jobs?q=${encodeURIComponent(q)}&l=${encodeURIComponent(loc)}&size=20`).then(r=>r.ok?r.json():null).then(d=>{(d?.jobs||[]).forEach(j=>ALL_JOBS.push(mkJob(j,'ZonaJobs')));sm.textContent=`ZonaJobs ✓ · ${ALL_JOBS.length} avisos`;}).catch(()=>{}),
+    fetch(`${APIS.li}/jobs?q=${encodeURIComponent(q)}&l=${encodeURIComponent(loc)}&size=10`).then(r=>r.ok?r.json():null).then(d=>{(d?.jobs||[]).forEach(j=>ALL_JOBS.push(mkJob(j,'LinkedIn')));sm.textContent=`LinkedIn ✓ · ${ALL_JOBS.length} avisos`;}).catch(()=>{}),
+    fetch(`${APIS.hr}/jobs`).then(r=>r.ok?r.json():null).then(d=>{(d?.jobs||[]).forEach(j=>ALL_JOBS.push(mkHR(j)));sm.textContent=`✓ ${ALL_JOBS.length} avisos en tiempo real`;}).catch(()=>{}),
+  ]);
+
+  sortJobs();
+  sb2.style.display='none';
+  renderJobs();
+}
+
+function fmtPosted(iso){
+  if(!iso)return '';
+  const d=new Date(iso),now=new Date();
+  const diff=Math.floor((now-d)/86400000);
+  if(diff===0)return 'Hoy';if(diff===1)return 'Ayer';
+  if(diff<7)return `Hace ${diff} días`;
+  return d.toLocaleDateString('es-AR',{day:'2-digit',month:'short'});
+}
+
+function calcMatch(title,desc){
+  const p=USER?.profile;
+  const jobText=(title+' '+(desc||'')).toLowerCase();
+  const profileSkills=(p?.skills||[]).map(s=>s.name.toLowerCase());
+  const profileTitle=(p?.titulo||'').toLowerCase();
+  if(!profileSkills.length&&!profileTitle) return 40+Math.floor(Math.random()*20);
+  let hits=0,total=0;
+  profileSkills.forEach(sk=>{total++;if(jobText.includes(sk))hits++;});
+  profileTitle.split(/\s+/).filter(w=>w.length>3).forEach(w=>{total+=0.5;if(jobText.includes(w))hits+=0.5;});
+  const base=total>0?Math.round((hits/Math.max(total,1))*60)+35:45;
+  return Math.min(Math.max(base+Math.floor(Math.random()*8)-4,30),99);
+}
+
+function mkJob(j,src){
+  return{id:++EXT_ID,src,srcClass:src==='ZonaJobs'?'zj':src==='LinkedIn'?'li':'hr',isTL:false,
+    title:j.title||'',company:j.company||'',location:j.location||'',
+    url:j.url||'',posted:j.posted||'',salary:j.salary||'',
+    modality:j.modality||'',description:j.description||'',
+    match:calcMatch(j.title,j.description),prov:provFrom(j.location),
+    mod:modFrom(j.modality),timestamp:dateToTs(j.posted)};
+}
+function mkHR(j){
+  return{id:++EXT_ID,src:'HiringRoom',srcClass:'hr',isTL:false,
+    title:j.title||'',company:j.empresa||'',location:j.location||'',
+    url:j.url||'',posted:j.posted||'',salary:'',
+    modality:j.tags||'',description:j.area||'',
+    match:calcMatch(j.title,j.area),prov:provFrom(j.location),
+    mod:modFrom(j.tags),timestamp:dateToTs(j.posted)};
+}
+function dateToTs(d){
+  if(!d)return 0;
+  if(d.includes('hora')||d.includes('minuto'))return Date.now()-3600000;
+  if(d.includes('día')||d.includes('dia')){const n=parseInt(d)||1;return Date.now()-n*86400000;}
+  try{return new Date(d).getTime()||0;}catch{return 0;}
+}
+function provFrom(loc){if(!loc)return '';const l=loc.toLowerCase();if(l.includes('capital federal')||l.includes('caba'))return 'caba';if(l.includes('buenos aires'))return 'bsas';if(l.includes('córdoba')||l.includes('cordoba'))return 'cba';if(l.includes('santa fe')||l.includes('rosario'))return 'sf';return '';}
+function modFrom(m){if(!m)return '';const ml=m.toLowerCase();if(ml.includes('híbrido')||ml.includes('hibrido'))return 'hibrido';if(ml.includes('remoto'))return 'remoto';if(ml.includes('presencial'))return 'presencial';return '';}
+function locFromProv(){const m={bsas:'Buenos Aires',caba:'CABA',cba:'Córdoba',sf:'Santa Fe',all:'Argentina'};return m[F.prov]||'Argentina';}
+function sortJobs(){if(F.sort==='nuevo')ALL_JOBS.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));else ALL_JOBS.sort((a,b)=>b.match-a.match);}
+
+function hasCompleteProfile(){
+  const p=USER?.profile;
+  if(!p)return false;
+  return !!(p.titulo&&p.resumen&&(p.skills||[]).length>0&&(p.exp||[]).length>0);
+}
+
+// ── FILTERS ───────────────────────────────────────────────
+function setFilter(type,val,el){
+  const p=el.parentElement;p.querySelectorAll('.fchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');
+  F[type]=val;
+  if(type==='prov'||type==='sort'){if(type==='sort'){sortJobs();}SHOWN=0;renderJobs();}
+  else{SHOWN=0;renderJobs();}
+}
+function setSrc(el,val){document.querySelectorAll('.spill').forEach(p=>p.classList.remove('on'));el.classList.add('on');F.src=val;SHOWN=0;renderJobs();}
+function setPuesto(val,el){document.querySelectorAll('.pchip').forEach(p=>p.classList.remove('on'));el.classList.add('on');F.puesto=val;SHOWN=0;renderJobs();}
+
+function getFiltered(){
+  const kws=F.puesto!=='all'?PUESTO_KEYWORDS[F.puesto]||[]:null;
+  return ALL_JOBS.filter(j=>{
+    if(F.src!=='all'&&j.src!==F.src)return false;
+    if(F.prov!=='all'&&j.prov&&j.prov!==F.prov)return false;
+    if(F.mod!=='all'&&j.mod&&j.mod!==F.mod)return false;
+    if(kws){const t=(j.title+' '+(j.description||'')).toLowerCase();if(!kws.some(k=>t.includes(k)))return false;}
+    return true;
+  });
+}
+
+// ── RENDER JOBS ───────────────────────────────────────────
+function matchStyle(m){
+  if(m>=80)return{color:'var(--teal)',label:'Match alto'};
+  if(m>=70)return{color:'var(--blue)',label:'Buen match'};
+  if(m>=55)return{color:'var(--amber)',label:'Match medio'};
+  return{color:'var(--coral)',label:'Completá perfil'};
+}
+
+function renderJobs(){
+  const filtered=getFiltered();
+  const grid=document.getElementById('jobs-list');
+  const countEl=document.getElementById('jobs-count');
+  const lmWrap=document.getElementById('lm-wrap');
+  if(!filtered.length){
+    grid.innerHTML='<div class="full-loader"><div style="font-size:32px">🔬</div><div>Sin resultados · Probá con otras palabras</div></div>';
+    countEl.textContent='';lmWrap.innerHTML='';return;
+  }
+  const vis=filtered.slice(0,PAGE_SIZE);
+  const needGate=!USER&&filtered.length>PAGE_SIZE;
+  countEl.textContent=`${filtered.length} aviso${filtered.length!==1?'s':''} encontrado${filtered.length!==1?'s':''}`;
+  grid.innerHTML=vis.map(jobCard).join('');
+  if(needGate){
+    lmWrap.innerHTML=`<div class="gate-wrap"><div class="gate-card"><h3>Hay ${filtered.length-PAGE_SIZE} avisos más</h3><p>Registrate gratis para verlos todos, guardar búsquedas y subir tu perfil.</p><button class="btn-full btn-teal" onclick="goPage('auth');switchTab('registro')">Registrarme gratis →</button></div></div>`;
+  } else if(USER&&!hasCompleteProfile()&&filtered.length>0){
+    lmWrap.innerHTML=`<div class="gate-wrap"><div class="gate-card" style="background:linear-gradient(135deg,var(--td),#0a7050)"><h3>Completá tu perfil</h3><p>Con el perfil completo podés postularte a avisos de TalentLab y mejorar tu match con cada aviso.</p><button class="btn-full" style="background:#fff;color:var(--teal)" onclick="goPage('perfil')">Completar mi perfil →</button></div></div>`;
+  } else if(USER&&filtered.length>PAGE_SIZE){
+    lmWrap.innerHTML=`<div class="gate-wrap"><button class="lm-btn" onclick="loadMore()">Ver ${filtered.length-PAGE_SIZE} avisos más</button></div>`;
+  } else {lmWrap.innerHTML='';}
+}
+
+function loadMore(){
+  SHOWN+=PAGE_SIZE;
+  const filtered=getFiltered();
+  const grid=document.getElementById('jobs-list');
+  filtered.slice(SHOWN,SHOWN+PAGE_SIZE).forEach(j=>{const d=document.createElement('div');d.innerHTML=jobCard(j);grid.appendChild(d.firstElementChild);});
+  const rem=filtered.length-SHOWN-PAGE_SIZE;
+  document.getElementById('lm-wrap').innerHTML=rem>0?`<div class="gate-wrap"><button class="lm-btn" onclick="loadMore()">Ver ${rem} más</button></div>`:'';
+}
+
+function jobCard(j){
+  const srcColors={ZonaJobs:'#888780',LinkedIn:'#0a66c2',HiringRoom:'var(--teal)',TalentLab:'var(--navy)'};
+  const col=srcColors[j.src]||'#888';
+  const desc=(j.description||'').trim().slice(0,110);
+  const isNew=j.timestamp&&(Date.now()-j.timestamp)<48*3600*1000;
+  const ms=matchStyle(j.match);
+  const modTag=j.modality?`<span class="tag ${j.mod==='remoto'?'tg':j.mod==='hibrido'?'ta':'tn'}">${j.modality.split(',')[0].trim()}</span>`:'';
+  const tlBadge=j.isTL?'<span class="tag tb">TalentLab</span>':'';
+  return`<div class="jcard ${j.srcClass}" onclick="openJob(${j.id})">
+    <div class="jcard-top">
+      <div class="jcard-src"><div class="jcard-src-dot" style="background:${col}"></div>${j.src}</div>
+      ${isNew?'<span class="jcard-new">Nuevo</span>':'<div class="jcard-date">'+j.posted+'</div>'}
+    </div>
+    <div class="jcard-title">${j.title}</div>
+    <div class="jcard-co">${j.company}${j.location?' · '+j.location.split(',')[0]:''}</div>
+    ${desc?`<div class="jcard-desc">${desc}</div>`:''}
+    <div class="jcard-tags">${tlBadge}${modTag}${j.salary?`<span class="tag tg">${j.salary}</span>`:''}</div>
+    <div class="jcard-foot">
+      <div class="jsal">${j.salary||'A convenir'}</div>
+      <div style="display:flex;align-items:center;gap:4px">
+        ${j.match<55?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>':''}
+        <div style="font-size:11px;font-weight:700;color:${ms.color}">${j.match}% · ${ms.label}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── JOB DETAIL ────────────────────────────────────────────
+function openJob(id){
+  const j=ALL_JOBS.find(x=>x.id===id);if(!j)return;
+  const srcColors={ZonaJobs:'#888780',LinkedIn:'#0a66c2',HiringRoom:'var(--td)',TalentLab:'var(--navy)'};
+  const col=srcColors[j.src]||'#555';
+  const ms=j.match;
+  const mbg=ms>=80?'var(--tl)':ms>=70?'var(--bl)':ms>=55?'var(--al)':'var(--cl)';
+  const mc=ms>=80?'var(--teal)':ms>=70?'var(--blue)':ms>=55?'var(--amber)':'var(--coral)';
+  const mt=ms>=80?'Excelente fit':ms>=70?'Buen match':ms>=55?'Match moderado — completá tu perfil':'Perfil a mejorar para este aviso';
+  const desc=(j.description||'').trim();
+  document.getElementById('sh-content').innerHTML=`
+    <div class="sh-head">
+      <button class="sh-close" onclick="closeSheet()">✕</button>
+      <div class="sh-title">${j.title}</div>
+      <div class="sh-sub">${j.company}${j.location?' · '+j.location:''}</div>
+    </div>
+    <div class="sh-body">
+      <div class="jmeta">
+        ${j.location?`<div class="jmi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>${j.location}</div>`:''}
+        ${j.modality?`<div class="jmi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3v4M8 3v4M2 11h20"/></svg>${j.modality.split(',')[0]}</div>`:''}
+        ${j.salary?`<div class="jmi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>${j.salary}</div>`:''}
+        <div class="jmi" style="color:${col}">● ${j.src}</div>
+      </div>
+      ${desc?`<div class="desc-lbl">Descripción del puesto</div><div class="desc-box">${desc}</div>`:''}
+      ${j.url?`<a href="${j.url}" target="_blank" rel="noopener" class="ext-link">
+        <div style="flex:1"><div class="ext-link-title">Ver aviso en ${j.src}</div><div class="ext-link-url">${j.url}</div></div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>`:''}
+      <div class="match-strip" style="background:${mbg};color:${mc}">
+        <strong>Match: ${ms}%</strong> · ${mt}
+        ${ms<70?`<div style="font-size:11px;margin-top:4px;opacity:.85">💡 Completá tu perfil para subir tu score. <span style="text-decoration:underline;cursor:pointer" onclick="closeSheet();goPage('perfil')">Ir a mi perfil →</span></div>`:''}
+      </div>
+      ${j.isTL?`<div class="apply-box">
+        <div class="apply-title">✅ Postulate con tu perfil TalentLab</div>
+        <div class="apply-perks"><span class="apply-perk">🚀 Score TalentLab visible</span><span class="apply-perk">📬 Feedback real</span><span class="apply-perk">🔒 Datos protegidos</span></div>
+        ${USER?`<button class="apply-btn" onclick="applyToJob(${j.id})">Postularme a este aviso →</button>`:`<button class="apply-btn" onclick="closeSheet();goPage('auth');switchTab('registro')">Registrarme gratis para postularme →</button>`}
+      </div>`:`<div style="background:var(--gray);border-radius:var(--r);padding:12px;font-size:12px;color:var(--muted);border:1.5px solid var(--border)">
+        <div style="font-weight:700;color:var(--dark);margin-bottom:4px">Aviso de ${j.src}</div>
+        <div>Usá el link de arriba para ver el aviso original y postularte directamente.</div>
+      </div>`}
+      <div class="glossary-hint">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span class="glossary-hint-text">¿No entendés algún término?</span>
+        <button style="padding:6px 12px;border-radius:var(--r);border:1.5px solid var(--teal);background:#fff;font-size:12px;font-weight:700;color:var(--teal);cursor:pointer" onclick="closeSheet();goPage('guias')">Ver glosario →</button>
+      </div>
+    </div>`;
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+async function applyToJob(id){
+  const j=ALL_JOBS.find(x=>x.id===id);if(!j||!USER)return;
+  const btn=document.querySelector('.apply-btn');
+  if(btn){btn.textContent='Enviando...';btn.disabled=true;}
+  const {error}=await sb.from('applications').insert({
+    candidate_id:USER.id, candidate_email:USER.email,
+    candidate_name:USER.name, job_id:j.tlId||null,
+    job_title:j.title, job_src:j.src, job_url:j.url||'',
+    status:'Pendiente'
+  });
+  if(error&&error.code==='23505'){toast('Ya te postulaste a este aviso ⚠');if(btn){btn.textContent='Ya postulado';}}
+  else if(error){toast('Error al postularse: '+error.message);if(btn){btn.textContent='Postularme →';btn.disabled=false;}}
+  else{closeSheet();toast('Postulación enviada ✓ · El equipo de RRHH te contactará pronto');}
+}
+
+function closeSheet(){document.getElementById('overlay').classList.remove('open');document.body.style.overflow='';}
+
+// ── AUTH ──────────────────────────────────────────────────
+function switchTab(t){
+  document.querySelectorAll('.atab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.aform').forEach(x=>x.classList.remove('on'));
+  document.getElementById('tab-'+t).classList.add('on');
+  document.getElementById('af-'+t).classList.add('on');
+  document.getElementById('auth-err').style.display='none';
+  document.getElementById('auth-sub').textContent=t==='login'?'Accedé a todos los avisos':'Gratis · Sin tarjeta de crédito';
+}
+function showErr(m){const e=document.getElementById('auth-err');e.textContent=m;e.style.display='block';}
+
+async function doLogin(){
+  const email=document.getElementById('l-email').value.trim();
+  const pass=document.getElementById('l-pass').value;
+  if(!email||!pass){showErr('Completá email y contraseña');return;}
+  const btn=document.getElementById('btn-login');
+  btn.textContent='Ingresando...';btn.disabled=true;
+  const {error}=await sb.auth.signInWithPassword({email,password:pass});
+  btn.textContent='Ingresar →';btn.disabled=false;
+  if(error){showErr(error.message==='Invalid login credentials'?'Email o contraseña incorrectos':error.message);return;}
+  goPage('empleos');toast('¡Bienvenido/a de vuelta!');
+}
+
+async function doRegistro(){
+  const name=document.getElementById('r-name').value.trim();
+  const email=document.getElementById('r-email').value.trim();
+  const pass=document.getElementById('r-pass').value;
+  if(!name){showErr('Ingresá tu nombre');return;}
+  if(!email||!email.includes('@')){showErr('Email inválido');return;}
+  if(pass.length<8){showErr('Mínimo 8 caracteres');return;}
+  const btn=document.getElementById('btn-reg');
+  btn.textContent='Creando cuenta...';btn.disabled=true;
+  const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{name}}});
+  btn.textContent='Crear cuenta gratis →';btn.disabled=false;
+  if(error){showErr(error.message);return;}
+  if(data.user){
+    // Create profile row
+    await sb.from('profiles').upsert({
+      id:data.user.id, email, name,
+      skills:'[]',idiomas:'[]',exp:'[]',edu:'[]',certs:'[]',score:0
+    });
+    if(data.session){
+      // Email confirmation OFF → sesión inmediata
+      USER={id:data.user.id,email,name};
+      const{data:prof}=await sb.from('profiles').select('*').eq('id',data.user.id).single();
+      if(prof) USER.profile=prof;
+      updateNav();
+      goPage('empleos');
+      toast('¡Cuenta creada! Bienvenido/a '+name.split(' ')[0]+' ✓');
+    } else {
+      // Email confirmation ON → avisar
+      const err=document.getElementById('auth-err');
+      err.style.background='var(--tl)';err.style.color='var(--td)';err.style.border='1px solid #a8d8c0';
+      showErr('✅ Revisá tu email para confirmar la cuenta. Luego ingresá con tu email y contraseña.');
+    }
+  }
+}
+
+async function doLogout(){
+  await sb.auth.signOut();
+  USER=null;updateNav();goPage('empleos');toast('Sesión cerrada');
+}
+
+// ── PERFIL VIRTUAL ────────────────────────────────────────
+const TL_SCORE_SKILLS=['gmp','bpf','bpa','anmat','fda','ich','hplc','gc','elisa','pcr','lims','capa','validaciones','regulatorio','microbiología'];
+
+function calcScore(p){
+  let pts=0;
+  if(p.foto_url)                         pts+=8;
+  if(p.resumen&&p.resumen.length>50)     pts+=12;
+  if((p.exp   ||[]).length>0)            pts+=15;
+  if((p.exp   ||[]).length>1)            pts+=5;
+  if((p.edu   ||[]).length>0)            pts+=10;
+  if((p.skills||[]).length>0)            pts+=10;
+  if((p.idiomas||[]).length>0)           pts+=5;
+  if((p.certs ||[]).length>0)            pts+=5;
+  if(p.titulo)                           pts+=5;
+  if(p.linkedin||p.tel)                  pts+=5;
+  const names=(p.skills||[]).map(s=>s.name.toLowerCase());
+  pts+=Math.min(names.filter(n=>TL_SCORE_SKILLS.some(k=>n.includes(k))).length*5,20);
+  return Math.min(pts,100);
+}
+
+function getScoreLabel(sc){
+  if(sc>=85)return{txt:'Perfil destacado',color:'var(--teal)',bg:'var(--tl)'};
+  if(sc>=70)return{txt:'Perfil completo',color:'var(--blue)',bg:'var(--bl)'};
+  if(sc>=50)return{txt:'En desarrollo',color:'var(--amber)',bg:'var(--al)'};
+  return{txt:'Perfil incompleto',color:'var(--coral)',bg:'var(--cl)'};
+}
+
+function getSuggestions(p){
+  const sug=[];
+  if(!p.foto_url) sug.push({icon:'📷',txt:'Agregá una foto profesional. Los perfiles con foto reciben 3× más visitas.',cta:'Agregar foto',action:"openMform('foto')"});
+  if(!p.resumen||p.resumen.length<50) sug.push({icon:'✍️',txt:'Escribí un resumen profesional de al menos 2 líneas.',cta:'Agregar resumen',action:"openMform('resumen')"});
+  if(!(p.exp||[]).length) sug.push({icon:'💼',txt:'Cargá al menos una experiencia laboral.',cta:'Agregar experiencia',action:"openMform('exp')"});
+  if(!(p.edu||[]).length) sug.push({icon:'🎓',txt:'Agregá tu formación académica.',cta:'Agregar formación',action:"openMform('edu')"});
+  if(!(p.skills||[]).length) sug.push({icon:'🔬',txt:'Agregá skills como GMP, HPLC o BPF para aparecer en búsquedas.',cta:'Agregar skills',action:"openMform('skill')"});
+  else{
+    const tlCount=(p.skills||[]).filter(s=>TL_SCORE_SKILLS.some(g=>s.name.toLowerCase().includes(g))).length;
+    if(tlCount<2) sug.push({icon:'📈',txt:'Agregá más skills del sector (GMP, ANMAT, CAPA, LIMS) para mejorar tu score.',cta:'Ver glosario',action:"goPage('guias')"});
+  }
+  if(!(p.idiomas||[]).length) sug.push({icon:'🌐',txt:'Inglés técnico es muy valorado. Agregalo aunque sea para lectura.',cta:'Agregar idioma',action:"openMform('idioma')"});
+  return sug;
+}
+
+async function getProfile(){
+  if(!USER)return{};
+  if(USER.profile)return USER.profile;
+  const{data}=await sb.from('profiles').select('*').eq('id',USER.id).single();
+  if(data){
+    // Parse JSON fields
+    ['skills','idiomas','exp','edu','certs'].forEach(f=>{
+      if(typeof data[f]==='string'){try{data[f]=JSON.parse(data[f]);}catch{data[f]=[];}}
+      if(!Array.isArray(data[f]))data[f]=[];
+    });
+    USER.profile=data;
+  }
+  return USER.profile||{};
+}
+
+async function saveProfileToDB(p){
+  if(!USER)return;
+  const score=calcScore(p);
+  const toSave={...p,score,updated_at:new Date().toISOString()};
+  // Stringify arrays for Supabase
+  const payload={
+    id:USER.id, email:USER.email, name:USER.name,
+    titulo:p.titulo||null, resumen:p.resumen||null,
+    tel:p.tel||null, linkedin:p.linkedin||null, ubicacion:p.ubicacion||null,
+    skills:p.skills||[], idiomas:p.idiomas||[],
+    exp:p.exp||[], edu:p.edu||[], certs:p.certs||[],
+    score, foto_url:p.foto_url||null, updated_at:new Date().toISOString()
+  };
+  await sb.from('profiles').upsert(payload);
+  USER.profile={...USER.profile,...toSave};
+}
+
+function renderPerfil(){
+  const el=document.getElementById('perfil-content');
+  if(!USER){
+    el.innerHTML=`<div style="padding:52px 16px;text-align:center">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--border)" stroke-width="1.5" style="margin:0 auto 16px"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <h3 style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy);margin-bottom:8px">Creá tu perfil profesional</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.55">Olvidate del PDF. Un perfil digital,<br>compartible con un link, postulate con un click.</p>
+      <button class="btn-full btn-teal" style="max-width:260px;margin:0 auto;display:block" onclick="goPage('auth');switchTab('registro')">Crear mi perfil gratis →</button>
+    </div>`;return;
+  }
+
+  el.innerHTML='<div class="full-loader"><div class="spinner"></div>Cargando perfil...</div>';
+
+  getProfile().then(p=>{
+    const score=calcScore(p);
+    const lbl=getScoreLabel(score);
+    const sugs=getSuggestions(p);
+    const ini=(USER.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const skillTLCount=(p.skills||[]).filter(s=>TL_SCORE_SKILLS.some(g=>s.name.toLowerCase().includes(g))).length;
+    const slug=(USER.name||'usuario').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+    const pubLink=`${location.hostname}/${slug}`;
+
+    el.innerHTML=`
+    <div class="ph-hero">
+      <div style="position:relative;width:72px;margin:0 auto 10px;cursor:pointer" onclick="openMform('foto')">
+        ${p.foto_url?`<div class="ph-av"><img src="${p.foto_url}"></div>`:
+        `<div class="ph-av">${ini}</div>`}
+        <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--navy)">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+      </div>
+      <div class="ph-name">${USER.name}</div>
+      <div class="ph-title">${p.titulo||'<span style="opacity:.5;font-size:12px">Agregá tu cargo actual</span>'}</div>
+      <button class="ph-share-btn" onclick="showPublicProfile()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        Ver perfil público
+      </button>
+    </div>
+    <div class="score-strip">
+      <div class="score-cell">
+        <div class="score-val" style="color:${lbl.color}">${score}</div>
+        <div class="score-lbl">Score TalentLab</div>
+      </div>
+      <div class="score-cell">
+        <div class="score-val" style="color:#6ee7be">${skillTLCount}</div>
+        <div class="score-lbl">Skills sector</div>
+      </div>
+      <div class="score-cell">
+        <div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:${lbl.bg};color:${lbl.color};margin-bottom:2px">${lbl.txt}</div>
+        <div class="score-lbl">${score}% completo</div>
+      </div>
+    </div>
+
+    ${sugs.length?`<div class="suggestions">
+      <div class="sug-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${sugs.length} sugerencia${sugs.length!==1?'s':''}</div>
+      ${sugs.map(s=>`<div class="sug-item"><span style="font-size:16px;flex-shrink:0">${s.icon}</span><div style="flex:1"><div class="sug-text">${s.txt}</div><button onclick="${s.action}" style="margin-top:4px;padding:3px 10px;border-radius:20px;border:1.5px solid var(--amber);background:transparent;font-size:11px;font-weight:700;color:var(--amber);cursor:pointer">${s.cta} →</button></div></div>`).join('')}
+    </div>`:'<div style="margin:10px 16px 0;background:var(--tl);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--td);font-weight:600">✅ ¡Perfil completo! Estás entre los mejores posicionados.</div>'}
+
+    ${buildSection('resumen','<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>','Resumen profesional',
+      p.resumen?`<div class="ps-body" style="font-size:13px;color:var(--muted);line-height:1.65">${p.resumen}</div><div class="ps-body" style="padding-top:0;display:flex;gap:8px;flex-wrap:wrap">
+        ${p.titulo?`<span style="font-size:11px;font-weight:700;background:var(--bl);color:var(--blue);padding:2px 9px;border-radius:20px">${p.titulo}</span>`:''}
+        ${p.tel?`<span style="font-size:11px;color:var(--muted)">📱 ${p.tel}</span>`:''}
+        ${p.linkedin?`<span style="font-size:11px;color:var(--blue)">🔗 ${p.linkedin}</span>`:''}
+        ${p.ubicacion?`<span style="font-size:11px;color:var(--muted)">📍 ${p.ubicacion}</span>`:''}
+      </div>`:'<div class="ps-empty">Contá quién sos y a qué tipo de rol apuntás</div>','resumen')}
+
+    ${buildSection('exp','<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3v4M8 3v4M2 11h20"/>','Experiencia laboral',
+      (p.exp||[]).length?`<div class="ps-body" style="padding-bottom:6px">${(p.exp||[]).map((e,i)=>`<div class="pitem"><div class="pitem-dot"></div><div class="pitem-main"><div class="pitem-title">${e.cargo}</div><div class="pitem-sub">${e.empresa}</div><div class="pitem-period">${e.desde}${e.hasta?' → '+e.hasta:' → Presente'}</div>${e.logros?`<div class="pitem-desc">${e.logros}</div>`:''}</div><button class="pitem-del" onclick="delProfileItem('exp',${i})">×</button></div>`).join('')}</div>`:'<div class="ps-empty">Agregá tus posiciones anteriores</div>','exp')}
+
+    ${buildSection('edu','<path d="M12 14l9-5-9-5-9 5 9 5z"/>','Formación académica',
+      (p.edu||[]).length?`<div class="ps-body" style="padding-bottom:6px">${(p.edu||[]).map((e,i)=>`<div class="pitem"><div class="pitem-dot" style="background:var(--blue)"></div><div class="pitem-main"><div class="pitem-title">${e.titulo}</div><div class="pitem-sub">${e.inst}</div><div class="pitem-period">${e.desde}${e.hasta?' → '+e.hasta:' → En curso'}</div></div><button class="pitem-del" onclick="delProfileItem('edu',${i})">×</button></div>`).join('')}</div>`:'<div class="ps-empty">Título, institución y año</div>','edu')}
+
+    ${buildSection('skills','<path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0"/>','Skills técnicas',
+      (p.skills||[]).length?`<div class="ps-body"><div class="skill-tags">${(p.skills||[]).map((s,i)=>`<div class="skill-tag">${s.name}<span class="skill-lvl">${s.nivel}</span><button class="skill-tag-del" onclick="delProfileItem('skills',${i})">×</button></div>`).join('')}</div></div>`:'<div class="ps-empty">GMP, HPLC, ANMAT, BPF...</div>','skill')}
+
+    ${buildSection('idiomas','<path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>','Idiomas',
+      (p.idiomas||[]).length?`<div class="ps-body"><div class="skill-tags">${(p.idiomas||[]).map((s,i)=>`<div class="skill-tag" style="background:var(--bl);border-color:#90b8e8;color:var(--blue)">${s.name}<span class="skill-lvl">${s.nivel}</span><button class="skill-tag-del" style="color:var(--blue)" onclick="delProfileItem('idiomas',${i})">×</button></div>`).join('')}</div></div>`:'<div class="ps-empty">Español, Inglés, Portugués...</div>','idioma')}
+
+    ${buildSection('certs','<path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138"/>','Certificaciones y cursos',
+      (p.certs||[]).length?`<div class="ps-body" style="padding-bottom:6px">${(p.certs||[]).map((c,i)=>`<div class="pitem"><div class="pitem-dot" style="background:var(--amber)"></div><div class="pitem-main"><div class="pitem-title">${c.nombre}</div><div class="pitem-sub">${c.inst||''}${c.anio?' · '+c.anio:''}</div></div><button class="pitem-del" onclick="delProfileItem('certs',${i})">×</button></div>`).join('')}</div>`:'<div class="ps-empty">Cursos, posgrados, certificaciones GMP...</div>','cert')}
+
+    <div class="share-card">
+      <div class="share-card-title">🔗 Tu perfil público</div>
+      <div class="share-card-sub">Compartí este link con reclutadores — sin PDF, sin adjuntos.</div>
+      <div class="share-link-box"><div class="share-link-text">${pubLink}</div><button class="copy-btn" onclick="copyLink('${pubLink}')">Copiar</button></div>
+      <button style="width:100%;padding:10px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);border-radius:var(--r);color:#fff;font-size:13px;font-weight:600;cursor:pointer" onclick="showPublicProfile()">Previsualizar perfil público →</button>
+    </div>
+    <div style="margin:12px 16px 20px">
+      <button class="btn-full" style="background:#fff;border:1.5px solid var(--border);color:var(--muted);border-radius:var(--r);padding:11px;font-size:13px;font-weight:600;cursor:pointer" onclick="doLogout()">Cerrar sesión</button>
+    </div>`;
+  });
+}
+
+function buildSection(id, iconPath, title, content, formType){
+  return`<div class="p-section">
+    <div class="ps-head">
+      <div class="ps-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;color:var(--teal)">${iconPath}</svg>${title}</div>
+      <button class="add-btn" onclick="openMform('${formType||id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        ${content.includes('ps-empty')&&!content.includes('pitem')&&!content.includes('skill-tag')?'Agregar':'Editar'}
+      </button>
+    </div>
+    ${content}
+  </div>`;
+}
+
+// ── MODAL FORMS ───────────────────────────────────────────
+function openMform(type){
+  const titles={foto:'Foto de perfil',resumen:'Resumen y datos',exp:'Agregar experiencia',edu:'Agregar formación',skill:'Agregar skill',idioma:'Agregar idioma',cert:'Agregar certificación'};
+  getProfile().then(p=>{
+    const bodies={
+      foto:`<div style="text-align:center;margin-bottom:14px">
+        <div id="foto-preview" style="width:90px;height:90px;border-radius:50%;background:var(--g2);margin:0 auto 12px;overflow:hidden;display:flex;align-items:center;justify-content:center;border:3px solid var(--border)">
+          ${p.foto_url?`<img src="${p.foto_url}" style="width:100%;height:100%;object-fit:cover">`:'<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--g3)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'}
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5">Una foto profesional aumenta 3× las visitas.</div>
+      </div>
+      <div class="mf-fg"><label>Seleccioná tu foto</label><input type="file" id="mf-foto-file" accept="image/*" onchange="previewFoto(this)" style="border:none;padding:0;font-size:13px"></div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:12px">JPG · PNG · Máx 2MB</div>
+      <button class="mf-save" onclick="saveFoto()">Guardar foto →</button>`,
+
+      resumen:`<div class="mf-fg"><label>Cargo / Título profesional</label><input id="mf-titulo" placeholder="Ej: Analista de Control de Calidad SSr." value="${p.titulo||''}"></div>
+      <div class="mf-fg"><label>Resumen (2–4 líneas)</label><textarea id="mf-resumen" placeholder="Quién sos, tu especialidad y qué buscás...">${p.resumen||''}</textarea></div>
+      <div class="mf-fg"><label>Teléfono / WhatsApp</label><input id="mf-tel" placeholder="+54 11 ..." value="${p.tel||''}"></div>
+      <div class="mf-fg"><label>LinkedIn</label><input id="mf-linkedin" placeholder="linkedin.com/in/tu-nombre" value="${p.linkedin||''}"></div>
+      <div class="mf-fg"><label>Ubicación</label><input id="mf-ubicacion" placeholder="Ej: Buenos Aires, GBA" value="${p.ubicacion||''}"></div>
+      <button class="mf-save" onclick="saveMform('resumen')">Guardar →</button>`,
+
+      exp:`<div class="mf-fg"><label>Cargo *</label><input id="mf-cargo" placeholder="Ej: Analista QC Jr."></div>
+      <div class="mf-fg"><label>Empresa *</label><input id="mf-empresa" placeholder="Ej: Laboratorio Richmond S.A."></div>
+      <div class="mf-row">
+        <div class="mf-fg"><label>Desde</label><input id="mf-desde" placeholder="Ej: Mar 2022"></div>
+        <div class="mf-fg"><label>Hasta (vacío = presente)</label><input id="mf-hasta" placeholder="Ej: Dic 2024"></div>
+      </div>
+      <div class="mf-fg"><label>Logros / Responsabilidades</label><textarea id="mf-logros" placeholder="Ej: Implementé sistema OOS, reduje tiempos un 30%."></textarea></div>
+      <button class="mf-save" onclick="saveMform('exp')">Agregar experiencia →</button>`,
+
+      edu:`<div class="mf-fg"><label>Título / Carrera *</label><input id="mf-titulo-edu" placeholder="Ej: Licenciatura en Química"></div>
+      <div class="mf-fg"><label>Institución *</label><input id="mf-inst" placeholder="Ej: UBA, UTN, UNLP"></div>
+      <div class="mf-row">
+        <div class="mf-fg"><label>Desde</label><input id="mf-desde-edu" placeholder="2018"></div>
+        <div class="mf-fg"><label>Hasta (vacío = en curso)</label><input id="mf-hasta-edu" placeholder="2023"></div>
+      </div>
+      <button class="mf-save" onclick="saveMform('edu')">Agregar formación →</button>`,
+
+      skill:`<div class="mf-fg"><label>Skill técnica *</label><input id="mf-skill" placeholder="Ej: HPLC, GMP, ANMAT, validaciones...">
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px">${['GMP','BPF','HPLC','ANMAT','Validaciones','CAPA','LIMS','OOS/OOT','CSV','Microbiología','PCR/qPCR','Regulatorio'].map(s=>`<span style="font-size:11px;padding:3px 9px;border-radius:20px;background:var(--tl);color:var(--td);cursor:pointer;font-weight:600" onclick="document.getElementById('mf-skill').value='${s}'">${s}</span>`).join('')}</div>
+      </div>
+      <div class="mf-fg"><label>Nivel</label><select id="mf-nivel"><option>Básico</option><option selected>Intermedio</option><option>Avanzado</option><option>Experto</option></select></div>
+      <button class="mf-save" onclick="saveMform('skill')">Agregar skill →</button>`,
+
+      idioma:`<div class="mf-fg"><label>Idioma *</label><select id="mf-idioma"><option>Inglés</option><option>Portugués</option><option>Francés</option><option>Alemán</option><option>Italiano</option><option>Otro</option></select></div>
+      <div class="mf-fg"><label>Nivel</label><select id="mf-nivel-id"><option>Básico</option><option>Intermedio</option><option>Avanzado</option><option>Nativo</option><option>Técnico (lectura)</option></select></div>
+      <button class="mf-save" onclick="saveMform('idioma')">Agregar idioma →</button>`,
+
+      cert:`<div class="mf-fg"><label>Nombre del curso / certificación *</label><input id="mf-cert" placeholder="Ej: Curso BPF — INTI"></div>
+      <div class="mf-fg"><label>Institución</label><input id="mf-inst-cert" placeholder="Ej: ANMAT, INTI, UBA"></div>
+      <div class="mf-fg"><label>Año</label><input id="mf-anio-cert" placeholder="2023"></div>
+      <button class="mf-save" onclick="saveMform('cert')">Agregar certificación →</button>`,
+    };
+    document.getElementById('mf-title').textContent=titles[type]||'Agregar';
+    document.getElementById('mf-body').innerHTML=bodies[type]||'';
+    document.getElementById('mform').classList.add('open');
+    document.body.style.overflow='hidden';
+  });
+}
+
+function closeMform(){document.getElementById('mform').classList.remove('open');document.body.style.overflow='';}
+
+async function saveMform(type){
+  const p=await getProfile();
+  const g=id=>document.getElementById(id)?.value?.trim()||'';
+  if(type==='resumen'){
+    p.titulo=g('mf-titulo');p.resumen=g('mf-resumen');p.tel=g('mf-tel');p.linkedin=g('mf-linkedin');p.ubicacion=g('mf-ubicacion');
+  } else if(type==='exp'){
+    const cargo=g('mf-cargo'),empresa=g('mf-empresa');
+    if(!cargo||!empresa){toast('Completá cargo y empresa ⚠');return;}
+    if(!p.exp)p.exp=[];p.exp.unshift({cargo,empresa,desde:g('mf-desde'),hasta:g('mf-hasta'),logros:g('mf-logros')});
+  } else if(type==='edu'){
+    const titulo=g('mf-titulo-edu'),inst=g('mf-inst');
+    if(!titulo||!inst){toast('Completá título e institución ⚠');return;}
+    if(!p.edu)p.edu=[];p.edu.unshift({titulo,inst,desde:g('mf-desde-edu'),hasta:g('mf-hasta-edu')});
+  } else if(type==='skill'){
+    const name=g('mf-skill');if(!name){toast('Ingresá la skill ⚠');return;}
+    if(!p.skills)p.skills=[];
+    if(p.skills.find(s=>s.name.toLowerCase()===name.toLowerCase())){toast('Esa skill ya está en tu perfil');closeMform();return;}
+    p.skills.push({name,nivel:g('mf-nivel')||'Intermedio'});
+  } else if(type==='idioma'){
+    if(!p.idiomas)p.idiomas=[];p.idiomas.push({name:g('mf-idioma'),nivel:g('mf-nivel-id')});
+  } else if(type==='cert'){
+    const nombre=g('mf-cert');if(!nombre){toast('Ingresá el nombre ⚠');return;}
+    if(!p.certs)p.certs=[];p.certs.unshift({nombre,inst:g('mf-inst-cert'),anio:g('mf-anio-cert')});
+  }
+  const btn=document.querySelector('#mf-body .mf-save');if(btn){btn.textContent='Guardando...';btn.disabled=true;}
+  await saveProfileToDB(p);
+  closeMform();renderPerfil();toast('Guardado ✓');
+}
+
+async function delProfileItem(section,idx){
+  const p=await getProfile();
+  if(p[section])p[section].splice(idx,1);
+  await saveProfileToDB(p);
+  renderPerfil();toast('Eliminado ✓');
+}
+
+function previewFoto(input){
+  if(!input.files||!input.files[0])return;
+  const file=input.files[0];
+  if(file.size>2*1024*1024){toast('La foto no puede superar 2MB ⚠');input.value='';return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const prev=document.getElementById('foto-preview');
+    if(prev)prev.innerHTML=`<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveFoto(){
+  const input=document.getElementById('mf-foto-file');
+  if(!input||!input.files||!input.files[0]){toast('Seleccioná una foto primero ⚠');return;}
+  const btn=document.querySelector('#mf-body .mf-save');if(btn){btn.textContent='Subiendo...';btn.disabled=true;}
+  const file=input.files[0];
+  const ext=file.name.split('.').pop();
+  const path=`avatars/${USER.id}.${ext}`;
+  // Upload to Supabase Storage
+  const{error:upErr}=await sb.storage.from('avatars').upload(path,file,{upsert:true});
+  if(upErr){toast('Error al subir foto: '+upErr.message);if(btn){btn.textContent='Guardar foto →';btn.disabled=false;}return;}
+  const{data:{publicUrl}}=sb.storage.from('avatars').getPublicUrl(path);
+  const p=await getProfile();
+  p.foto_url=publicUrl;
+  await saveProfileToDB(p);
+  closeMform();renderPerfil();updateNav();toast('Foto actualizada ✓');
+}
+
+function copyLink(link){
+  navigator.clipboard?.writeText('https://'+link).then(()=>toast('Link copiado ✓')).catch(()=>toast('Link: '+link));
+}
+
+async function showPublicProfile(){
+  const p=await getProfile();
+  const sc=calcScore(p);
+  const lbl=getScoreLabel(sc);
+  const ini=(USER.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const skillTLCount=(p.skills||[]).filter(s=>TL_SCORE_SKILLS.some(g=>s.name.toLowerCase().includes(g))).length;
+  document.getElementById('public-content').innerHTML=`<div class="pub-profile">
+    <div class="pub-hero">
+      ${p.foto_url?`<div class="pub-av"><img src="${p.foto_url}"></div>`:`<div class="pub-av">${ini}</div>`}
+      <div class="pub-name">${USER.name}</div>
+      <div class="pub-title">${p.titulo||''}</div>
+      ${p.ubicacion?`<div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:8px">📍 ${p.ubicacion}</div>`:''}
+      <div class="pub-scores">
+        <div class="pub-score-badge" style="background:${lbl.bg};color:${lbl.color}">Score TalentLab ${sc}/100</div>
+        <div class="pub-score-badge">${skillTLCount} skills especializadas</div>
+        ${(p.idiomas||[]).length?`<div class="pub-score-badge">${p.idiomas.map(i=>i.name).join(' · ')}</div>`:''}
+      </div>
+    </div>
+    ${p.resumen?`<div class="pub-sec"><div class="pub-sec-title">Sobre mí</div><div style="font-size:13px;color:var(--muted);line-height:1.65">${p.resumen}</div></div>`:''}
+    ${(p.exp||[]).length?`<div class="pub-sec"><div class="pub-sec-title">Experiencia</div>${(p.exp||[]).map(e=>`<div class="pitem"><div class="pitem-dot"></div><div class="pitem-main"><div class="pitem-title">${e.cargo}</div><div class="pitem-sub">${e.empresa}</div><div class="pitem-period">${e.desde}${e.hasta?' → '+e.hasta:' → Presente'}</div>${e.logros?`<div class="pitem-desc">${e.logros}</div>`:''}</div></div>`).join('')}</div>`:''}
+    ${(p.edu||[]).length?`<div class="pub-sec"><div class="pub-sec-title">Formación</div>${(p.edu||[]).map(e=>`<div class="pitem"><div class="pitem-dot" style="background:var(--blue)"></div><div class="pitem-main"><div class="pitem-title">${e.titulo}</div><div class="pitem-sub">${e.inst} · ${e.desde}${e.hasta?' → '+e.hasta:' → En curso'}</div></div></div>`).join('')}</div>`:''}
+    ${(p.skills||[]).length?`<div class="pub-sec"><div class="pub-sec-title">Skills técnicas</div><div class="skill-tags">${(p.skills||[]).map(s=>`<div class="skill-tag">${s.name}<span class="skill-lvl">${s.nivel}</span></div>`).join('')}</div></div>`:''}
+    ${(p.certs||[]).length?`<div class="pub-sec"><div class="pub-sec-title">Certificaciones</div>${(p.certs||[]).map(c=>`<div class="pitem"><div class="pitem-dot" style="background:var(--amber)"></div><div class="pitem-main"><div class="pitem-title">${c.nombre}</div><div class="pitem-sub">${c.inst||''}${c.anio?' · '+c.anio:''}</div></div></div>`).join('')}</div>`:''}
+    <div style="background:var(--navy);border-radius:var(--r);padding:16px;text-align:center;margin-top:14px">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:5px">¿Querés contactar a ${USER.name.split(' ')[0]}?</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:12px">Registrate en TalentLab para ver su contacto</div>
+      <button style="padding:10px 24px;background:var(--teal);color:#fff;border:none;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer" onclick="goPage('auth');switchTab('registro')">Registrarme →</button>
+    </div>
+  </div>`;
+  goPage('public');
+}
+
+// ── GUÍAS ────────────────────────────────────────────────
+function toggleConv(el){const det=el.querySelector('.conv-detail');if(det)det.style.display=det.style.display==='none'?'block':'none';}
+
+const GUIAS=[
+  {id:'match',color:'#d6f5ea',iconColor:'var(--teal)',
+    icon:'<path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>',
+    title:'Cómo funciona el Match y el Score',desc:'Entendé cómo TalentLab evalúa tu perfil',
+    render:()=>`<div class="g-h4">¿Qué es el Match?</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">El porcentaje indica qué tan bien coincide tu perfil con un aviso. Se calcula comparando tus skills, cargo y resumen contra el texto del aviso.</div>
+      ${[['80–99% — Match alto','var(--tl)','var(--teal)','Tus skills coinciden muy bien. Postulate con prioridad.'],['70–79% — Buen match','var(--bl)','var(--blue)','Buena coincidencia. Revisá los requisitos específicos.'],['55–69% — Match medio','var(--al)','var(--amber)','Coincidencia parcial. Completar el perfil puede subir este score.'],['Menos de 55% — A mejorar','var(--cl)','var(--coral)','Perfil incompleto o sin skills del sector.']].map(([t,bg,c,d])=>`<div style="background:${bg};border-radius:8px;padding:10px 12px;margin-bottom:7px"><div style="font-size:12px;font-weight:700;color:${c};margin-bottom:3px">${t}</div><div style="font-size:12px;color:var(--muted)">${d}</div></div>`).join('')}
+      <div class="g-tip g-tip-teal">💡 Un perfil con score ≥ 70 aparece destacado ante los reclutadores del sector.</div>`},
+  {id:'seniority',color:'#dceeff',iconColor:'#1653a8',
+    icon:'<path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>',
+    title:'Jr, SSr, Sr, Lead: ¿qué significan?',desc:'Los niveles de experiencia en los avisos',
+    render:()=>`<div class="g-h4">Niveles de seniority</div>
+      ${[['Pasante','bg:var(--bl);c:var(--blue)','0 años · Estudiante o recién egresado. <strong>Salario:</strong> $350k–$550k'],['Junior (Jr.)','bg:var(--tl);c:var(--td)','1–3 años · Consolida conocimientos. <strong>Salario:</strong> $600k–$950k'],['Semi Senior (SSr.)','bg:var(--al);c:var(--amber)','3–6 años · Autonomía en tareas habituales. <strong>Salario:</strong> $950k–$1.5M'],['Senior (Sr.)','bg:var(--cl);c:var(--coral)','6–10 años · Referente técnico. <strong>Salario:</strong> $1.5M–$2.5M'],['Lead / Gerente','bg:var(--gray);c:var(--muted)','10+ años · Lidera equipos estratégicos. <strong>Salario:</strong> $2.5M+']].map(([t,s,d])=>`<div class="g-row"><span class="g-badge" style="background:${s.split(';')[0].replace('bg:','')};color:${s.split(';')[1].replace('c:','')}">${t}</span><div class="g-txt">${d}</div></div>`).join('')}
+      <div class="g-tip g-tip-teal">💡 Los años son orientativos — el seniority real depende del área y la empresa.</div>`},
+  {id:'recibo',color:'#fef0c0',iconColor:'var(--amber)',
+    icon:'<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
+    title:'Cómo leer un recibo de sueldo',desc:'Entendé cada ítem de tu liquidación',
+    render:()=>`<div class="g-h4">Haberes ✓</div>
+      ${[['Sueldo básico','Salario base según convenio. Es remunerativo.'],['Antigüedad','1% del sueldo por año trabajado.'],['Presentismo','Adicional por asistencia perfecta.'],['Horas extra','50% días hábiles · 100% domingos y feriados.']].map(([n,d])=>`<div class="recibo-it"><div class="recibo-top"><div class="recibo-name">${n}</div><span class="recibo-tipo" style="background:var(--tl);color:var(--td)">HABER</span></div><div class="recibo-desc">${d}</div></div>`).join('')}
+      <div class="g-h4" style="margin-top:14px">Descuentos ✗</div>
+      ${[['Jubilación (11%)','Aporte al sistema previsional ANSES.'],['Obra social (3%)','Cobertura médica. La empresa aporta el 6%.'],['PAMI (3%)','Cobertura para jubilados.'],['Ganancias','Solo si superás el mínimo no imponible. Escala 5%–35%.']].map(([n,d])=>`<div class="recibo-it"><div class="recibo-top"><div class="recibo-name">${n}</div><span class="recibo-tipo" style="background:var(--cl);color:var(--coral)">DESCUENTO</span></div><div class="recibo-desc">${d}</div></div>`).join('')}
+      <div class="g-tip g-tip-amber">💡 En los avisos siempre figura el sueldo <strong>bruto</strong>. Neto = bruto − descuentos (~83%).</div>`},
+  {id:'convenios',color:'#ede8fb',iconColor:'var(--blue)',
+    icon:'<path d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/>',
+    title:'Convenios colectivos de trabajo',desc:'Los CCT de sanidad, farmacéutica y comercio',
+    render:()=>`<div style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5">Un CCT fija salarios mínimos, licencias, jornada y categorías para cada sector.</div>
+      <div class="g-h4">Sector Farmacéutico e Industria</div>
+      ${[['CCT 546/08','Industria Farmacéutica (FAIM)','Mayoría de laboratorios. Categorías técnicas A–G, adicionales por turno. Sindicato: ATEFAP/SINQUIFA.'],['CCT 507/07','Droguerías y Distribuidoras','Distribución farmacéutica. Cubre choferes, almacenistas y admin. Adicionales por cadena de frío.'],['CCT 201/92','Químicos y Petroquímicos','Industria química. Adicional por riesgo y jornada reducida en plantas.'],['CCT 108/75','Perfumería y Cosmética','Fabricación de higiene y cosmética. Aplica a laboratorios con líneas dermatológicas.'],['CCT 60/89','Trabajadores de Laboratorio','Laboratorios de análisis clínicos. Bonificaciones por especialización.']].map(([n,e,d])=>`<div class="conv-it" onclick="toggleConv(this)"><span class="conv-n">${n}</span><div><div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px">${e} &#x25BE;</div><div class="conv-detail">${d}</div></div></div>`).join('')}
+      <div class="g-h4" style="margin-top:14px">Sector Salud</div>
+      ${[['CCT 122/75','Sanidad','Hospitales y clínicas privadas. Cubre médicos, enfermeros, bioquímicos y admin.'],['CCT 459/06','Centros de Diagnóstico','Laboratorios de análisis clínicos. Categorías para bioquímicos y técnicos.'],['CCT 305/98','Obras Sociales (OSECAC)','Personal administrativo y de salud de las mutuales.']].map(([n,e,d])=>`<div class="conv-it" onclick="toggleConv(this)"><span class="conv-n">${n}</span><div><div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px">${e} &#x25BE;</div><div class="conv-detail">${d}</div></div></div>`).join('')}
+      <div class="g-h4" style="margin-top:14px">Sector Comercio</div>
+      ${[['CCT 130/75','Empleados de Comercio (FAECYS)','El más amplio de Argentina. Farmacias, droguerías minoristas y ventas.'],['CCT 40/89 E','Viajantes de Comercio','Visitadores médicos. Fija comisiones mínimas y gastos de movilidad.'],['Ley 19587/72','Higiene y Seguridad','Marco legal para técnicos en SyH. Obligaciones del empleador y EPP.']].map(([n,e,d])=>`<div class="conv-it" onclick="toggleConv(this)"><span class="conv-n">${n}</span><div><div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px">${e} &#x25BE;</div><div class="conv-detail">${d}</div></div></div>`).join('')}
+      <div class="g-tip g-tip-blue">💡 Consultá tu CCT completo en <strong>argentina.gob.ar/trabajo/convenios</strong></div>`},
+  {id:'glosario',color:'#d6f5ea',iconColor:'var(--teal)',
+    icon:'<path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>',
+    title:'Glosario de términos técnicos',desc:'GMP, ANMAT, HPLC, CAPA y más — explicados simple',
+    render:()=>`<div class="g-h4">Normas y regulaciones</div>
+      ${[['GMP','Good Manufacturing Practices. Normas que garantizan la calidad en producción farmacéutica.'],['BPF','Buenas Prácticas de Fabricación. Equivalente en español de las GMP.'],['ANMAT','Administración Nacional de Medicamentos. El regulador argentino, equivalente a la FDA.'],['ICH','International Council for Harmonisation. Guías globales de calidad (Q8, Q9, Q10).'],['FDA','Food and Drug Administration de EEUU. Si la empresa exporta, debe cumplir normas FDA.']].map(([t,d])=>`<div class="glos-it"><div class="glos-term">${t}</div><div class="glos-def">${d}</div></div>`).join('')}
+      <div class="g-h4" style="margin-top:14px">Técnicas analíticas</div>
+      ${[['HPLC','High Performance Liquid Chromatography. Separar y cuantificar componentes. Muy pedida en CC.'],['Karl Fischer','Método para medir contenido de agua. Fundamental en control de calidad farmacéutico.'],['ELISA','Enzyme-Linked ImmunoSorbent Assay. Técnica inmunológica para detectar proteínas.'],['PCR / qPCR','Reacción en cadena de la polimerasa. Detecta material genético. Clave en biofarma.']].map(([t,d])=>`<div class="glos-it"><div class="glos-term">${t}</div><div class="glos-def">${d}</div></div>`).join('')}
+      <div class="g-h4" style="margin-top:14px">Sistemas y procesos</div>
+      ${[['SOP / PNO','Standard Operating Procedure. Describe paso a paso cómo realizar una tarea.'],['LIMS','Laboratory Information Management System. Software para gestionar muestras y resultados.'],['OOS / OOT','Out of Specification/Trend. Resultado fuera de especificación. Requiere investigación.'],['CAPA','Corrective and Preventive Action. Plan de acciones ante desvíos o no conformidades.'],['ATS','Applicant Tracking System. Software que filtra CVs por palabras clave antes del reclutador.']].map(([t,d])=>`<div class="glos-it"><div class="glos-term">${t}</div><div class="glos-def">${d}</div></div>`).join('')}`},
+  {id:'cv',color:'#ede8fb',iconColor:'var(--blue)',
+    icon:'<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>',
+    title:'Cómo armar un CV para el sector',desc:'Lo que buscan los reclutadores de laboratorios',
+    render:()=>`<div class="g-h4">Estructura recomendada</div>
+      ${[['1. Datos de contacto','Nombre, email y localidad. Sin DNI ni fecha de nacimiento.'],['2. Resumen (3 líneas)','Quién sos, tu especialidad y qué buscás. Ej: "Farmacéutica 5 años en CC GMP. Especializada en HPLC."'],['3. Experiencia laboral','Empresa → Cargo → Período → Logros concretos con impacto medible.'],['4. Formación','Título, institución y año. Especializaciones relevantes.'],['5. Skills técnicas','GMP, BPF, HPLC, ANMAT, LIMS, SAP. Clave para pasar filtros ATS.'],['6. Idiomas','Inglés técnico para lectura de documentación FDA/ICH es muy valorado.']].map(([t,d])=>`<div class="cv-tip-it"><div class="cv-tip-title">${t}</div><div class="cv-tip-desc">${d}</div></div>`).join('')}
+      <div class="g-h4" style="margin-top:14px">Errores frecuentes</div>
+      ${[['❌ CV de más de 2 páginas','Los reclutadores leen en 30 segundos. 1 página con menos de 5 años; máximo 2 con más.'],['❌ Sin keywords GMP/BPF','Los ATS filtran por palabras clave. Sin GMP o BPF puede no llegar al reclutador.'],['❌ Objetivos genéricos','"Busco crecer profesionalmente" no dice nada. Sé específico sobre área y empresa.']].map(([t,d])=>`<div class="cv-tip-it" style="border-color:var(--coral)"><div class="cv-tip-title">${t}</div><div class="cv-tip-desc">${d}</div></div>`).join('')}`},
+];
+
+function renderGuias(){
+  const el=document.getElementById('guias-list');
+  if(!el||el.children.length)return;
+  el.innerHTML=GUIAS.map((g,i)=>`
+    <div class="gc" id="gc-${g.id}" onclick="toggleGuia('${g.id}',${i})">
+      <div class="gc-head">
+        <div class="gc-ic" style="background:${g.color}"><svg viewBox="0 0 24 24" fill="none" stroke="${g.iconColor}" stroke-width="1.8">${g.icon}</svg></div>
+        <div style="flex:1;min-width:0"><div class="gc-title">${g.title}</div><div class="gc-desc">${g.desc}</div></div>
+        <div class="gc-arrow">›</div>
+      </div>
+      <div class="gc-body" id="gcb-${g.id}"></div>
+    </div>`).join('');
+}
+
+function toggleGuia(id,idx){
+  const card=document.getElementById('gc-'+id);
+  const body=document.getElementById('gcb-'+id);
+  const isOpen=card.classList.contains('open');
+  document.querySelectorAll('.gc').forEach(c=>c.classList.remove('open'));
+  if(!isOpen){body.innerHTML=GUIAS[idx].render();card.classList.add('open');}
+}
+
+// ── TOAST ─────────────────────────────────────────────────
+let _tt;
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.remove('show'),3000);}
+</script>
+</body>
+</html>

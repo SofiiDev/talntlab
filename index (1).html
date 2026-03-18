@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TalentLab — Empleos en Ciencia, Tecnología y Laboratorios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0c1f3d;--navy2:#162b52;--navy3:#1e3a6e;
+  --teal:#1b9e74;--tl:#d6f5ea;--td:#064d38;--tm:#3db88a;
+  --amber:#c97d00;--al:#fef0c0;
+  --blue:#1653a8;--bl:#dceeff;
+  --coral:#b83232;--cl:#fde0de;
+  --gray:#f0efe9;--g2:#dddbd4;--g3:#c5c3bb;
+  --border:#ccc9bf;--muted:#6b6860;--dark:#1c1b19;--white:#fff;
+  --sh:0 1px 4px rgba(0,0,0,.08),0 4px 20px rgba(0,0,0,.07);
+  --sh2:0 8px 40px rgba(0,0,0,.14);
+  --r:12px;--r2:20px;
+}
+html{scroll-behavior:smooth;background:var(--gray)}
+body{font-family:'DM Sans',sans-serif;color:var(--dark);font-size:15px;line-height:1.6;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'DM Serif Display',serif;line-height:1.15}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+button,input,select,textarea{font-family:'DM Sans',sans-serif}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.anim{opacity:0;animation:fadeUp .7s ease forwards}
+.anim-d1{animation-delay:.1s}.anim-d2{animation-delay:.2s}.anim-d3{animation-delay:.3s}.anim-d4{animation-delay:.4s}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;padding:0 5%;height:64px;transition:all .3s}
+.nav.scrolled{background:var(--navy);box-shadow:0 2px 20px rgba(0,0,0,.2)}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:22px;color:#fff;display:flex;align-items:baseline;gap:2px}
+.nav-logo em{color:#6ee7be;font-style:normal}
+.nav-links{display:flex;gap:28px;margin-left:auto;align-items:center}
+.nav-links a{font-size:13px;font-weight:600;color:rgba(255,255,255,.75);transition:color .15s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:var(--teal);color:#fff!important;padding:8px 20px;border-radius:8px;font-weight:700!important;transition:background .15s!important}
+.nav-cta:hover{background:var(--td)!important}
+.nav-mobile-btn{display:none;background:none;border:none;cursor:pointer;color:#fff;padding:4px}
+.nav-mobile-btn svg{width:22px;height:22px}
+.mobile-menu{display:none;position:fixed;inset:0;background:var(--navy);z-index:199;flex-direction:column;align-items:center;justify-content:center;gap:28px}
+.mobile-menu.open{display:flex;animation:fadeIn .2s ease}
+.mobile-menu a{font-size:20px;font-weight:700;color:rgba(255,255,255,.8);transition:color .15s}
+.mobile-menu a:hover{color:#fff}
+
+/* ── HERO ── */
+.hero{min-height:100vh;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 5% 60px;position:relative;overflow:hidden;text-align:center}
+.hero-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.hero-glow1{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(27,158,116,.18) 0%,transparent 70%);top:-200px;left:-100px}
+.hero-glow2{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(22,83,168,.14) 0%,transparent 70%);bottom:-100px;right:-100px}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:60px 60px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;background:rgba(110,231,190,.12);border:1px solid rgba(110,231,190,.28);border-radius:30px;padding:6px 16px;font-size:12px;font-weight:700;color:#6ee7be;letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px;animation:pulse 3s ease infinite}
+.hero h1{font-size:clamp(36px,7vw,72px);color:#fff;margin-bottom:20px;max-width:820px;letter-spacing:-.02em}
+.hero h1 em{color:#6ee7be;font-style:italic}
+.hero-sub{font-size:clamp(15px,2vw,19px);color:rgba(255,255,255,.55);max-width:560px;margin-bottom:36px;line-height:1.65}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:60px}
+.btn-primary{background:var(--teal);color:#fff;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary:hover{background:var(--td);transform:translateY(-1px);box-shadow:0 6px 20px rgba(27,158,116,.35)}
+.btn-secondary{background:rgba(255,255,255,.08);color:#fff;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:700;border:1.5px solid rgba(255,255,255,.2);cursor:pointer;transition:all .2s}
+.btn-secondary:hover{background:rgba(255,255,255,.14)}
+.hero-stats{display:flex;gap:40px;flex-wrap:wrap;justify-content:center}
+.hstat{text-align:center}
+.hstat-val{font-family:'DM Serif Display',serif;font-size:32px;color:#fff;line-height:1}
+.hstat-lbl{font-size:12px;color:rgba(255,255,255,.4);font-weight:600;letter-spacing:.04em;margin-top:4px}
+.hero-scroll{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(255,255,255,.3);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;animation:float 2.5s ease infinite}
+.hero-scroll svg{width:16px;height:16px}
+
+/* ── SECTION BASE ── */
+.section{padding:90px 5%}
+.section-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.section-tag.teal{background:var(--tl);color:var(--td)}
+.section-tag.blue{background:var(--bl);color:var(--blue)}
+.section-tag.amber{background:var(--al);color:var(--amber)}
+.section-title{font-size:clamp(28px,4vw,44px);color:var(--navy);margin-bottom:14px;letter-spacing:-.01em}
+.section-sub{font-size:16px;color:var(--muted);max-width:560px;line-height:1.65}
+.section-head{margin-bottom:50px}
+
+/* ── HOW IT WORKS ── */
+.how-wrap{background:#fff}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.step{background:var(--gray);border-radius:var(--r2);padding:32px;position:relative;overflow:hidden;border:1.5px solid var(--border);transition:all .25s}
+.step:hover{transform:translateY(-4px);box-shadow:var(--sh2);border-color:var(--teal)}
+.step-num{font-family:'DM Serif Display',serif;font-size:64px;color:rgba(27,158,116,.12);position:absolute;top:-8px;right:16px;line-height:1;font-weight:700}
+.step-icon{width:48px;height:48px;border-radius:12px;background:var(--tl);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.step-icon svg{width:24px;height:24px;color:var(--teal)}
+.step h3{font-size:20px;color:var(--navy);margin-bottom:8px}
+.step p{font-size:14px;color:var(--muted);line-height:1.65}
+
+/* ── FEATURES ── */
+.features{background:var(--navy);color:#fff}
+.features .section-title{color:#fff}
+.features .section-sub{color:rgba(255,255,255,.5)}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;margin-top:48px;border-radius:var(--r2);overflow:hidden}
+.feat{background:rgba(255,255,255,.04);padding:36px;border:1px solid rgba(255,255,255,.06);transition:background .2s}
+.feat:hover{background:rgba(255,255,255,.08)}
+.feat-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.feat-icon.teal{background:rgba(27,158,116,.2)}
+.feat-icon.blue{background:rgba(22,83,168,.25)}
+.feat-icon.amber{background:rgba(201,125,0,.2)}
+.feat-icon.coral{background:rgba(184,50,50,.2)}
+.feat-icon svg{width:22px;height:22px}
+.feat-icon.teal svg{color:#6ee7be}
+.feat-icon.blue svg{color:#7eb3f5}
+.feat-icon.amber svg{color:#f5c842}
+.feat-icon.coral svg{color:#f08080}
+.feat h3{font-size:18px;color:#fff;margin-bottom:8px}
+.feat p{font-size:13px;color:rgba(255,255,255,.5);line-height:1.65}
+
+/* ── SCORE ── */
+.score-section{background:var(--gray)}
+.score-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.score-visual{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r2);padding:36px;position:relative;overflow:hidden}
+.score-visual::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(27,158,116,.15),transparent 60%)}
+.score-ring-wrap{display:flex;justify-content:center;margin-bottom:28px;position:relative}
+.score-ring{width:140px;height:140px;position:relative}
+.score-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.score-ring-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-ring-num{font-family:'DM Serif Display',serif;font-size:36px;color:#fff;line-height:1}
+.score-ring-lbl{font-size:10px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.score-items{display:flex;flex-direction:column;gap:10px}
+.score-item{display:flex;align-items:center;gap:10px}
+.score-item-bar-wrap{flex:1;background:rgba(255,255,255,.1);border-radius:4px;height:6px;overflow:hidden}
+.score-item-bar{height:100%;border-radius:4px;background:var(--teal);transition:width 1s ease}
+.score-item-lbl{font-size:12px;color:rgba(255,255,255,.6);width:120px;flex-shrink:0}
+.score-item-pts{font-size:12px;color:#6ee7be;font-weight:700;width:36px;text-align:right;flex-shrink:0}
+.score-text h2{font-size:clamp(26px,3.5vw,38px);color:var(--navy);margin-bottom:14px}
+.score-text p{color:var(--muted);margin-bottom:24px;line-height:1.7}
+.score-levels{display:flex;flex-direction:column;gap:8px}
+.sl{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;background:#fff;border:1.5px solid var(--border)}
+.sl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.sl-txt{font-size:13px;font-weight:600;color:var(--dark)}
+.sl-range{font-size:12px;color:var(--muted);margin-left:auto}
+
+/* ── SECTORS ── */
+.sectors{background:#fff}
+.sector-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:40px}
+.sector-card{background:var(--gray);border-radius:var(--r);padding:22px 18px;text-align:center;border:1.5px solid var(--border);transition:all .2s;cursor:default}
+.sector-card:hover{border-color:var(--teal);background:#fff;transform:translateY(-3px);box-shadow:var(--sh)}
+.sector-ic{width:48px;height:48px;border-radius:12px;background:var(--tl);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.sector-ic svg{width:24px;height:24px;color:var(--teal)}
+.sector-card h4{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.sector-card p{font-size:12px;color:var(--muted)}
+
+/* ── BLOG ── */
+.blog{background:var(--gray)}
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
+.blog-card{background:#fff;border-radius:var(--r2);overflow:hidden;border:1.5px solid var(--border);box-shadow:var(--sh);transition:all .25s;cursor:pointer}
+.blog-card:hover{transform:translateY(-5px);box-shadow:var(--sh2);border-color:var(--teal)}
+.blog-img{width:100%;height:180px;object-fit:cover;background:var(--navy);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.blog-img-placeholder{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:52px;position:relative}
+.blog-img-placeholder::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);opacity:.85}
+.blog-img-placeholder span{position:relative;z-index:1}
+.blog-cat{display:inline-flex;align-items:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 10px;border-radius:20px;margin-bottom:10px}
+.blog-body{padding:20px}
+.blog-card h3{font-size:17px;color:var(--navy);margin-bottom:8px;line-height:1.3}
+.blog-card p{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.blog-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)}
+.blog-meta-dot{width:3px;height:3px;border-radius:50%;background:var(--g3)}
+.blog-more-wrap{text-align:center;margin-top:36px}
+
+/* ── BLOG ADMIN ── */
+.blog-admin-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.admin-toggle{display:none;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;padding:7px 14px;border:1.5px solid var(--border);border-radius:8px;background:#fff;transition:all .15s}
+.admin-toggle:hover{border-color:var(--teal);color:var(--teal)}
+.admin-toggle.on{border-color:var(--teal);color:var(--teal);background:var(--tl)}
+.admin-toggle svg{width:14px;height:14px}
+.edit-btn{position:absolute;top:10px;right:10px;background:var(--navy);color:#fff;border:none;padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;opacity:0;transition:opacity .15s;z-index:2}
+.blog-card:hover .edit-btn{opacity:1}
+.new-post-btn{display:none;align-items:center;gap:6px;background:var(--teal);color:#fff;padding:9px 18px;border-radius:8px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s}
+.new-post-btn:hover{background:var(--td)}
+.new-post-btn svg{width:14px;height:14px}
+
+/* ── MODAL BLOG ── */
+.modal-ov{position:fixed;inset:0;background:rgba(12,31,61,.6);z-index:600;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(4px)}
+.modal-ov.open{display:flex;animation:fadeIn .2s}
+.modal-box{background:#fff;border-radius:var(--r2);width:100%;max-width:760px;margin:auto;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-head{background:var(--navy);padding:20px 26px;display:flex;justify-content:space-between;align-items:center}
+.modal-head-title{font-family:'DM Serif Display',serif;font-size:20px;color:#fff}
+.modal-close{background:rgba(255,255,255,.12);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.modal-close:hover{background:rgba(255,255,255,.22)}
+.modal-body-inner{padding:26px}
+.mf{display:flex;flex-direction:column;gap:4px;margin-bottom:16px}
+.mf label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.mf input,.mf select,.mf textarea{border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:14px;color:var(--dark);outline:none;transition:border-color .15s;width:100%;background:#fff}
+.mf input:focus,.mf select:focus,.mf textarea:focus{border-color:var(--teal)}
+.mf textarea{resize:vertical;min-height:120px;line-height:1.6}
+.mf-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;padding-top:12px;border-top:1.5px solid var(--g2)}
+.btn-save{background:var(--teal);color:#fff;padding:10px 24px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s}
+.btn-save:hover{background:var(--td)}
+.btn-del{background:var(--cl);color:var(--coral);padding:10px 16px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-right:auto;transition:background .15s}
+.btn-del:hover{background:#fac8c8}
+.btn-cancel{background:var(--gray);color:var(--muted);padding:10px 18px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer}
+
+/* ── ARTICLE VIEWER ── */
+.article-ov{position:fixed;inset:0;background:rgba(12,31,61,.55);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(4px)}
+.article-ov.open{display:flex;animation:fadeIn .2s}
+.article-box{background:#fff;border-radius:var(--r2);width:100%;max-width:720px;margin:auto;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.article-hero{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:40px 36px 32px;position:relative}
+.article-cat-badge{display:inline-flex;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;border-radius:20px;margin-bottom:14px}
+.article-title{font-family:'DM Serif Display',serif;font-size:28px;color:#fff;line-height:1.2;margin-bottom:12px}
+.article-meta{font-size:12px;color:rgba(255,255,255,.45);display:flex;gap:12px;flex-wrap:wrap}
+.article-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.12);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.article-content{padding:32px 36px;font-size:15px;color:var(--dark);line-height:1.8;max-height:65vh;overflow-y:auto}
+.article-content h2{font-family:'DM Serif Display',serif;font-size:22px;color:var(--navy);margin:28px 0 12px}
+.article-content h3{font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy);margin:22px 0 10px}
+.article-content p{margin-bottom:14px}
+.article-content ul,.article-content ol{margin:0 0 14px 22px}
+.article-content li{margin-bottom:6px}
+.article-content strong{font-weight:700;color:var(--dark)}
+.article-content em{color:var(--teal);font-style:normal;font-weight:600}
+.article-content blockquote{border-left:3px solid var(--teal);padding:12px 18px;background:var(--tl);border-radius:0 8px 8px 0;margin:18px 0;color:var(--td);font-style:italic}
+.article-content a{color:var(--teal);text-decoration:underline}
+.article-content .tip-box{background:var(--al);border-radius:10px;padding:16px 18px;margin:18px 0;border-left:3px solid var(--amber)}
+.article-content .tip-box strong{color:var(--amber)}
+
+/* ── CTA ── */
+.cta{background:linear-gradient(135deg,var(--teal),var(--td));padding:80px 5%;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.08),transparent 60%)}
+.cta h2{font-size:clamp(28px,4vw,44px);color:#fff;margin-bottom:14px}
+.cta p{color:rgba(255,255,255,.65);font-size:17px;margin-bottom:32px}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-white{background:#fff;color:var(--teal);padding:14px 32px;border-radius:10px;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .2s}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.15)}
+.btn-outline-white{background:transparent;color:#fff;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:700;border:2px solid rgba(255,255,255,.4);cursor:pointer;transition:all .2s}
+.btn-outline-white:hover{background:rgba(255,255,255,.1)}
+
+/* ── FOOTER ── */
+.footer{background:var(--navy);padding:50px 5% 28px;color:rgba(255,255,255,.5)}
+.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-logo{font-family:'DM Serif Display',serif;font-size:22px;color:#fff;margin-bottom:10px}
+.footer-logo em{color:#6ee7be;font-style:normal}
+.footer-desc{font-size:13px;line-height:1.65;margin-bottom:18px}
+.footer-col h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);margin-bottom:14px}
+.footer-col a{display:block;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:9px;transition:color .15s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:22px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-wrap:wrap;gap:10px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;border-left:4px solid var(--teal);box-shadow:var(--sh2)}
+.toast.show{opacity:1;transform:none}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .feat-grid{grid-template-columns:1fr}
+  .score-inner{grid-template-columns:1fr}
+  .sector-grid{grid-template-columns:repeat(2,1fr)}
+  .blog-grid{grid-template-columns:1fr 1fr}
+  .footer-inner{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .nav-links{display:none}
+  .nav-mobile-btn{display:block}
+  .hero-stats{gap:24px}
+  .blog-grid{grid-template-columns:1fr}
+  .sector-grid{grid-template-columns:1fr 1fr}
+  .footer-inner{grid-template-columns:1fr}
+  .mf-row{grid-template-columns:1fr}
+  .article-content{padding:22px}
+  .article-hero{padding:28px 22px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a class="nav-logo" href="#">Talent<em>Lab</em></a>
+  <div class="nav-links">
+    <a href="#como-funciona">Cómo funciona</a>
+    <a href="#sectores">Sectores</a>
+    <a href="#blog">Blog</a>
+    <a href="app.html" class="nav-cta">Buscar empleos →</a>
+  </div>
+  <button class="nav-mobile-btn" onclick="toggleMobileMenu()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <button onclick="toggleMobileMenu()" style="position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;cursor:pointer;font-size:22px">✕</button>
+  <a href="#como-funciona" onclick="toggleMobileMenu()">Cómo funciona</a>
+  <a href="#sectores" onclick="toggleMobileMenu()">Sectores</a>
+  <a href="#blog" onclick="toggleMobileMenu()">Blog</a>
+  <a href="app.html" style="background:var(--teal);padding:12px 28px;border-radius:10px;color:#fff;font-weight:700">Buscar empleos →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"><div class="hero-glow1"></div><div class="hero-glow2"></div><div class="hero-grid"></div></div>
+  <div class="hero-eyebrow">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>
+    El portal de empleos para el sector científico
+  </div>
+  <h1 class="anim">Tu próxima posición en<br><em>ciencia y tecnología</em></h1>
+  <p class="hero-sub anim anim-d1">TalentLab conecta a profesionales del sector farmacéutico, laboratorio e I+D con las mejores oportunidades del mercado argentino. Sin PDF, sin intermediarios.</p>
+  <div class="hero-btns anim anim-d2">
+    <a href="app.html"><button class="btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      Ver empleos ahora
+    </button></a>
+    <a href="#como-funciona"><button class="btn-secondary">Cómo funciona</button></a>
+  </div>
+  <div class="hero-stats anim anim-d3">
+    <div class="hstat"><div class="hstat-val">3</div><div class="hstat-lbl">Portales integrados</div></div>
+    <div class="hstat"><div class="hstat-val">8</div><div class="hstat-lbl">Áreas especializadas</div></div>
+    <div class="hstat"><div class="hstat-val">100%</div><div class="hstat-lbl">Gratuito</div></div>
+  </div>
+  <div class="hero-scroll">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    scroll
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="section how-wrap" id="como-funciona">
+  <div class="section-head anim">
+    <div class="section-tag teal">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Proceso simple
+    </div>
+    <h2 class="section-title">Tres pasos para encontrar tu empleo ideal</h2>
+    <p class="section-sub">Sin fricciones, sin CV adjunto, sin esperas. Tu perfil es tu carta de presentación.</p>
+  </div>
+  <div class="steps">
+    <div class="step anim anim-d1">
+      <div class="step-num">1</div>
+      <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <h3>Creá tu perfil digital</h3>
+      <p>Registrate gratis y completá tu perfil con experiencia, formación, skills técnicas e idiomas. Sin PDF, sin adjuntos — todo en minutos.</p>
+    </div>
+    <div class="step anim anim-d2">
+      <div class="step-num">2</div>
+      <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div>
+      <h3>Explorá miles de avisos</h3>
+      <p>Buscamos en tiempo real en ZonaJobs, LinkedIn y HiringRoom. Filtrá por área, provincia, modalidad y obtené tu porcentaje de match con cada aviso.</p>
+    </div>
+    <div class="step anim anim-d3">
+      <div class="step-num">3</div>
+      <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.0 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg></div>
+      <h3>Postulate con un click</h3>
+      <p>Para los avisos de TalentLab, postulate directamente con tu perfil completo. Los reclutadores ven tu Score TalentLab y habilidades en segundos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section features">
+  <div class="section-head anim">
+    <div class="section-tag" style="background:rgba(110,231,190,.12);color:#6ee7be">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Características
+    </div>
+    <h2 class="section-title">Todo lo que necesitás en un solo lugar</h2>
+    <p class="section-sub">Diseñado específicamente para profesionales de laboratorio, farmacéutica e I+D en Argentina.</p>
+  </div>
+  <div class="feat-grid">
+    <div class="feat anim anim-d1">
+      <div class="feat-icon teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
+      <h3>Score TalentLab</h3>
+      <p>Tu perfil recibe un puntaje de 0 a 100 basado en completitud y skills especializadas del sector (GMP, HPLC, ANMAT, etc.). A mayor score, más visible sos para los reclutadores.</p>
+    </div>
+    <div class="feat anim anim-d2">
+      <div class="feat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0"/></svg></div>
+      <h3>Match inteligente</h3>
+      <p>Cada aviso muestra tu porcentaje de coincidencia calculado comparando tus skills y experiencia contra los requisitos del puesto. Sabés antes de postularte si sos candidato ideal.</p>
+    </div>
+    <div class="feat anim anim-d3">
+      <div class="feat-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
+      <h3>Perfil público compartible</h3>
+      <p>Cada candidato tiene su propia URL pública con su perfil completo. Compartí el link directamente con reclutadores, sin necesidad de enviar un PDF adjunto.</p>
+    </div>
+    <div class="feat anim anim-d4">
+      <div class="feat-icon coral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></div>
+      <h3>Guías del sector</h3>
+      <p>Glosario técnico (GMP, BPF, HPLC, CAPA), guía de CCT y convenios laborales, cómo leer un recibo de sueldo, y más recursos específicos para el sector farmacéutico.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SCORE -->
+<section class="section score-section">
+  <div class="score-inner">
+    <div class="score-visual anim">
+      <div class="score-ring-wrap">
+        <div class="score-ring">
+          <svg viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="58" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="12"/>
+            <circle cx="70" cy="70" r="58" fill="none" stroke="#1b9e74" stroke-width="12" stroke-dasharray="364" stroke-dashoffset="100" stroke-linecap="round"/>
+          </svg>
+          <div class="score-ring-val"><div class="score-ring-num">73</div><div class="score-ring-lbl">Score</div></div>
+        </div>
+      </div>
+      <div class="score-items">
+        <div class="score-item"><span class="score-item-lbl">Foto de perfil</span><div class="score-item-bar-wrap"><div class="score-item-bar" style="width:100%"></div></div><span class="score-item-pts">+8</span></div>
+        <div class="score-item"><span class="score-item-lbl">Resumen</span><div class="score-item-bar-wrap"><div class="score-item-bar" style="width:100%"></div></div><span class="score-item-pts">+12</span></div>
+        <div class="score-item"><span class="score-item-lbl">Experiencia</span><div class="score-item-bar-wrap"><div class="score-item-bar" style="width:100%"></div></div><span class="score-item-pts">+20</span></div>
+        <div class="score-item"><span class="score-item-lbl">Skills GMP/HPLC</span><div class="score-item-bar-wrap"><div class="score-item-bar" style="width:75%"></div></div><span class="score-item-pts">+15</span></div>
+        <div class="score-item"><span class="score-item-lbl">Formación</span><div class="score-item-bar-wrap"><div class="score-item-bar" style="width:83%"></div></div><span class="score-item-pts">+10</span></div>
+        <div class="score-item"><span class="score-item-lbl">Idiomas</span><div class="score-item-bar-wrap"><div class="score-item-bar" style="width:42%"></div></div><span class="score-item-pts">+5</span></div>
+        <div class="score-item" style="opacity:.4"><span class="score-item-lbl">Certificaciones</span><div class="score-item-bar-wrap"><div class="score-item-bar" style="width:0%"></div></div><span class="score-item-pts" style="color:rgba(255,255,255,.3)">+0</span></div>
+      </div>
+    </div>
+    <div class="score-text anim anim-d2">
+      <div class="section-tag teal" style="margin-bottom:16px">Score TalentLab</div>
+      <h2>Tu perfil tiene un puntaje. Mejoralo y destacá.</h2>
+      <p>El Score TalentLab es un número de 0 a 100 que resume la calidad y completitud de tu perfil. Cada sección que completás suma puntos. Las skills especializadas del sector farmacéutico valen más.</p>
+      <div class="score-levels">
+        <div class="sl"><div class="sl-dot" style="background:var(--teal)"></div><div class="sl-txt">Perfil destacado</div><div class="sl-range">≥ 85 puntos</div></div>
+        <div class="sl"><div class="sl-dot" style="background:var(--blue)"></div><div class="sl-txt">Perfil completo</div><div class="sl-range">≥ 70 puntos</div></div>
+        <div class="sl"><div class="sl-dot" style="background:var(--amber)"></div><div class="sl-txt">En desarrollo</div><div class="sl-range">≥ 50 puntos</div></div>
+        <div class="sl"><div class="sl-dot" style="background:var(--coral)"></div><div class="sl-txt">Perfil incompleto</div><div class="sl-range">< 50 puntos</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTORES -->
+<section class="section sectors" id="sectores">
+  <div class="section-head anim" style="text-align:center">
+    <div class="section-tag blue" style="margin:0 auto 14px">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517"/></svg>
+      Especialidades
+    </div>
+    <h2 class="section-title">8 áreas del sector científico</h2>
+    <p class="section-sub" style="margin:0 auto">Posiciones especializadas para cada perfil profesional del sector.</p>
+  </div>
+  <div class="sector-grid">
+    <div class="sector-card anim anim-d1">
+      <div class="sector-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+      <h4>Control de Calidad</h4><p>HPLC, microbiología, análisis</p>
+    </div>
+    <div class="sector-card anim anim-d2">
+      <div class="sector-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+      <h4>Regulatorio</h4><p>ANMAT, FDA, dossiers</p>
+    </div>
+    <div class="sector-card anim anim-d3">
+      <div class="sector-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3v4M8 3v4M2 11h20"/></svg></div>
+      <h4>Producción</h4><p>Manufactura GMP, operaciones</p>
+    </div>
+    <div class="sector-card anim anim-d4">
+      <div class="sector-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg></div>
+      <h4>Validaciones</h4><p>IQ/OQ/PQ, CSV, procesos</p>
+    </div>
+    <div class="sector-card anim">
+      <div class="sector-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg></div>
+      <h4>Ensayos Clínicos</h4><p>CRA, CRC, monitoreo</p>
+    </div>
+    <div class="sector-card anim anim-d1">
+      <div class="sector-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0"/></svg></div>
+      <h4>I+D</h4><p>Formulaciones, biotecnología</p>
+    </div>
+    <div class="sector-card anim anim-d2">
+      <div class="sector-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <h4>Seguridad e Higiene</h4><p>SyH, técnicos, coordinadores</p>
+    </div>
+    <div class="sector-card anim anim-d3">
+      <div class="sector-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1"/></svg></div>
+      <h4>Logística Farmacéutica</h4><p>Distribución, cadena de frío</p>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section class="section blog" id="blog">
+  <div class="blog-admin-bar">
+    <div class="section-head anim" style="margin-bottom:0">
+      <div class="section-tag amber">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Blog TalentLab
+      </div>
+      <h2 class="section-title">Recursos para tu carrera</h2>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="admin-toggle" id="admin-toggle" onclick="toggleAdmin()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Editar blog
+      </button>
+      <button class="new-post-btn" id="new-post-btn" onclick="openEditor(null)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nuevo artículo
+      </button>
+    </div>
+  </div>
+  <div class="blog-grid" id="blog-grid"></div>
+  <div class="blog-more-wrap">
+    <button class="btn-primary" onclick="loadMorePosts()" id="load-more-btn" style="display:none">Ver más artículos</button>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2 class="anim">¿Listo para encontrar tu próximo empleo?</h2>
+  <p class="anim anim-d1">Registrate gratis, completá tu perfil y accedé a miles de posiciones especializadas del sector científico argentino.</p>
+  <div class="cta-btns anim anim-d2">
+    <a href="app.html"><button class="btn-white">Crear mi perfil gratis →</button></a>
+    <a href="app.html"><button class="btn-outline-white">Ver empleos disponibles</button></a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">Talent<em>Lab</em></div>
+      <p class="footer-desc">El portal de empleos especializado en ciencia, tecnología y laboratorios de Argentina. Conectamos talento con oportunidades del sector farmacéutico, biotecnología e I+D.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Portal</h4>
+      <a href="app.html">Buscar empleos</a>
+      <a href="app.html">Mi perfil</a>
+      <a href="app.html">Guías laborales</a>
+    </div>
+    <div class="footer-col">
+      <h4>Sectores</h4>
+      <a href="app.html">Control de Calidad</a>
+      <a href="app.html">Regulatorio</a>
+      <a href="app.html">I+D</a>
+      <a href="app.html">Ensayos Clínicos</a>
+    </div>
+    <div class="footer-col">
+      <h4>Empresa</h4>
+      <a href="admin.html">Admin</a>
+      <a href="#blog">Blog</a>
+      <a href="#como-funciona">Cómo funciona</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 TalentLab. Todos los derechos reservados.</span>
+    <span>Hecho con ♥ para el sector científico argentino</span>
+  </div>
+</footer>
+
+<!-- ARTICLE VIEWER -->
+<div class="article-ov" id="article-ov" onclick="if(event.target===this)closeArticle()">
+  <div class="article-box">
+    <div class="article-hero" id="article-hero">
+      <button class="article-close" onclick="closeArticle()">✕</button>
+      <div id="article-cat-badge"></div>
+      <h1 class="article-title" id="article-title"></h1>
+      <div class="article-meta" id="article-meta"></div>
+    </div>
+    <div class="article-content" id="article-content"></div>
+  </div>
+</div>
+
+<!-- BLOG EDITOR MODAL -->
+<div class="modal-ov" id="editor-ov" onclick="if(event.target===this)closeEditor()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-head-title" id="editor-title">Nuevo artículo</div>
+      <button class="modal-close" onclick="closeEditor()">✕</button>
+    </div>
+    <div class="modal-body-inner">
+      <div class="mf-row">
+        <div class="mf">
+          <label>Categoría</label>
+          <select id="e-cat">
+            <option value="carrera">💼 Carrera</option>
+            <option value="laboral">📋 Laboral</option>
+            <option value="tecnico">🔬 Técnico</option>
+            <option value="salario">💰 Salario</option>
+            <option value="cv">📄 CV & Perfil</option>
+          </select>
+        </div>
+        <div class="mf">
+          <label>Tiempo de lectura</label>
+          <select id="e-read">
+            <option>2 min</option><option>3 min</option><option selected>5 min</option><option>7 min</option><option>10 min</option>
+          </select>
+        </div>
+      </div>
+      <div class="mf"><label>Título del artículo *</label><input id="e-title" placeholder="Ej: Cómo armar tu primer perfil profesional"></div>
+      <div class="mf"><label>Resumen (se muestra en la card)</label><textarea id="e-excerpt" rows="2" placeholder="Una o dos líneas que describen el artículo..."></textarea></div>
+      <div class="mf"><label>Emoji / Ícono de portada</label><input id="e-emoji" placeholder="🔬" style="font-size:24px;text-align:center" maxlength="4"></div>
+      <div class="mf">
+        <label>Contenido (HTML permitido: &lt;h2&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;blockquote&gt;, &lt;a href=""&gt;)</label>
+        <textarea id="e-content" rows="10" placeholder="<h2>Introducción</h2><p>El contenido del artículo va acá...</p>"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-del" id="btn-del" onclick="deletePost()" style="display:none">🗑 Eliminar</button>
+        <button class="btn-cancel" onclick="closeEditor()">Cancelar</button>
+        <button class="btn-save" onclick="savePost()">Guardar artículo →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════
+// NAV
+// ══════════════════════════════════
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40);
+});
+
+function toggleMobileMenu(){
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+
+// ══════════════════════════════════
+// BLOG DATA
+// ══════════════════════════════════
+const DEFAULT_POSTS=[
+  {
+    id:1,cat:'cv',emoji:'📄',read:'5 min',
+    title:'Cómo armar tu primer perfil profesional en TalentLab',
+    excerpt:'Tu perfil es tu CV digital. Te explicamos paso a paso cómo completarlo para conseguir un Score alto y aparecer primero ante los reclutadores.',
+    date:'12 mar 2026',author:'Equipo TalentLab',
+    content:`<h2>¿Por qué importa tu perfil?</h2>
+<p>En el sector farmacéutico y de laboratorios, los reclutadores reciben cientos de CVs. Un perfil TalentLab bien completado te diferencia porque muestra exactamente lo que sabés hacer, con el vocabulario que ellos buscan.</p>
+<blockquote>Los perfiles con Score ≥ 70 reciben 4 veces más contactos que los perfiles incompletos.</blockquote>
+<h2>Paso 1: La foto</h2>
+<p>Una foto profesional suma <em>+8 puntos</em> al score y aumenta 3× las visitas. No necesitás una sesión de fotos — alcanza con una imagen de frente, buena iluminación y fondo neutro. Evitá fotos de perfil de redes sociales informales.</p>
+<h2>Paso 2: El resumen profesional</h2>
+<p>El resumen es lo primero que lee el reclutador. Tiene que responder tres preguntas en 3 líneas:</p>
+<ul>
+  <li>¿Quién sos? (profesión + especialidad)</li>
+  <li>¿Cuántos años de experiencia tenés?</li>
+  <li>¿Qué tipo de posición buscás?</li>
+</ul>
+<p><strong>Ejemplo:</strong> "Farmacéutica con 4 años en Control de Calidad en industria GMP. Especializada en HPLC y microbiología. Busco posición semi senior en empresa exportadora."</p>
+<h2>Paso 3: Las skills técnicas</h2>
+<p>Las skills son clave para el matching y el score. Cada skill reconocida del sector suma <em>+5 puntos</em> (hasta un máximo de 20). Las más valoradas:</p>
+<ul>
+  <li><strong>GMP / BPF</strong> — aparece en casi todos los avisos farmacéuticos</li>
+  <li><strong>HPLC / GC</strong> — técnicas analíticas de alta demanda</li>
+  <li><strong>ANMAT / FDA</strong> — conocimiento regulatorio</li>
+  <li><strong>CAPA / LIMS / OOS</strong> — gestión de calidad</li>
+  <li><strong>Validaciones</strong> — muy pedido en plantas</li>
+</ul>
+<div class="tip-box"><strong>💡 Tip:</strong> Usá exactamente las siglas que aparecen en los avisos. Los sistemas ATS buscan palabras clave exactas. Si el aviso dice "BPF", ponelo como "BPF", no solo "Buenas Prácticas".</div>
+<h2>Paso 4: La experiencia laboral</h2>
+<p>Para cada posición, describí logros concretos con impacto medible en lugar de listar tareas. En vez de "Realizaba análisis de HPLC", escribí "Implementé metodología de HPLC para control de producto terminado, reduciendo tiempos de análisis un 25%".</p>
+<h2>Resultado esperado</h2>
+<p>Un perfil bien completado con foto, resumen, 2+ experiencias, skills GMP y un idioma debería alcanzar fácilmente un Score de <em>70-85 puntos</em> — suficiente para aparecer como candidato destacado.</p>`
+  },
+  {
+    id:2,cat:'laboral',emoji:'💰',read:'4 min',
+    title:'Cómo leer un recibo de sueldo: guía práctica',
+    excerpt:'Jubilación, presentismo, obra social, PAMI... Te explicamos cada ítem de tu liquidación para que entiendas cuánto cobrás y por qué.',
+    date:'8 mar 2026',author:'Equipo TalentLab',
+    content:`<h2>¿Por qué es importante entender tu recibo?</h2>
+<p>El recibo de sueldo es un documento legal que detalla exactamente cuánto ganaste y cuánto te retuvieron. Muchos profesionales firman sin leer — acá te explicamos cada línea.</p>
+<h2>La estructura básica</h2>
+<p>Todo recibo tiene dos secciones principales: los <strong>haberes</strong> (lo que ganás ✓) y los <strong>descuentos</strong> (lo que te retienen ✗). La diferencia entre ambos es tu <strong>sueldo neto</strong>, lo que te depositan.</p>
+<h2>Los haberes más comunes</h2>
+<ul>
+  <li><strong>Sueldo básico:</strong> Tu salario base según convenio o contrato. Es remunerativo, aporta a jubilación.</li>
+  <li><strong>Antigüedad:</strong> 1% del sueldo básico por año trabajado en la misma empresa.</li>
+  <li><strong>Presentismo:</strong> Adicional por asistencia perfecta. Si faltás un día sin justificación, lo perdés.</li>
+  <li><strong>Horas extra:</strong> 50% en días hábiles, 100% en sábados tarde, domingos y feriados.</li>
+  <li><strong>Ticket canasta / vales:</strong> Son <em>no remunerativos</em> — no aportan a jubilación pero tampoco te descuentan.</li>
+</ul>
+<h2>Los descuentos obligatorios</h2>
+<ul>
+  <li><strong>Jubilación (11%):</strong> Aporte al sistema previsional. La empresa aporta el 16% adicional que no ves.</li>
+  <li><strong>Obra social (3%):</strong> Para cobertura médica. La empresa aporta el 6% extra.</li>
+  <li><strong>PAMI (3%):</strong> Para la cobertura de jubilados futura.</li>
+  <li><strong>Ganancias:</strong> Solo si superás el Mínimo No Imponible (MNI). Escala progresiva del 5% al 35%.</li>
+</ul>
+<blockquote>En la industria farmacéutica, el sueldo neto suele ser aproximadamente el 83-87% del bruto (si no pagás Ganancias).</blockquote>
+<div class="tip-box"><strong>💡 Tip:</strong> Cuando un aviso indica salario, siempre es <em>bruto</em>. Para calcular tu neto aproximado, multiplicá el bruto × 0.83. Por ejemplo, $1.200.000 bruto ≈ $996.000 neto.</div>
+<h2>Qué verificar siempre</h2>
+<ul>
+  <li>Que el sueldo básico sea correcto según tu categoría del CCT</li>
+  <li>Que te hayan pagado el presentismo si no faltaste</li>
+  <li>Que las horas extra estén calculadas al valor correcto</li>
+  <li>Que figure tu obra social correcta</li>
+</ul>`
+  },
+  {
+    id:3,cat:'tecnico',emoji:'🔬',read:'6 min',
+    title:'GMP, BPF, HPLC, CAPA: el glosario que todo profesional necesita',
+    excerpt:'Las siglas del sector farmacéutico pueden ser abrumadoras al principio. Te explicamos las más importantes para que las entendás y las uses correctamente.',
+    date:'3 mar 2026',author:'Equipo TalentLab',
+    content:`<h2>¿Por qué importan estas siglas?</h2>
+<p>En el sector farmacéutico, las siglas no son adorno — son el lenguaje técnico universal. Los sistemas de selección (ATS) filtran CVs buscando estas palabras clave. Si no las tenés escritas correctamente en tu perfil, puede que nunca llegues al reclutador.</p>
+<h2>Normas y regulaciones</h2>
+<ul>
+  <li><strong>GMP</strong> (Good Manufacturing Practices): Las normas que garantizan que los medicamentos se fabrican con calidad constante. Es el estándar internacional, adoptado por la FDA, EMA y equivalentes.</li>
+  <li><strong>BPF</strong> (Buenas Prácticas de Fabricación): El equivalente en español de las GMP. En Argentina se usa ambos términos, pero BPF es el oficial de ANMAT.</li>
+  <li><strong>ANMAT</strong>: La Administración Nacional de Medicamentos, Alimentos y Tecnología Médica. El regulador argentino, equivalente a la FDA estadounidense.</li>
+  <li><strong>ICH</strong>: El International Council for Harmonisation fija guías técnicas globales. Las más conocidas son Q8 (desarrollo farmacéutico), Q9 (gestión de riesgos) y Q10 (sistema de calidad).</li>
+</ul>
+<h2>Técnicas analíticas</h2>
+<ul>
+  <li><strong>HPLC</strong> (High Performance Liquid Chromatography): La técnica reina de Control de Calidad. Separa y cuantifica componentes de una muestra. Es la más pedida en ofertas de CC.</li>
+  <li><strong>GC</strong> (Gas Chromatography): Para análisis de compuestos volátiles y solventes residuales.</li>
+  <li><strong>Karl Fischer:</strong> Método específico para medir el contenido de agua en muestras. Fundamental en productos sensibles a la humedad.</li>
+  <li><strong>ELISA:</strong> Técnica inmunológica para detectar proteínas o anticuerpos. Muy usada en biofarma y diagnóstico.</li>
+</ul>
+<h2>Sistemas y procesos de calidad</h2>
+<ul>
+  <li><strong>CAPA</strong> (Corrective and Preventive Action): El plan de acciones correctivas y preventivas ante una desviación o no conformidad. Es un proceso clave en cualquier sistema de calidad GMP.</li>
+  <li><strong>OOS/OOT</strong> (Out of Specification/Out of Trend): Resultados fuera de especificación o de tendencia. Requieren investigación obligatoria y documentación.</li>
+  <li><strong>LIMS</strong> (Laboratory Information Management System): Software de gestión de laboratorio. SAP QM, LabWare y LIMS de Thermo son los más comunes en Argentina.</li>
+  <li><strong>SOP/PNO</strong> (Standard Operating Procedure / Procedimiento Normalizado de Operación): El documento que describe paso a paso cómo realizar una tarea. En industria GMP, TODO tiene SOP.</li>
+</ul>
+<div class="tip-box"><strong>💡 Tip para el CV:</strong> No pongas solo "HPLC" — especificá tu nivel: "HPLC (operación, mantenimiento y desarrollo de métodos)" da mucha más información al reclutador que un simple "HPLC".</div>`
+  },
+  {
+    id:4,cat:'carrera',emoji:'🚀',read:'5 min',
+    title:'De Junior a Senior: cómo planificar tu carrera en el sector farmacéutico',
+    excerpt:'La industria farmacéutica tiene una escalera de crecimiento bien definida. Entendé cuántos años lleva cada salto, qué habilidades necesitás y cómo acelerar tu desarrollo.',
+    date:'25 feb 2026',author:'Equipo TalentLab',
+    content:`<h2>La escalera de seniority en farmacéutica</h2>
+<p>A diferencia de otras industrias, en farmacéutica el crecimiento es bastante predecible porque está vinculado a la acumulación de experiencia en procedimientos regulados. Esto es a la vez una ventaja (sabés qué esperar) y un límite (no se puede acelerar demasiado sin perder rigor).</p>
+<h2>Los niveles y sus tiempos reales</h2>
+<ul>
+  <li><strong>Pasante / Becario (0 años):</strong> Primer contacto con la industria durante la carrera. Aprendizaje de SOPs, BPR, trabajo bajo supervisión estrecha.</li>
+  <li><strong>Junior (1-3 años):</strong> Ejecuta tareas definidas con supervisión. Consolida conocimiento de las técnicas del área. Salario: $600k-$950k bruto.</li>
+  <li><strong>Semi Senior (3-6 años):</strong> Autonomía en tareas habituales. Puede orientar juniors. Participa en investigaciones OOS, auditorías. Salario: $950k-$1.5M bruto.</li>
+  <li><strong>Senior (6-10 años):</strong> Independencia total, referente técnico del equipo. Lidera proyectos, presenta ante ANMAT. Salario: $1.5M-$2.5M bruto.</li>
+  <li><strong>Lead / Gerente (10+ años):</strong> Gestión de equipos y estrategia. Interlocución con management y entes reguladores. Salario: $2.5M+ bruto.</li>
+</ul>
+<blockquote>El seniority en farmacéutica no es solo tiempo — es profundidad de experiencia. Un Analista QC que hizo 50 investigaciones OOS vale más que uno que hizo 5 en el mismo período.</blockquote>
+<h2>Cómo acelerar el crecimiento (sin quemar etapas)</h2>
+<ul>
+  <li><strong>Elegí empresas que te expongan a variedad:</strong> Un laboratorio pequeño que hace de todo (CC, Regulatorio, Producción) te enseña más en 2 años que uno grande muy compartimentado.</li>
+  <li><strong>Participá en proyectos de validación:</strong> Las validaciones (IQ/OQ/PQ) son muy valoradas y escasas. Si tenés oportunidad, tomala.</li>
+  <li><strong>Aprendé inglés técnico:</strong> Los documentos ICH, FDA y muchas normativas están en inglés. Leerlos directamente es una ventaja enorme.</li>
+  <li><strong>Certificaciones específicas:</strong> Cursos en ANMAT, INTI o universidades sobre temas como CSV, gestión de riesgos ICH Q9, o auditorías GMP tienen mucho peso en el CV.</li>
+</ul>
+<h2>El cambio de empresa como herramienta</h2>
+<p>En farmacéutica, cambiar de empresa cada 3-4 años suele acelerar el crecimiento salarial más que esperar aumentos internos. El salto ideal es cuando podés ir al escalón inmediato superior: de Junior a SSr, de SSr a Senior.</p>
+<div class="tip-box"><strong>💡 Tip:</strong> No esperes a tener TODOS los requisitos del puesto para postularte a una posición superior. Si cumplís el 70-75%, postulate — la industria prefiere candidatos con potencial sobre candidatos "perfectos pero estancados".</div>`
+  },
+  {
+    id:5,cat:'salario',emoji:'💼',read:'4 min',
+    title:'Convenios colectivos en farmacéutica: qué cubrís y qué podés negociar',
+    excerpt:'El CCT 546/08 de Industria Farmacéutica es el convenio que cubre a la mayoría de los trabajadores del sector. Te explicamos qué garantiza y qué podés pedir además.',
+    date:'18 feb 2026',author:'Equipo TalentLab',
+    content:`<h2>¿Qué es un Convenio Colectivo de Trabajo?</h2>
+<p>Un CCT es un acuerdo firmado entre sindicatos y cámaras empresariales que establece las condiciones mínimas de trabajo para un sector. Define salarios básicos, categorías, jornada, licencias y adicionales obligatorios. Es el piso legal: todo lo que acuerdes por encima es válido, nada puede estar por debajo.</p>
+<p>En Argentina, los CCT se homologan en el Ministerio de Trabajo y tienen fuerza de ley para todos los trabajadores del sector, aunque no estén afiliados al sindicato.</p>
+<h2>¿Cuál CCT aplica en farmacéutica?</h2>
+<p>Depende del tipo de empresa y rol. Los principales son:</p>
+<ul>
+  <li><strong>CCT 546/08 — Industria Farmacéutica (FAIM):</strong> Para plantas de fabricación. Negocia ATEFAP con CAEME, CILFA y COOPERALA. Cubre operarios, técnicos y analistas de producción y control de calidad.</li>
+  <li><strong>CCT 130/75 — Empleados de Comercio (FAECYS):</strong> Para farmacias, droguerías y distribuidoras. Es el convenio más masivo del país.</li>
+  <li><strong>CCT 122/75 — Sanidad:</strong> Para hospitales, clínicas y laboratorios de análisis clínicos privados.</li>
+  <li><strong>CCT 40/89 E — Viajantes de Comercio:</strong> Para visitadores médicos y representantes de laboratorios.</li>
+</ul>
+<h2>Cómo saber cuál te aplica</h2>
+<p>Mirá el recibo de sueldo — debe indicar el número de CCT. Si no lo dice o no sabés, podés consultar en el Ministerio de Trabajo en <em>argentina.gob.ar/trabajo/convenios</em> buscando por actividad de la empresa.</p>
+<blockquote>Muchos trabajadores de laboratorios farmacéuticos en roles de CC, Regulatorio o Validaciones están encuadrados en el CCT 546/08 pero cobran "fuera de convenio" — es decir, más que el mínimo — porque el mercado paga más que la escala de convenio para esos perfiles.</blockquote>
+<h2>Qué garantiza el CCT 546/08</h2>
+<ul>
+  <li><strong>Jornada:</strong> 44 horas semanales. Las horas extra se pagan al 50% (días hábiles) o al 100% (domingos y feriados).</li>
+  <li><strong>Vacaciones:</strong> 14 días corridos hasta 5 años de antigüedad; 21 días entre 5 y 10 años; 28 días entre 10 y 20 años.</li>
+  <li><strong>Antigüedad:</strong> 1% del básico por año de trabajo en la misma empresa, acumulable indefinidamente.</li>
+  <li><strong>Adicional nocturno:</strong> Recargo del 30% sobre el valor hora para trabajo entre las 21hs y las 6hs.</li>
+  <li><strong>Adicional turno rotativo:</strong> Porcentaje adicional por trabajo en sistema de turnos. Varía según el convenio vigente.</li>
+  <li><strong>SAC (aguinaldo):</strong> Un salario adicional al año, pagado en dos cuotas: junio y diciembre.</li>
+</ul>
+<h2>Qué podés negociar además del CCT</h2>
+<p>El CCT es el piso. En la industria farmacéutica, muchas empresas ofrecen beneficios adicionales que no son obligatorios pero se pueden pedir:</p>
+<ul>
+  <li><strong>Prepaga médica de alta complejidad:</strong> OSDE 210, Swiss Medical SM430 o Galeno. Vale entre $100k y $300k/mes adicionales.</li>
+  <li><strong>Bono por objetivos:</strong> En multinacionales, suele ser de 1 a 4 sueldos anuales según desempeño y resultado de la empresa.</li>
+  <li><strong>Capacitación paga:</strong> Posgrados, certificaciones, congresos. Pedilo por escrito en el contrato.</li>
+  <li><strong>Flexibilidad horaria:</strong> Para roles no operativos (CC analítica, regulatorio, validaciones), se puede negociar horario flexible o home office parcial.</li>
+  <li><strong>Comedor o ticket canasta:</strong> No remunerativo (no aporta a jubilación) pero suma al ingreso neto real.</li>
+</ul>
+<div class="tip-box"><strong>💡 Tip para evaluar una oferta:</strong> Pedí siempre el desglose completo antes de aceptar. Dos ofertas con el mismo sueldo bruto pueden tener un costo total muy diferente: una con prepaga de alta complejidad + bono + capacitación paga puede valer $400k/mes más que otra sin beneficios. Calculá el "paquete total", no solo el básico.</div>`
+  },
+  {
+    id:6,cat:'cv',emoji:'📝',read:'5 min',
+    title:'Los 7 errores más comunes en CVs del sector farmacéutico',
+    excerpt:'Los reclutadores del sector ven cientos de CVs. Estos son los errores que hacen descartar un perfil en menos de 30 segundos, y cómo evitarlos.',
+    date:'10 feb 2026',author:'Equipo TalentLab',
+    content:`<h2>El contexto: cómo se filtra un CV en 2026</h2>
+<p>Antes de llegar a un reclutador humano, tu CV pasa por un sistema ATS (Applicant Tracking System) que filtra automáticamente por palabras clave. Si no las tenés, tu CV puede no llegar nunca a una persona real.</p>
+<h2>Error 1: No usar las siglas correctas</h2>
+<p>Si el aviso dice "GMP" y vos escribiste "Buenas Prácticas de Fabricación", el ATS puede no reconocerlo. Usá siempre las siglas estándar del sector: GMP, BPF, HPLC, ANMAT, CAPA, OOS, SOP. Podés expandirlas entre paréntesis, pero la sigla tiene que estar.</p>
+<h2>Error 2: CV de más de 2 páginas</h2>
+<p>Con menos de 5 años de experiencia, 1 página es suficiente. Entre 5 y 15 años, 2 páginas es el máximo. Los reclutadores deciden en 30 segundos si vale la pena leer — un CV de 4 páginas rara vez llega al final.</p>
+<h2>Error 3: Listar tareas en lugar de logros</h2>
+<p>Malo: "Realizaba análisis de HPLC de materias primas". Bueno: "Analicé 200+ muestras/mes de materias primas por HPLC, con tasa de conformidad del 98.5%". La diferencia es el impacto medible.</p>
+<h2>Error 4: Objetivos genéricos</h2>
+<p>"Busco crecer profesionalmente en una empresa líder que me permita desarrollarme" no dice nada. Reemplazalo con tu resumen específico: área, especialidad y tipo de posición que buscás.</p>
+<h2>Error 5: Incluir DNI, foto y estado civil</h2>
+<p>En Argentina es costumbre pero no es obligatorio y puede generar sesgos. Los datos personales que sí importan: nombre, email, ciudad, LinkedIn (si está actualizado).</p>
+<h2>Error 6: No mencionar el software</h2>
+<p>SAP (módulo QM), LIMS, LabWare, Empower (Waters), ChemStation (Agilent) son softwares muy buscados. Si los usaste, mencionálos.</p>
+<h2>Error 7: Errores de ortografía</h2>
+<p>En un sector donde la atención al detalle es parte del perfil requerido (GMP, SOPs), un CV con errores ortográficos genera dudas sobre tu rigurosidad. Siempre pasá corrector antes de enviar.</p>
+<blockquote>Un buen CV no es el más creativo — es el que comunica exactamente lo que el reclutador necesita saber, en el menor tiempo posible, con las palabras clave correctas.</blockquote>
+<div class="tip-box"><strong>💡 Test rápido:</strong> Pedile a alguien que no conoce tu industria que lea tu CV en 30 segundos y te diga qué hacés. Si no puede responder con precisión, tu CV necesita trabajo.</div>`
+  }
+];
+
+// ── Blog state ──────────────────────────────
+let POSTS=[], ADMIN_MODE=false, EDITING_ID=null, VISIBLE=6;
+
+function initBlog(){
+  try{ const saved=localStorage.getItem('tl_blog_posts'); if(saved) POSTS=JSON.parse(saved); else POSTS=DEFAULT_POSTS.map(p=>({...p})); }
+  catch{ POSTS=DEFAULT_POSTS.map(p=>({...p})); }
+  // Show admin toggle only if URL has ?admin
+  if(location.search.includes('admin')||location.hash.includes('admin')){
+    document.getElementById('admin-toggle').style.display='flex';
+  }
+  renderBlog();
+}
+
+function savePosts(){ try{localStorage.setItem('tl_blog_posts',JSON.stringify(POSTS));}catch{} }
+
+function renderBlog(){
+  const grid=document.getElementById('blog-grid');
+  const toShow=POSTS.slice(0,VISIBLE);
+  const catColors={carrera:'background:var(--tl);color:var(--td)',laboral:'background:var(--bl);color:var(--blue)',tecnico:'background:var(--tl);color:var(--td)',salario:'background:var(--al);color:var(--amber)',cv:'background:#ede8fb;color:#534AB7'};
+  const catNames={carrera:'Carrera',laboral:'Laboral',tecnico:'Técnico',salario:'Salario',cv:'CV & Perfil'};
+
+  grid.innerHTML=toShow.map(p=>`
+    <div class="blog-card" onclick="openArticle(${p.id})" style="position:relative">
+      ${ADMIN_MODE?`<button class="edit-btn" onclick="event.stopPropagation();openEditor(${p.id})">✏️ Editar</button>`:''}
+      <div class="blog-img-placeholder" style="background:linear-gradient(135deg,var(--navy),var(--navy2))"><span style="font-size:52px;position:relative;z-index:1">${p.emoji||'📄'}</span></div>
+      <div class="blog-body">
+        <div class="blog-cat" style="${catColors[p.cat]||catColors.carrera}">${catNames[p.cat]||'Blog'}</div>
+        <h3>${p.title}</h3>
+        <p>${p.excerpt}</p>
+        <div class="blog-meta">
+          <span>${p.author||'TalentLab'}</span>
+          <div class="blog-meta-dot"></div>
+          <span>${p.date}</span>
+          <div class="blog-meta-dot"></div>
+          <span>⏱ ${p.read}</span>
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('load-more-btn').style.display=POSTS.length>VISIBLE?'inline-flex':'none';
+  if(ADMIN_MODE) document.getElementById('new-post-btn').style.display='flex';
+}
+
+function loadMorePosts(){ VISIBLE+=3; renderBlog(); }
+
+function openArticle(id){
+  const p=POSTS.find(x=>x.id===id); if(!p)return;
+  const catColors={carrera:'background:rgba(110,231,190,.2);color:#6ee7be',laboral:'background:rgba(126,179,245,.2);color:#7eb3f5',tecnico:'background:rgba(110,231,190,.2);color:#6ee7be',salario:'background:rgba(245,200,66,.2);color:#f5c842',cv:'background:rgba(175,169,236,.2);color:#c5bff5'};
+  const catNames={carrera:'Carrera',laboral:'Laboral',tecnico:'Técnico',salario:'Salario',cv:'CV & Perfil'};
+  document.getElementById('article-hero').style.background='linear-gradient(135deg,var(--navy),var(--navy2))';
+  document.getElementById('article-cat-badge').innerHTML=`<div class="article-cat-badge" style="${catColors[p.cat]||catColors.carrera}">${p.emoji} ${catNames[p.cat]||'Blog'}</div>`;
+  document.getElementById('article-title').textContent=p.title;
+  document.getElementById('article-meta').innerHTML=`<span>${p.author||'TalentLab'}</span><span>•</span><span>${p.date}</span><span>•</span><span>⏱ ${p.read} de lectura</span>`;
+  document.getElementById('article-content').innerHTML=p.content;
+  document.getElementById('article-ov').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeArticle(){ document.getElementById('article-ov').classList.remove('open'); document.body.style.overflow=''; }
+
+// ── Admin ────────────────────────────────────
+function toggleAdmin(){
+  ADMIN_MODE=!ADMIN_MODE;
+  document.getElementById('admin-toggle').classList.toggle('on',ADMIN_MODE);
+  document.getElementById('new-post-btn').style.display=ADMIN_MODE?'flex':'none';
+  renderBlog();
+  toast(ADMIN_MODE?'Modo edición activado — click en un artículo para editarlo':'Modo edición desactivado');
+}
+
+function openEditor(id){
+  EDITING_ID=id;
+  const p=id?POSTS.find(x=>x.id===id):null;
+  document.getElementById('editor-title').textContent=p?'Editar artículo':'Nuevo artículo';
+  document.getElementById('e-cat').value=p?.cat||'carrera';
+  document.getElementById('e-read').value=p?.read||'5 min';
+  document.getElementById('e-title').value=p?.title||'';
+  document.getElementById('e-excerpt').value=p?.excerpt||'';
+  document.getElementById('e-emoji').value=p?.emoji||'📄';
+  document.getElementById('e-content').value=p?.content||'';
+  document.getElementById('btn-del').style.display=p?'block':'none';
+  document.getElementById('editor-ov').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeEditor(){ document.getElementById('editor-ov').classList.remove('open'); document.body.style.overflow=''; }
+
+function savePost(){
+  const title=document.getElementById('e-title').value.trim();
+  const content=document.getElementById('e-content').value.trim();
+  if(!title||!content){toast('Completá el título y el contenido ⚠');return;}
+  const post={
+    id: EDITING_ID||Date.now(),
+    cat: document.getElementById('e-cat').value,
+    read: document.getElementById('e-read').value,
+    title, excerpt: document.getElementById('e-excerpt').value||title.slice(0,100)+'...',
+    emoji: document.getElementById('e-emoji').value||'📄',
+    content,
+    date: new Date().toLocaleDateString('es-AR',{day:'numeric',month:'short',year:'numeric'}),
+    author:'Equipo TalentLab'
+  };
+  if(EDITING_ID){ const idx=POSTS.findIndex(p=>p.id===EDITING_ID); if(idx>-1) POSTS[idx]=post; }
+  else{ POSTS.unshift(post); }
+  savePosts(); closeEditor(); renderBlog();
+  toast(EDITING_ID?'Artículo actualizado ✓':'Artículo publicado ✓');
+}
+
+function deletePost(){
+  if(!EDITING_ID)return;
+  if(!confirm('¿Eliminar este artículo?'))return;
+  POSTS=POSTS.filter(p=>p.id!==EDITING_ID);
+  savePosts(); closeEditor(); renderBlog();
+  toast('Artículo eliminado');
+}
+
+// ── TOAST ────────────────────────────────────
+let _tt;
+function toast(m){ const e=document.getElementById('toast'); e.textContent=m; e.classList.add('show'); clearTimeout(_tt); _tt=setTimeout(()=>e.classList.remove('show'),3000); }
+
+// ── INIT ─────────────────────────────────────
+initBlog();
+</script>
+</body>
+</html>
