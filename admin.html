@@ -266,7 +266,7 @@ const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 // Para el admin necesitás la SERVICE ROLE KEY (lee todos los perfiles)
 // Supabase → Settings → API → service_role key
 // ⚠️  NUNCA expongas esta key en el portal público (index.html)
-const SUPABASE_SERVICE = 'TU_SERVICE_ROLE_KEY';
+const SUPABASE_SERVICE = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzcGtvcmRjaWRqZmhyeG9ydmFxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Mzg0MzEyMCwiZXhwIjoyMDg5NDE5MTIwfQ.FVeKhFaLczyyoYG4pbqw7YNz9juXm8kE_mrjCPkjvXQ';
 
 const sb      = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 const sbAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE);
