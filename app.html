@@ -86,7 +86,7 @@ h1,h2,h3{font-family:'DM Serif Display',serif;line-height:1.18}
 .source-bar{display:flex;gap:6px;padding:9px 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--gray);border-bottom:1px solid var(--border)}
 .source-bar::-webkit-scrollbar{display:none}
 .spill{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;border:1.5px solid var(--border);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;background:var(--white);color:var(--muted)}
-.spill.on{color:#fff;border-color:transparent}
+.spill.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 .spill .sd{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 
 /* STATUS BAR */
@@ -573,12 +573,13 @@ async function buscar(){
   // Load TalentLab internal jobs from Supabase
   const {data:tlJobs}=await sb.from('jobs').select('*').eq('status','activo').order('created_at',{ascending:false});
   if(tlJobs) tlJobs.forEach(j=>{
+    const fullDesc=[j.descripcion,j.requisitos?'Requisitos: '+j.requisitos:''].filter(Boolean).join('\n\n');
     ALL_JOBS.push({
       id:++EXT_ID,src:'TalentLab',srcClass:'tl',isTL:true,tlId:j.id,
       title:j.titulo,company:j.empresa||'TalentLab',location:j.ubicacion||'Argentina',
-      url:'',posted:fmtPosted(j.created_at),salary:j.salario||'',
-      modality:j.modalidad||'',description:j.descripcion||'',
-      match:calcMatch(j.titulo,j.descripcion),prov:provFrom(j.ubicacion),
+      url:j.url||'',posted:fmtPosted(j.created_at),salary:j.salario||'',
+      modality:j.modalidad||'',description:fullDesc,requisitos:j.requisitos||'',
+      match:calcMatch(j.titulo,fullDesc),prov:provFrom(j.ubicacion),
       mod:modFrom(j.modalidad),timestamp:new Date(j.created_at).getTime()
     });
   });
@@ -745,7 +746,8 @@ function openJob(id){
   const mbg=ms>=80?'var(--tl)':ms>=70?'var(--bl)':ms>=55?'var(--al)':'var(--cl)';
   const mc=ms>=80?'var(--teal)':ms>=70?'var(--blue)':ms>=55?'var(--amber)':'var(--coral)';
   const mt=ms>=80?'Excelente fit':ms>=70?'Buen match':ms>=55?'Match moderado — completá tu perfil':'Perfil a mejorar para este aviso';
-  const desc=(j.description||'').trim();
+  const desc=(j.description||'').replace(/\n\nRequisitos: .*/s,'').trim();
+  const req=j.requisitos||(j.description||'').match(/Requisitos: ([\s\S]*)/)?.[1]||'';
   document.getElementById('sh-content').innerHTML=`
     <div class="sh-head">
       <button class="sh-close" onclick="closeSheet()">✕</button>
@@ -760,8 +762,9 @@ function openJob(id){
         <div class="jmi" style="color:${col}">● ${j.src}</div>
       </div>
       ${desc?`<div class="desc-lbl">Descripción del puesto</div><div class="desc-box">${desc}</div>`:''}
+      ${req?`<div class="desc-lbl" style="margin-top:12px">Requisitos</div><div class="desc-box">${req}</div>`:''}
       ${j.url?`<a href="${j.url}" target="_blank" rel="noopener" class="ext-link">
-        <div style="flex:1"><div class="ext-link-title">Ver aviso en ${j.src}</div><div class="ext-link-url">${j.url}</div></div>
+        <div style="flex:1"><div class="ext-link-title">Ver aviso completo${j.isTL?' / Postularse externamente':' en '+j.src}</div><div class="ext-link-url">${j.url}</div></div>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       </a>`:''}
       <div class="match-strip" style="background:${mbg};color:${mc}">
@@ -1061,7 +1064,8 @@ function openMform(type){
       <div style="font-size:11px;color:var(--muted);margin-bottom:12px">JPG · PNG · Máx 2MB</div>
       <button class="mf-save" onclick="saveFoto()">Guardar foto →</button>`,
 
-      resumen:`<div class="mf-fg"><label>Cargo / Título profesional</label><input id="mf-titulo" placeholder="Ej: Analista de Control de Calidad SSr." value="${p.titulo||''}"></div>
+      resumen:`<div class="mf-fg"><label>Nombre completo *</label><input id="mf-nombre" placeholder="Tu nombre y apellido" value="${USER.name||''}"></div>
+      <div class="mf-fg"><label>Cargo / Título profesional</label><input id="mf-titulo" placeholder="Ej: Analista de Control de Calidad SSr." value="${p.titulo||''}"></div>
       <div class="mf-fg"><label>Resumen (2–4 líneas)</label><textarea id="mf-resumen" placeholder="Quién sos, tu especialidad y qué buscás...">${p.resumen||''}</textarea></div>
       <div class="mf-fg"><label>Teléfono / WhatsApp</label><input id="mf-tel" placeholder="+54 11 ..." value="${p.tel||''}"></div>
       <div class="mf-fg"><label>LinkedIn</label><input id="mf-linkedin" placeholder="linkedin.com/in/tu-nombre" value="${p.linkedin||''}"></div>
@@ -1113,6 +1117,7 @@ async function saveMform(type){
   const p=await getProfile();
   const g=id=>document.getElementById(id)?.value?.trim()||'';
   if(type==='resumen'){
+    const nombre=g('mf-nombre');if(nombre)USER.name=nombre;
     p.titulo=g('mf-titulo');p.resumen=g('mf-resumen');p.tel=g('mf-tel');p.linkedin=g('mf-linkedin');p.ubicacion=g('mf-ubicacion');
   } else if(type==='exp'){
     const cargo=g('mf-cargo'),empresa=g('mf-empresa');
@@ -1135,7 +1140,7 @@ async function saveMform(type){
   }
   const btn=document.querySelector('#mf-body .mf-save');if(btn){btn.textContent='Guardando...';btn.disabled=true;}
   await saveProfileToDB(p);
-  closeMform();renderPerfil();toast('Guardado ✓');
+  closeMform();renderPerfil();updateNav();toast('Guardado ✓');
 }
 
 async function delProfileItem(section,idx){
@@ -1240,12 +1245,12 @@ const GUIAS=[
     title:'Convenios colectivos de trabajo',desc:'Los CCT de sanidad, farmacéutica y comercio',
     render:()=>`<div style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5">Un CCT fija salarios mínimos, licencias, jornada y categorías para cada sector.</div>
       <div class="g-h4">Sector Farmacéutico e Industria</div>
-      ${[['CCT 546/08','Industria Farmacéutica (FAIM)','Mayoría de laboratorios. Categorías técnicas A–G, adicionales por turno. Sindicato: ATEFAP/SINQUIFA.'],['CCT 507/07','Droguerías y Distribuidoras','Distribución farmacéutica. Cubre choferes, almacenistas y admin. Adicionales por cadena de frío.'],['CCT 201/92','Químicos y Petroquímicos','Industria química. Adicional por riesgo y jornada reducida en plantas.'],['CCT 108/75','Perfumería y Cosmética','Fabricación de higiene y cosmética. Aplica a laboratorios con líneas dermatológicas.'],['CCT 60/89','Trabajadores de Laboratorio','Laboratorios de análisis clínicos. Bonificaciones por especialización.']].map(([n,e,d])=>`<div class="conv-it" onclick="toggleConv(this)"><span class="conv-n">${n}</span><div><div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px">${e} &#x25BE;</div><div class="conv-detail">${d}</div></div></div>`).join('')}
+      ${[['CCT 546/08','Industria Farmacéutica (FAIM)','Mayoría de laboratorios. Categorías técnicas A–G, adicionales por turno. Sindicato: ATEFAP/SINQUIFA.','546/08'],['CCT 507/07','Droguerías y Distribuidoras','Distribución farmacéutica. Cubre choferes, almacenistas y admin. Adicionales por cadena de frío.','507/07'],['CCT 201/92','Químicos y Petroquímicos','Industria química. Adicional por riesgo y jornada reducida en plantas.','201/92'],['CCT 108/75','Perfumería y Cosmética','Fabricación de higiene y cosmética. Aplica a laboratorios con líneas dermatológicas.','108/75'],['CCT 60/89','Trabajadores de Laboratorio','Laboratorios de análisis clínicos. Bonificaciones por especialización.','60/89']].map(([n,e,d,num])=>`<div class="conv-it" onclick="toggleConv(this)"><span class="conv-n">${n}</span><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px">${e} &#x25BE;</div><div class="conv-detail">${d}<br><a href="https://www.argentina.gob.ar/trabajo/convenios" target="_blank" rel="noopener" style="font-size:11px;color:var(--blue);font-weight:700;text-decoration:none" onclick="event.stopPropagation()">📄 Ver CCT en argentina.gob.ar →</a></div></div></div>`).join('')}
       <div class="g-h4" style="margin-top:14px">Sector Salud</div>
-      ${[['CCT 122/75','Sanidad','Hospitales y clínicas privadas. Cubre médicos, enfermeros, bioquímicos y admin.'],['CCT 459/06','Centros de Diagnóstico','Laboratorios de análisis clínicos. Categorías para bioquímicos y técnicos.'],['CCT 305/98','Obras Sociales (OSECAC)','Personal administrativo y de salud de las mutuales.']].map(([n,e,d])=>`<div class="conv-it" onclick="toggleConv(this)"><span class="conv-n">${n}</span><div><div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px">${e} &#x25BE;</div><div class="conv-detail">${d}</div></div></div>`).join('')}
+      ${[['CCT 122/75','Sanidad','Hospitales y clínicas privadas. Cubre médicos, enfermeros, bioquímicos y admin.'],['CCT 459/06','Centros de Diagnóstico','Laboratorios de análisis clínicos. Categorías para bioquímicos y técnicos.'],['CCT 305/98','Obras Sociales (OSECAC)','Personal administrativo y de salud de las mutuales.']].map(([n,e,d])=>`<div class="conv-it" onclick="toggleConv(this)"><span class="conv-n">${n}</span><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px">${e} &#x25BE;</div><div class="conv-detail">${d}<br><a href="https://www.argentina.gob.ar/trabajo/convenios" target="_blank" rel="noopener" style="font-size:11px;color:var(--blue);font-weight:700;text-decoration:none" onclick="event.stopPropagation()">📄 Ver CCT en argentina.gob.ar →</a></div></div></div>`).join('')}
       <div class="g-h4" style="margin-top:14px">Sector Comercio</div>
-      ${[['CCT 130/75','Empleados de Comercio (FAECYS)','El más amplio de Argentina. Farmacias, droguerías minoristas y ventas.'],['CCT 40/89 E','Viajantes de Comercio','Visitadores médicos. Fija comisiones mínimas y gastos de movilidad.'],['Ley 19587/72','Higiene y Seguridad','Marco legal para técnicos en SyH. Obligaciones del empleador y EPP.']].map(([n,e,d])=>`<div class="conv-it" onclick="toggleConv(this)"><span class="conv-n">${n}</span><div><div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px">${e} &#x25BE;</div><div class="conv-detail">${d}</div></div></div>`).join('')}
-      <div class="g-tip g-tip-blue">💡 Consultá tu CCT completo en <strong>argentina.gob.ar/trabajo/convenios</strong></div>`},
+      ${[['CCT 130/75','Empleados de Comercio (FAECYS)','El más amplio de Argentina. Farmacias, droguerías minoristas y ventas.'],['CCT 40/89 E','Viajantes de Comercio','Visitadores médicos. Fija comisiones mínimas y gastos de movilidad.'],['Ley 19587/72','Higiene y Seguridad','Marco legal para técnicos en SyH. Obligaciones del empleador y EPP.']].map(([n,e,d])=>`<div class="conv-it" onclick="toggleConv(this)"><span class="conv-n">${n}</span><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px">${e} &#x25BE;</div><div class="conv-detail">${d}<br><a href="https://www.argentina.gob.ar/trabajo/convenios" target="_blank" rel="noopener" style="font-size:11px;color:var(--blue);font-weight:700;text-decoration:none" onclick="event.stopPropagation()">📄 Ver CCT en argentina.gob.ar →</a></div></div></div>`).join('')}
+      <div class="g-tip g-tip-blue">💡 Descargá el texto completo de cada CCT en <a href="https://www.argentina.gob.ar/trabajo/convenios" target="_blank" rel="noopener" style="color:var(--blue);font-weight:700">argentina.gob.ar/trabajo/convenios</a></div>`},
   {id:'glosario',color:'#d6f5ea',iconColor:'var(--teal)',
     icon:'<path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>',
     title:'Glosario de términos técnicos',desc:'GMP, ANMAT, HPLC, CAPA y más — explicados simple',
