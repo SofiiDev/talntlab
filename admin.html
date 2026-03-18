@@ -554,6 +554,7 @@ function openNewJobModal(){
       <div class="mf-fg"><label>Salario (opcional)</label><input id="j-salario" placeholder="Ej: $1.2M – $1.6M bruto/mes"></div>
       <div class="mf-fg full"><label>Descripción del puesto *</label><textarea id="j-desc" style="min-height:120px" placeholder="Responsabilidades, perfil buscado, beneficios..."></textarea></div>
       <div class="mf-fg full"><label>Requisitos clave</label><textarea id="j-req" placeholder="GMP, HPLC, 3+ años de experiencia..."></textarea></div>
+      <div class="mf-fg full"><label>Link para postularse (opcional)</label><input id="j-url" placeholder="https://... (deja vacío para postulación vía TalentLab)"></div>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:8px;border-top:1.5px solid var(--g2)">
       <button class="filt-btn out" onclick="closeModal()">Cancelar</button>
@@ -575,6 +576,7 @@ async function publishJob(){
     salario:document.getElementById('j-salario').value||null,
     descripcion:desc,
     requisitos:document.getElementById('j-req').value||null,
+    url:document.getElementById('j-url').value||null,
     status:'activo', postulations:0
   }).select().single();
   if(btn){btn.textContent='Publicar aviso →';btn.disabled=false;}

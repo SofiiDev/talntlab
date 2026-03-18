@@ -35,6 +35,7 @@ create table if not exists jobs (
   salario text,
   descripcion text,
   requisitos text,
+  url text,
   status text default 'activo',
   postulations integer default 0,
   created_at timestamptz default now()
@@ -88,5 +89,33 @@ create trigger profiles_updated_at
 -- Usada desde el panel admin con service_role key
 create or replace view admin_profiles as
   select * from profiles;
+
+-- 7. STORAGE — Bucket para fotos de perfil
+-- Ejecutar en: Supabase → SQL Editor
+-- También podés crear el bucket desde: Storage → New bucket → avatars → Public ON
+
+insert into storage.buckets (id, name, public)
+  values ('avatars', 'avatars', true)
+  on conflict (id) do update set public = true;
+
+-- Permitir lectura pública de avatars
+create policy "Avatars públicos" on storage.objects
+  for select using (bucket_id = 'avatars');
+
+-- Permitir a usuarios autenticados subir su propia foto
+create policy "Subir avatar propio" on storage.objects
+  for insert to authenticated
+  with check (
+    bucket_id = 'avatars'
+    and (storage.foldername(name))[1] = 'avatars'
+  );
+
+-- Permitir a usuarios autenticados actualizar su propia foto
+create policy "Actualizar avatar propio" on storage.objects
+  for update to authenticated
+  using (
+    bucket_id = 'avatars'
+    and auth.uid()::text = split_part(storage.filename(name), '.', 1)
+  );
 
 -- ¡Listo! Ahora configurá las variables en index.html y admin.html
