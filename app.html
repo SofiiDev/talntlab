@@ -65,22 +65,26 @@ h1,h2,h3{font-family:'DM Serif Display',serif;line-height:1.18}
 .search-go:hover{background:var(--td)}
 .search-go svg{width:18px;height:18px}
 
+/* SEARCH SUGGESTIONS */
+.search-outer{position:relative;max-width:600px;margin:0 auto}
+.suggestions{position:absolute;top:calc(100% + 8px);left:0;right:0;background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.22);z-index:300;overflow:hidden;display:none}
+.suggestions.show{display:block}
+.sug-label{font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:11px 14px 5px;display:flex;align-items:center;gap:5px}
+.sug-label svg{width:11px;height:11px;opacity:.6}
+.sug-chips{display:flex;flex-wrap:wrap;gap:6px;padding:4px 14px 12px}
+.sug-chip{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--dark);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.sug-chip:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+
 /* FILTERS */
-.filter-row{background:var(--white);border-bottom:1.5px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;display:flex;align-items:center}
+.filter-row{background:var(--white);border-bottom:1.5px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;display:flex;align-items:stretch}
 .filter-row::-webkit-scrollbar{display:none}
-.filter-section{display:flex;align-items:center;gap:6px;padding:9px 14px;flex-shrink:0;border-right:1px solid var(--border)}
+.filter-section{display:flex;align-items:center;gap:6px;padding:10px 16px;flex-shrink:0;border-right:1px solid var(--border)}
 .filter-section:last-child{border-right:none}
-.filter-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);flex-shrink:0}
-.fchip{flex-shrink:0;padding:4px 11px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.filter-icon{width:13px;height:13px;flex-shrink:0;opacity:.45}
+.filter-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);flex-shrink:0;margin-right:1px}
+.fchip{flex-shrink:0;padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
 .fchip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 .fchip:hover:not(.on){border-color:var(--teal);color:var(--teal)}
-
-/* PUESTO ROW */
-.puesto-row{background:var(--white);border-bottom:1.5px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;display:flex;gap:6px;padding:8px 14px}
-.puesto-row::-webkit-scrollbar{display:none}
-.pchip{flex-shrink:0;padding:4px 11px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:5px}
-.pchip svg{width:12px;height:12px}
-.pchip.on{background:var(--teal);color:#fff;border-color:var(--teal)}
 
 /* SOURCE BAR */
 .source-bar{display:flex;gap:6px;padding:9px 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--gray);border-bottom:1px solid var(--border)}
@@ -323,7 +327,7 @@ h1,h2,h3{font-family:'DM Serif Display',serif;line-height:1.18}
   /* Jobs grid 3 cols, content centered with max-width */
   .jobs-list{grid-template-columns:repeat(3,1fr)}
   .jobs-wrap{max-width:1280px;margin:0 auto;padding:16px 32px 12px}
-  .filter-row,.puesto-row,.source-bar,.status-bar{padding-left:32px;padding-right:32px}
+  .filter-row,.source-bar,.status-bar{padding-left:32px;padding-right:32px}
   /* Hero — centrado */
   .hero{padding:56px 5% 44px;text-align:center}
   .search-wrap{max-width:600px;margin:0 auto}
@@ -396,16 +400,39 @@ h1,h2,h3{font-family:'DM Serif Display',serif;line-height:1.18}
     </div>
     <h1>Tu próximo empleo en<br><em>ciencia y tecnología</em></h1>
     <p class="hero-sub">Buscá entre miles de posiciones especializadas del sector</p>
-    <div class="search-wrap">
-      <input type="text" id="sq" placeholder="Cargo, empresa o área..." autocomplete="off" onkeydown="if(event.key==='Enter')buscar()">
-      <button class="search-go" onclick="buscar()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-      </button>
+    <div class="search-outer">
+      <div class="search-wrap">
+        <input type="text" id="sq" placeholder="Cargo, empresa o área..." autocomplete="off"
+          onkeydown="if(event.key==='Enter'){hideSugs();buscar()}"
+          oninput="onSqInput()"
+          onfocus="showSugs()"
+        >
+        <button class="search-go" onclick="hideSugs();buscar()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </button>
+      </div>
+      <div class="suggestions" id="suggestions">
+        <div class="sug-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          Búsquedas frecuentes
+        </div>
+        <div class="sug-chips">
+          <span class="sug-chip" onclick="pickSug('Control de Calidad')">Control de Calidad</span>
+          <span class="sug-chip" onclick="pickSug('Regulatorio')">Regulatorio</span>
+          <span class="sug-chip" onclick="pickSug('Producción')">Producción</span>
+          <span class="sug-chip" onclick="pickSug('Validaciones')">Validaciones</span>
+          <span class="sug-chip" onclick="pickSug('Ensayos Clínicos')">Ensayos Clínicos</span>
+          <span class="sug-chip" onclick="pickSug('I+D')">I+D</span>
+          <span class="sug-chip" onclick="pickSug('Seguridad e Higiene')">Seguridad e Higiene</span>
+          <span class="sug-chip" onclick="pickSug('Logística')">Logística</span>
+        </div>
+      </div>
     </div>
   </div>
   <div class="filter-row">
     <div class="filter-section">
-      <span class="filter-label">Provincia</span>
+      <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span class="filter-label">Ubicación</span>
       <span class="fchip on" onclick="setFilter('prov','all',this)">Todas</span>
       <span class="fchip" onclick="setFilter('prov','caba',this)">CABA</span>
       <span class="fchip" onclick="setFilter('prov','bsas',this)">GBA</span>
@@ -413,28 +440,19 @@ h1,h2,h3{font-family:'DM Serif Display',serif;line-height:1.18}
       <span class="fchip" onclick="setFilter('prov','sf',this)">Santa Fe</span>
     </div>
     <div class="filter-section">
-      <span class="filter-label">Ordenar</span>
-      <span class="fchip on" onclick="setFilter('sort','nuevo',this)">Más nuevo</span>
-      <span class="fchip" onclick="setFilter('sort','match',this)">Mayor match</span>
-    </div>
-    <div class="filter-section">
+      <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3v4M8 3v4M2 11h20"/></svg>
       <span class="filter-label">Modalidad</span>
       <span class="fchip on" onclick="setFilter('mod','all',this)">Todas</span>
       <span class="fchip" onclick="setFilter('mod','presencial',this)">Presencial</span>
       <span class="fchip" onclick="setFilter('mod','remoto',this)">Remoto</span>
       <span class="fchip" onclick="setFilter('mod','hibrido',this)">Híbrido</span>
     </div>
-  </div>
-  <div class="puesto-row">
-    <span class="pchip on" onclick="setPuesto('all',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Todos</span>
-    <span class="pchip" onclick="setPuesto('cc',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Control de Calidad</span>
-    <span class="pchip" onclick="setPuesto('reg',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Regulatorio</span>
-    <span class="pchip" onclick="setPuesto('ec',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>Ensayos Clínicos</span>
-    <span class="pchip" onclick="setPuesto('prod',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3v4M8 3v4M2 11h20"/></svg>Producción</span>
-    <span class="pchip" onclick="setPuesto('val',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>Validaciones</span>
-    <span class="pchip" onclick="setPuesto('seg',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Seguridad e Higiene</span>
-    <span class="pchip" onclick="setPuesto('rd',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0"/></svg>I+D</span>
-    <span class="pchip" onclick="setPuesto('log',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1"/></svg>Logística</span>
+    <div class="filter-section">
+      <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 12h13M13 18h8"/></svg>
+      <span class="filter-label">Ordenar</span>
+      <span class="fchip on" onclick="setFilter('sort','nuevo',this)">Más nuevo</span>
+      <span class="fchip" onclick="setFilter('sort','match',this)">Mayor match</span>
+    </div>
   </div>
   <div class="source-bar">
     <div class="spill on" data-src="all" onclick="setSrc(this,'all')"><div class="sd" style="background:var(--muted)"></div>Todas las fuentes</div>
@@ -540,7 +558,7 @@ const APIS={
 };
 
 let USER=null, ALL_JOBS=[], SHOWN=0, EXT_ID=5000;
-const F={prov:'all',mod:'all',sort:'nuevo',src:'all',puesto:'all'};
+const F={prov:'all',mod:'all',sort:'nuevo',src:'all'};
 const PAGE_SIZE=12;
 const TL_SKILLS=['gmp','bpf','bpa','anmat','fda','ich','hplc','gc','elisa','pcr','karl fischer','lims','sop','capa','validaciones','regulatorio','microbiología'];
 const PUESTO_KEYWORDS={
@@ -698,22 +716,37 @@ function hasCompleteProfile(){
 function setFilter(type,val,el){
   const p=el.parentElement;p.querySelectorAll('.fchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');
   F[type]=val;
-  if(type==='prov'||type==='sort'){if(type==='sort'){sortJobs();}SHOWN=0;renderJobs();}
-  else{SHOWN=0;renderJobs();}
+  if(type==='sort'){sortJobs();}
+  SHOWN=0;renderJobs();
 }
 function setSrc(el,val){document.querySelectorAll('.spill').forEach(p=>p.classList.remove('on'));el.classList.add('on');F.src=val;SHOWN=0;renderJobs();}
-function setPuesto(val,el){document.querySelectorAll('.pchip').forEach(p=>p.classList.remove('on'));el.classList.add('on');F.puesto=val;SHOWN=0;renderJobs();}
 
 function getFiltered(){
-  const kws=F.puesto!=='all'?PUESTO_KEYWORDS[F.puesto]||[]:null;
   return ALL_JOBS.filter(j=>{
     if(F.src!=='all'&&j.src!==F.src)return false;
     if(F.prov!=='all'&&j.prov&&j.prov!==F.prov)return false;
     if(F.mod!=='all'&&j.mod&&j.mod!==F.mod)return false;
-    if(kws){const t=(j.title+' '+(j.description||'')).toLowerCase();if(!kws.some(k=>t.includes(k)))return false;}
     return true;
   });
 }
+
+// ── SUGGESTIONS ───────────────────────────────────────────
+function showSugs(){
+  const sq=document.getElementById('sq');
+  if(!sq.value.trim())document.getElementById('suggestions').classList.add('show');
+}
+function hideSugs(){document.getElementById('suggestions').classList.remove('show');}
+function onSqInput(){
+  document.getElementById('suggestions').classList.remove('show');
+}
+function pickSug(label){
+  document.getElementById('sq').value=label;
+  hideSugs();
+  buscar();
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.search-outer'))hideSugs();
+});
 
 // ── RENDER JOBS ───────────────────────────────────────────
 function matchStyle(m){

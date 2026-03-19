@@ -64,17 +64,13 @@ alter table applications enable row level security;
 create policy "Perfil propio" on profiles
   for all using (auth.uid() = id);
 
--- Jobs: lectura pública
-create policy "Jobs publicos" on jobs
-  for select using (true);
-
--- Jobs: escritura para usuarios autenticados (admin usa service_role que bypasea RLS,
--- pero estas políticas cubren configuraciones donde sea necesario)
-create policy "Jobs insert auth" on jobs
-  for insert to authenticated with check (true);
-
-create policy "Jobs update auth" on jobs
-  for update to authenticated using (true);
+-- Jobs: acceso total (datos públicos, sin info sensible)
+-- Si ya existen políticas anteriores, ejecutar primero:
+-- drop policy if exists "Jobs publicos" on jobs;
+-- drop policy if exists "Jobs insert auth" on jobs;
+-- drop policy if exists "Jobs update auth" on jobs;
+create policy "Jobs all operations" on jobs
+  for all using (true) with check (true);
 
 -- Applications: candidato ve las suyas
 create policy "Apps propias" on applications
