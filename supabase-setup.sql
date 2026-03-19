@@ -125,4 +125,52 @@ create policy "Actualizar avatar propio" on storage.objects
 -- MIGRACIÓN: agregar columna url si no existe (ejecutar si la tabla ya fue creada sin ella)
 alter table jobs add column if not exists url text;
 
+-- ═══════════════════════════════════════════════════
+-- PANEL DE RECLUTADOR — Ejecutar para habilitar
+-- ═══════════════════════════════════════════════════
+
+-- 8. TABLA DE RECLUTADORES
+create table if not exists recruiters (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users on delete cascade not null unique,
+  empresa text not null,
+  contacto text,
+  email text not null,
+  plan text default 'free',
+  created_at timestamptz default now()
+);
+alter table recruiters enable row level security;
+create policy "Recruiter self access" on recruiters
+  for all using (auth.uid() = user_id);
+
+-- 9. COLUMNAS DE RECLUTADOR EN JOBS
+alter table jobs add column if not exists recruiter_id uuid references auth.users;
+alter table jobs add column if not exists recruiter_email text;
+
+-- 10. PROFILES: reclutadores pueden leer todos los perfiles
+-- (adicional a la política existente "Perfil propio")
+create policy "Recruiters view all profiles" on profiles
+  for select using (
+    auth.uid() in (select user_id from recruiters)
+  );
+
+-- 11. APPLICATIONS: reclutadores pueden ver y actualizar postulaciones a sus avisos
+create policy "Recruiters view own job apps" on applications
+  for select using (
+    exists (
+      select 1 from jobs j
+      where j.id = applications.job_id
+        and j.recruiter_id = auth.uid()
+    )
+  );
+
+create policy "Recruiters update own job apps" on applications
+  for update using (
+    exists (
+      select 1 from jobs j
+      where j.id = applications.job_id
+        and j.recruiter_id = auth.uid()
+    )
+  );
+
 -- ¡Listo! Ahora configurá las variables en index.html y admin.html
