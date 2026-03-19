@@ -64,9 +64,17 @@ alter table applications enable row level security;
 create policy "Perfil propio" on profiles
   for all using (auth.uid() = id);
 
--- Jobs: todos pueden leer, solo admins crean/editan (manejado desde el cliente con service key)
+-- Jobs: lectura pública
 create policy "Jobs publicos" on jobs
   for select using (true);
+
+-- Jobs: escritura para usuarios autenticados (admin usa service_role que bypasea RLS,
+-- pero estas políticas cubren configuraciones donde sea necesario)
+create policy "Jobs insert auth" on jobs
+  for insert to authenticated with check (true);
+
+create policy "Jobs update auth" on jobs
+  for update to authenticated using (true);
 
 -- Applications: candidato ve las suyas
 create policy "Apps propias" on applications
@@ -117,5 +125,8 @@ create policy "Actualizar avatar propio" on storage.objects
     bucket_id = 'avatars'
     and auth.uid()::text = split_part(storage.filename(name), '.', 1)
   );
+
+-- MIGRACIÓN: agregar columna url si no existe (ejecutar si la tabla ya fue creada sin ella)
+alter table jobs add column if not exists url text;
 
 -- ¡Listo! Ahora configurá las variables en index.html y admin.html
