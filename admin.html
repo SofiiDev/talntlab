@@ -568,8 +568,10 @@ async function publishJob(){
   const desc=document.getElementById('j-desc')?.value?.trim();
   if(!titulo||!desc){toast('Completá título y descripción ⚠');return;}
   const btn=document.querySelector('.mf-save');if(btn){btn.textContent='Publicando...';btn.disabled=true;}
-  const{data,error}=await sbAdmin.from('jobs').insert({
-    titulo, area:document.getElementById('j-area').value,
+  const payload={
+    id:'TL-'+Date.now(),
+    titulo,
+    area:document.getElementById('j-area').value,
     empresa:document.getElementById('j-empresa').value,
     ubicacion:document.getElementById('j-ubicacion').value,
     modalidad:document.getElementById('j-modalidad').value,
@@ -577,8 +579,9 @@ async function publishJob(){
     descripcion:desc,
     requisitos:document.getElementById('j-req').value||null,
     url:document.getElementById('j-url').value||null,
-    status:'activo', postulations:0
-  }).select().single();
+    status:'activo',
+  };
+  const{data,error}=await sbAdmin.from('jobs').insert(payload).select().single();
   if(btn){btn.textContent='Publicar aviso →';btn.disabled=false;}
   if(error){toast('Error: '+error.message);return;}
   closeModal();ALL_JOBS=[];loadJobs();
