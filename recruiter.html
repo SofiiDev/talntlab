@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TalentLab — Panel Reclutador</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0c1f3d;--navy2:#162b52;
+  --teal:#1b9e74;--tl:#d6f5ea;--td:#064d38;--tm:#3db88a;
+  --amber:#c97d00;--al:#fef0c0;
+  --blue:#1653a8;--bl:#dceeff;
+  --coral:#b83232;--cl:#fde0de;
+  --gray:#f0efe9;--g2:#dddbd4;--g3:#c5c3bb;
+  --border:#ccc9bf;--muted:#6b6860;--dark:#1c1b19;--white:#fff;
+  --sh:0 1px 4px rgba(0,0,0,.08),0 2px 12px rgba(0,0,0,.06);
+  --sh2:0 4px 24px rgba(0,0,0,.12);--r:10px;
+}
+html{background:var(--gray)}
+body{font-family:'DM Sans',sans-serif;color:var(--dark);font-size:14px;min-height:100vh}
+h1,h2,h3{font-family:'DM Serif Display',serif}
+button,input,select,textarea{font-family:'DM Sans',sans-serif}
+a{color:inherit;text-decoration:none}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── AUTH ── */
+.auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--navy) 0%,#1a3566 100%);padding:20px}
+.auth-card{background:#fff;border-radius:16px;padding:32px;width:100%;max-width:400px;box-shadow:var(--sh2)}
+.auth-logo{font-family:'DM Serif Display',serif;font-size:22px;color:var(--navy);text-align:center;margin-bottom:2px}
+.auth-logo em{color:var(--teal);font-style:normal}
+.auth-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:22px}
+.auth-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:18px}
+.atab{flex:1;padding:9px;font-size:13px;font-weight:700;cursor:pointer;color:var(--muted);border-bottom:2.5px solid transparent;margin-bottom:-2px;background:none;border-top:none;border-left:none;border-right:none;transition:all .12s}
+.atab.on{color:var(--teal);border-bottom-color:var(--teal)}
+.aform{display:none}.aform.on{display:block}
+.fg{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}
+.fg label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.fg input,.fg select{border:1.5px solid var(--border);border-radius:var(--r);padding:11px 13px;font-size:14px;color:var(--dark);outline:none;transition:border-color .15s;width:100%;background:#fff;-webkit-appearance:none}
+.fg input:focus,.fg select:focus{border-color:var(--teal)}
+.auth-err{background:var(--cl);color:var(--coral);border-radius:var(--r);padding:9px 12px;font-size:12px;margin-bottom:11px;display:none;font-weight:600}
+.btn-full{width:100%;padding:12px;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s}
+.btn-teal{background:var(--teal);color:#fff}.btn-teal:hover{background:var(--td)}
+.btn-teal:disabled{background:var(--g2);cursor:not-allowed}
+
+/* ── COMPANY SETUP ── */
+.setup-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--navy) 0%,#1a3566 100%);padding:20px}
+.setup-card{background:#fff;border-radius:16px;padding:32px;width:100%;max-width:460px;box-shadow:var(--sh2)}
+.setup-card h2{font-size:20px;color:var(--navy);margin-bottom:4px}
+.setup-card p{font-size:12px;color:var(--muted);margin-bottom:22px;line-height:1.55}
+
+/* ── TOP BAR ── */
+.top-bar{background:var(--navy);height:52px;display:flex;align-items:center;padding:0 24px;gap:10px;position:sticky;top:0;z-index:100}
+.top-logo{font-family:'DM Serif Display',serif;font-size:19px;color:#fff;display:flex;align-items:baseline;gap:4px}
+.top-logo em{color:#6ee7be;font-style:normal}
+.top-logo span{font-size:10px;color:rgba(255,255,255,.4);font-family:'DM Sans',sans-serif}
+.top-co{font-size:12px;color:rgba(255,255,255,.55);margin-left:8px;padding-left:8px;border-left:1px solid rgba(255,255,255,.15)}
+.top-tabs{display:flex;gap:2px;margin-left:auto}
+.ttab{padding:5px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.6);background:none;border:1.5px solid transparent;transition:all .15s}
+.ttab.on{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.15)}
+.ttab:hover:not(.on){background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+.logout-btn{margin-left:8px;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.6);background:none;border:1.5px solid rgba(255,255,255,.18);transition:all .15s}
+.logout-btn:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* ── PANELS ── */
+.main-wrap{display:none;min-height:100vh;flex-direction:column}
+.panels{flex:1;padding:24px;max-width:1200px;margin:0 auto;width:100%}
+.panel{display:none;animation:fi .2s ease}
+.panel.on{display:block}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:var(--sh)}
+.stat-val{font-family:'DM Serif Display',serif;font-size:28px;color:var(--dark);line-height:1;margin-bottom:3px}
+.stat-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+
+/* ── CARD ── */
+.card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:14px;overflow:hidden}
+.card-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1.5px solid var(--g2);flex-wrap:wrap;gap:8px}
+.card-title{font-size:14px;font-weight:700;color:var(--dark)}
+.card-body{padding:16px}
+
+/* ── FILTERS ── */
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filt{border:1.5px solid var(--border);border-radius:8px;padding:7px 11px;font-size:12px;outline:none;color:var(--dark);background:#fff;transition:border-color .15s}
+.filt:focus{border-color:var(--teal)}
+.filt-btn{padding:7px 16px;background:var(--teal);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s}
+.filt-btn:hover{background:var(--td)}
+.filt-btn.sec{background:var(--navy)}.filt-btn.sec:hover{background:var(--navy2)}
+.filt-btn.out{background:#fff;border:1.5px solid var(--border);color:var(--muted)}.filt-btn.out:hover{border-color:var(--teal);color:var(--teal)}
+.filt-btn:disabled{background:var(--g2);cursor:not-allowed}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:9px 12px;text-align:left;border-bottom:2px solid var(--g2);background:var(--gray);white-space:nowrap}
+.tbl td{padding:10px 12px;border-bottom:1px solid #ebebea;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#f8f7f3}
+.tbl tr{cursor:pointer}
+.empty-row td{text-align:center;padding:32px;color:var(--muted);font-style:italic;cursor:default}
+.empty-row td:hover{background:none}
+
+/* ── PILLS / TAGS ── */
+.pill{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.pg{background:var(--tl);color:var(--td)}
+.pa{background:var(--al);color:var(--amber)}
+.pb{background:var(--bl);color:var(--blue)}
+.pr{background:var(--cl);color:var(--coral)}
+.pm{background:var(--gray);color:var(--muted);border:1px solid var(--border)}
+.skill-tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--tl);color:var(--td);margin:1px 2px}
+
+/* ── MODAL ── */
+.ov{position:fixed;inset:0;background:rgba(12,31,61,.55);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(3px)}
+.ov.open{display:flex;animation:fi .2s}
+.modal{background:#fff;border-radius:14px;max-width:700px;width:100%;margin:auto;box-shadow:var(--sh2);overflow:hidden}
+.modal-head{background:var(--navy);padding:18px 22px;display:flex;justify-content:space-between;align-items:flex-start}
+.modal-close{background:rgba(255,255,255,.12);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.modal-body{padding:20px 22px;max-height:75vh;overflow-y:auto}
+.mf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mf-fg{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.mf-fg label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.mf-fg input,.mf-fg select,.mf-fg textarea{border:1.5px solid var(--border);border-radius:var(--r);padding:9px 11px;font-size:13px;color:var(--dark);outline:none;width:100%;transition:border-color .15s;background:#fff}
+.mf-fg input:focus,.mf-fg select:focus,.mf-fg textarea:focus{border-color:var(--teal)}
+.mf-fg textarea{resize:vertical;min-height:80px}
+.mf-fg.full{grid-column:1/-1}
+.mf-save{padding:11px 24px;background:var(--teal);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer}
+.mf-save:hover{background:var(--td)}
+.mf-save:disabled{background:var(--g2);cursor:not-allowed}
+
+/* ── CANDIDATE PROFILE IN MODAL ── */
+.prof-header{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px}
+.prof-av{width:56px;height:56px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:18px;color:#fff;overflow:hidden}
+.prof-av img{width:100%;height:100%;object-fit:cover}
+.prof-section{margin-bottom:16px}
+.prof-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;padding-bottom:5px;border-bottom:1.5px solid var(--g2)}
+.prof-item{padding:9px 0;border-bottom:1px solid var(--g2)}
+.prof-item:last-child{border-bottom:none}
+.prof-item-title{font-size:13px;font-weight:700;color:var(--dark)}
+.prof-item-sub{font-size:12px;color:var(--muted);margin-top:1px}
+.prof-item-desc{font-size:12px;color:var(--dark);margin-top:4px;line-height:1.5}
+
+/* ── MISC ── */
+.loading-wrap{padding:40px;text-align:center;color:var(--muted);font-size:13px}
+.spinner{width:32px;height:32px;border:3px solid var(--tl);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:#fff;padding:10px 16px;border-radius:var(--r);font-size:13px;font-weight:600;z-index:999;opacity:0;transform:translateY(6px);transition:all .22s;pointer-events:none;border-left:4px solid var(--teal);box-shadow:var(--sh2)}
+.toast.show{opacity:1;transform:none}
+.plan-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:var(--al);color:var(--amber);border:1px solid rgba(201,125,0,.2)}
+.plan-badge.pro{background:var(--tl);color:var(--td);border-color:rgba(27,158,116,.2)}
+
+/* ── EMPTY STATE ── */
+.empty-state{padding:40px;text-align:center}
+.empty-state-icon{font-size:32px;margin-bottom:12px}
+.empty-state-title{font-size:15px;font-weight:700;color:var(--dark);margin-bottom:6px}
+.empty-state-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+
+/* ── JOB CARD (en dashboard) ── */
+.jrow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--g2);gap:10px}
+.jrow:last-child{border-bottom:none}
+.jrow-title{font-size:13px;font-weight:700;color:var(--dark)}
+.jrow-meta{font-size:11px;color:var(--muted);margin-top:2px}
+
+@media(max-width:900px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .mf-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .panels{padding:14px}
+  .top-tabs{display:none}
+  .top-co{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ AUTH ══════════════════════════════════════════════════ -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">Talent<em>Lab</em></div>
+    <div class="auth-sub">Panel para Reclutadores</div>
+    <div class="auth-tabs">
+      <button class="atab on" onclick="switchAuthTab('login',this)">Ingresar</button>
+      <button class="atab" onclick="switchAuthTab('registro',this)">Crear cuenta</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="aform on" id="aform-login">
+      <div class="auth-err" id="login-err"></div>
+      <div class="fg"><label>Email</label><input type="email" id="login-email" placeholder="hola@empresa.com" autocomplete="email"></div>
+      <div class="fg"><label>Contraseña</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn-full btn-teal" id="btn-login" onclick="doLogin()">Ingresar →</button>
+      <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px">
+        ¿Sos candidato? <a href="app.html" style="color:var(--teal);font-weight:700">Ir al portal →</a>
+      </p>
+    </div>
+
+    <!-- REGISTRO -->
+    <div class="aform" id="aform-registro">
+      <div class="auth-err" id="reg-err"></div>
+      <div class="fg"><label>Email corporativo</label><input type="email" id="reg-email" placeholder="reclutador@empresa.com" autocomplete="email"></div>
+      <div class="fg"><label>Contraseña</label><input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div>
+      <button class="btn-full btn-teal" id="btn-reg" onclick="doRegister()">Crear cuenta →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COMPANY SETUP (primera vez) ══════════════════════════ -->
+<div id="setup-screen" class="setup-screen" style="display:none">
+  <div class="setup-card">
+    <h2>Configurá tu empresa</h2>
+    <p>Completá estos datos para activar tu panel de reclutador. Solo se hace una vez.</p>
+    <div class="auth-err" id="setup-err"></div>
+    <div class="fg"><label>Nombre de la empresa *</label><input type="text" id="setup-empresa" placeholder="Laboratorio XYZ S.A."></div>
+    <div class="fg"><label>Tu nombre y apellido *</label><input type="text" id="setup-contacto" placeholder="Nombre Apellido"></div>
+    <div class="fg"><label>Sector / rubro</label>
+      <select id="setup-sector">
+        <option value="">Seleccioná el sector</option>
+        <option>Industria Farmacéutica</option>
+        <option>Laboratorio de Análisis</option>
+        <option>Biotecnología</option>
+        <option>Dispositivos Médicos</option>
+        <option>Cosméticos y Dermocosmética</option>
+        <option>Alimentaria</option>
+        <option>Química Industrial</option>
+        <option>Consultora / RRHH</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <button class="btn-full btn-teal" id="btn-setup" onclick="doSetup()" style="margin-top:6px">Activar panel →</button>
+  </div>
+</div>
+
+<!-- ══ MAIN PANEL ════════════════════════════════════════════ -->
+<div id="main-wrap" class="main-wrap">
+
+  <div class="top-bar">
+    <div class="top-logo">Talent<em>Lab</em><span>Reclutador</span></div>
+    <span class="top-co" id="top-empresa">—</span>
+    <div class="top-tabs">
+      <button class="ttab on" onclick="showPanel('dashboard',this)">Dashboard</button>
+      <button class="ttab" onclick="showPanel('jobs',this)">Mis avisos</button>
+      <button class="ttab" onclick="showPanel('applications',this)">Postulaciones</button>
+      <button class="ttab" onclick="showPanel('candidates',this)">Candidatos</button>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Salir</button>
+  </div>
+
+  <div class="panels">
+
+    <!-- DASHBOARD -->
+    <div class="panel on" id="panel-dashboard">
+      <h2 style="font-size:22px;color:var(--navy);margin-bottom:4px">Dashboard</h2>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:18px" id="dash-updated">Cargando...</p>
+      <div class="stats-row" id="dash-stats">
+        <div class="stat"><div class="stat-val">—</div><div class="stat-lbl">Mis avisos activos</div></div>
+        <div class="stat"><div class="stat-val">—</div><div class="stat-lbl">Total postulaciones</div></div>
+        <div class="stat"><div class="stat-val">—</div><div class="stat-lbl">Pendientes de revisión</div></div>
+        <div class="stat"><div class="stat-val">—</div><div class="stat-lbl">Candidatos disponibles</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" id="dash-grid">
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Mis avisos</div>
+            <button class="filt-btn" style="padding:5px 12px;font-size:11px" onclick="showPanel('jobs',document.querySelector('.ttab:nth-child(2)'))">Ver todos</button>
+          </div>
+          <div class="card-body" id="dash-jobs-list"><div class="loading-wrap" style="padding:20px"><div class="spinner"></div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Últimas postulaciones</div>
+            <button class="filt-btn" style="padding:5px 12px;font-size:11px" onclick="showPanel('applications',document.querySelector('.ttab:nth-child(3)'))">Ver todas</button>
+          </div>
+          <div class="card-body" id="dash-apps-list"><div class="loading-wrap" style="padding:20px"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MIS AVISOS -->
+    <div class="panel" id="panel-jobs">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <h2 style="font-size:22px;color:var(--navy)">Mis avisos <span id="jobs-count" style="font-size:14px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400"></span></h2>
+        <button class="filt-btn" onclick="openJobModal()">+ Publicar aviso</button>
+      </div>
+      <div class="card">
+        <div class="card-body" id="jobs-list"><div class="loading-wrap"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+
+    <!-- POSTULACIONES -->
+    <div class="panel" id="panel-applications">
+      <h2 style="font-size:22px;color:var(--navy);margin-bottom:14px">Postulaciones</h2>
+      <div class="card">
+        <div class="card-head">
+          <div class="filters">
+            <input class="filt" id="f-app-search" placeholder="🔍 Candidato o aviso..." style="min-width:200px" oninput="filterApps()">
+            <select class="filt" id="f-app-job" onchange="filterApps()">
+              <option value="">Todos los avisos</option>
+            </select>
+            <select class="filt" id="f-app-status" onchange="filterApps()">
+              <option value="">Todos los estados</option>
+              <option>Pendiente</option>
+              <option>En revisión</option>
+              <option>Entrevista</option>
+              <option>Contratado</option>
+              <option>Descartado</option>
+            </select>
+            <button class="filt-btn out" onclick="loadApplications(true)">↺ Actualizar</button>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Candidato</th><th>Aviso</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="apps-tbody"><tr class="empty-row"><td colspan="5">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CANDIDATOS -->
+    <div class="panel" id="panel-candidates">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <h2 style="font-size:22px;color:var(--navy)">Candidatos <span id="cands-count" style="font-size:14px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400"></span></h2>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div class="filters">
+            <input class="filt" id="f-cand-search" placeholder="🔍 Nombre, skill, cargo..." style="min-width:200px" oninput="filterCands()">
+            <select class="filt" id="f-cand-area" onchange="filterCands()">
+              <option value="">Todas las áreas</option>
+              <option>Control de Calidad</option><option>Producción</option><option>Regulatorio</option>
+              <option>Validaciones</option><option>I+D</option><option>Logística</option>
+              <option>Seguridad e Higiene</option><option>Ensayos Clínicos</option>
+            </select>
+            <select class="filt" id="f-cand-score" onchange="filterCands()">
+              <option value="">Cualquier score</option>
+              <option value="85">Score ≥ 85</option>
+              <option value="70">Score ≥ 70</option>
+              <option value="50">Score ≥ 50</option>
+            </select>
+            <select class="filt" id="f-cand-sort" onchange="filterCands()">
+              <option value="score">Mayor score</option>
+              <option value="name">Nombre A–Z</option>
+              <option value="date">Más reciente</option>
+            </select>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Candidato</th><th>Cargo</th><th>Skills</th><th>Score</th><th>Exp.</th><th>Idiomas</th><th>Acciones</th></tr></thead>
+            <tbody id="cands-tbody"><tr class="empty-row"><td colspan="7">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /panels -->
+</div><!-- /main-wrap -->
+
+<!-- ══ MODAL ═════════════════════════════════════════════════ -->
+<div class="ov" id="ov" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;color:#fff" id="modal-title">Modal</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px" id="modal-sub"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// CONFIG — mismas credenciales que index.html / admin.html
+// ══════════════════════════════════════════════════════════
+const SUPABASE_URL  = 'https://aspkordcidjfhrxorvaq.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzcGtvcmRjaWRqZmhyeG9ydmFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDMxMjAsImV4cCI6MjA4OTQxOTEyMH0.ERIH3V6iLpOkABmkKGWYYqQgB54NhWNVCZa_Yggdy_E';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+let CUR_USER = null;
+let CUR_RECRUITER = null;
+let ALL_JOBS = [], ALL_APPS = [], ALL_CANDS = [];
+
+// ── BOOT ──────────────────────────────────────────────────
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    CUR_USER = session.user;
+    await checkRecruiterProfile();
+  }
+})();
+
+// ── AUTH TAB ──────────────────────────────────────────────
+function switchAuthTab(tab, el) {
+  document.querySelectorAll('.atab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.aform').forEach(f => f.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('aform-' + tab).classList.add('on');
+}
+
+// ── LOGIN ─────────────────────────────────────────────────
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const err   = document.getElementById('login-err');
+  err.style.display = 'none';
+  if (!email || !pass) { showErr(err, 'Ingresá email y contraseña'); return; }
+  const btn = document.getElementById('btn-login');
+  btn.textContent = 'Ingresando...'; btn.disabled = true;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.textContent = 'Ingresar →'; btn.disabled = false;
+  if (error) { showErr(err, error.message === 'Invalid login credentials' ? 'Email o contraseña incorrectos' : error.message); return; }
+  CUR_USER = data.user;
+  await checkRecruiterProfile();
+}
+
+// ── REGISTER ──────────────────────────────────────────────
+async function doRegister() {
+  const email = document.getElementById('reg-email').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  const err   = document.getElementById('reg-err');
+  err.style.display = 'none';
+  if (!email || !pass) { showErr(err, 'Completá email y contraseña'); return; }
+  if (pass.length < 6) { showErr(err, 'La contraseña debe tener al menos 6 caracteres'); return; }
+  const btn = document.getElementById('btn-reg');
+  btn.textContent = 'Creando cuenta...'; btn.disabled = true;
+  const { data, error } = await sb.auth.signUp({ email, password: pass });
+  btn.textContent = 'Crear cuenta →'; btn.disabled = false;
+  if (error) { showErr(err, error.message); return; }
+  CUR_USER = data.user;
+  // Si Supabase requiere confirmación de email, data.user existe pero sesión no
+  if (!data.session) {
+    showErr(err, '✓ Revisá tu email para confirmar la cuenta, luego ingresá.');
+    err.style.background = 'var(--tl)'; err.style.color = 'var(--td)';
+    err.style.display = 'block'; return;
+  }
+  await checkRecruiterProfile();
+}
+
+// ── CHECK RECRUITER PROFILE ───────────────────────────────
+async function checkRecruiterProfile() {
+  const { data } = await sb.from('recruiters').select('*').eq('user_id', CUR_USER.id).single();
+  if (data) {
+    CUR_RECRUITER = data;
+    showMain();
+  } else {
+    // Primera vez: mostrar setup
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('setup-screen').style.display = 'flex';
+  }
+}
+
+// ── COMPANY SETUP ─────────────────────────────────────────
+async function doSetup() {
+  const empresa   = document.getElementById('setup-empresa').value.trim();
+  const contacto  = document.getElementById('setup-contacto').value.trim();
+  const err       = document.getElementById('setup-err');
+  err.style.display = 'none';
+  if (!empresa || !contacto) { showErr(err, 'Completá empresa y nombre de contacto'); return; }
+  const btn = document.getElementById('btn-setup');
+  btn.textContent = 'Guardando...'; btn.disabled = true;
+  const payload = {
+    user_id:  CUR_USER.id,
+    empresa,
+    contacto,
+    email:    CUR_USER.email,
+    plan:     'free',
+  };
+  const sector = document.getElementById('setup-sector').value;
+  if (sector) payload.contacto = contacto + ' · ' + sector;
+  const { data, error } = await sb.from('recruiters').insert(payload).select().single();
+  btn.textContent = 'Activar panel →'; btn.disabled = false;
+  if (error) { showErr(err, error.message); return; }
+  CUR_RECRUITER = data;
+  showMain();
+}
+
+// ── SHOW MAIN ─────────────────────────────────────────────
+function showMain() {
+  document.getElementById('auth-screen').style.display  = 'none';
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('main-wrap').style.display    = 'flex';
+  document.getElementById('top-empresa').textContent    = CUR_RECRUITER.empresa;
+  loadDashboard();
+}
+
+// ── LOGOUT ────────────────────────────────────────────────
+async function doLogout() {
+  await sb.auth.signOut();
+  CUR_USER = null; CUR_RECRUITER = null;
+  ALL_JOBS = []; ALL_APPS = []; ALL_CANDS = [];
+  document.getElementById('main-wrap').style.display   = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+}
+
+// ── PANELS ────────────────────────────────────────────────
+function showPanel(name, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.ttab').forEach(t => t.classList.remove('on'));
+  document.getElementById('panel-' + name).classList.add('on');
+  if (el) el.classList.add('on');
+  if (name === 'jobs')         loadJobs();
+  if (name === 'applications') loadApplications();
+  if (name === 'candidates')   loadCandidates();
+}
+
+// ══════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════
+async function loadDashboard() {
+  document.getElementById('dash-updated').textContent = 'Actualizado: ' + new Date().toLocaleString('es-AR');
+
+  const [jr, ar, cr] = await Promise.all([
+    sb.from('jobs').select('*').eq('recruiter_id', CUR_USER.id).order('created_at', { ascending: false }),
+    sb.from('applications').select('*').order('created_at', { ascending: false }),
+    sb.from('profiles').select('id,name,email,titulo,score,skills,foto_url,updated_at').order('score', { ascending: false }),
+  ]);
+
+  ALL_JOBS  = jr.data || [];
+  ALL_CANDS = (cr.data || []).map(parseProfile);
+
+  // Filtrar apps solo de mis jobs
+  const myJobIds = new Set(ALL_JOBS.map(j => j.id));
+  ALL_APPS = (ar.data || []).filter(a => myJobIds.has(a.job_id));
+
+  const activos   = ALL_JOBS.filter(j => j.status === 'activo').length;
+  const pendientes = ALL_APPS.filter(a => a.status === 'Pendiente').length;
+
+  document.getElementById('dash-stats').innerHTML = [
+    [activos,          'Avisos activos',          'var(--teal)'],
+    [ALL_APPS.length,  'Total postulaciones',      'var(--blue)'],
+    [pendientes,       'Pendientes de revisión',   'var(--amber)'],
+    [ALL_CANDS.length, 'Candidatos disponibles',   'var(--coral)'],
+  ].map(([v, l, c]) => `<div class="stat"><div class="stat-val" style="color:${c}">${v}</div><div class="stat-lbl">${l}</div></div>`).join('');
+
+  // Mini lista de jobs
+  const jobsEl = document.getElementById('dash-jobs-list');
+  if (!ALL_JOBS.length) {
+    jobsEl.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-title">Sin avisos publicados</div><div class="empty-state-sub">Publicá tu primer aviso y aparecerá aquí</div><button class="filt-btn" onclick="openJobModal()">+ Publicar aviso</button></div>`;
+  } else {
+    jobsEl.innerHTML = ALL_JOBS.slice(0, 5).map(j => `
+      <div class="jrow">
+        <div>
+          <div class="jrow-title">${j.titulo}</div>
+          <div class="jrow-meta">${j.area || '—'} · ${j.ubicacion || 'Argentina'} · <span style="color:${j.status==='activo'?'var(--teal)':'var(--muted)'}">● ${j.status}</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <span class="pill pm">${j.postulations || 0} postul.</span>
+          <button class="filt-btn out" style="padding:4px 10px;font-size:11px" onclick="openJobModal(${escJson(j)})">Editar</button>
+        </div>
+      </div>`).join('');
+  }
+
+  // Mini lista de apps
+  const appsEl = document.getElementById('dash-apps-list');
+  const recentApps = ALL_APPS.slice(0, 6);
+  if (!recentApps.length) {
+    appsEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">Sin postulaciones aún</div>';
+  } else {
+    appsEl.innerHTML = recentApps.map(a => `
+      <div class="jrow">
+        <div>
+          <div class="jrow-title">${a.candidate_name || a.candidate_email}</div>
+          <div class="jrow-meta">${a.job_title || '—'} · ${fmtDate(a.created_at)}</div>
+        </div>
+        <span class="pill ${statusClass(a.status)}">${a.status}</span>
+      </div>`).join('');
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// JOBS
+// ══════════════════════════════════════════════════════════
+async function loadJobs(force) {
+  if (ALL_JOBS.length && !force) { renderJobs(); return; }
+  document.getElementById('jobs-list').innerHTML = '<div class="loading-wrap"><div class="spinner"></div></div>';
+  const { data } = await sb.from('jobs').select('*').eq('recruiter_id', CUR_USER.id).order('created_at', { ascending: false });
+  ALL_JOBS = data || [];
+  renderJobs();
+}
+
+function renderJobs() {
+  const el = document.getElementById('jobs-list');
+  document.getElementById('jobs-count').textContent = ALL_JOBS.length ? `(${ALL_JOBS.length})` : '';
+  if (!ALL_JOBS.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-title">No publicaste avisos aún</div><div class="empty-state-sub">Tus avisos aparecerán en el portal de candidatos de TalentLab</div><button class="filt-btn" onclick="openJobModal()">+ Publicar primer aviso</button></div>`;
+    return;
+  }
+  el.innerHTML = `<table class="tbl"><thead><tr><th>Aviso</th><th>Área</th><th>Ubicación</th><th>Modalidad</th><th>Postulantes</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+    ${ALL_JOBS.map(j => `<tr onclick="openJobModal(${escJson(j)})">
+      <td><div style="font-weight:700">${j.titulo}</div>${j.salario ? `<div style="font-size:11px;color:var(--teal)">${j.salario}</div>` : ''}</td>
+      <td><span class="pill pm">${j.area || '—'}</span></td>
+      <td style="font-size:12px">${j.ubicacion || 'Argentina'}</td>
+      <td><span class="pill pm">${j.modalidad || '—'}</span></td>
+      <td><strong>${j.postulations || 0}</strong></td>
+      <td><span class="pill ${j.status === 'activo' ? 'pg' : 'pm'}">${j.status}</span></td>
+      <td onclick="event.stopPropagation()" style="white-space:nowrap;display:flex;gap:6px;padding:10px 12px">
+        <button class="filt-btn out" style="padding:4px 10px;font-size:11px" onclick="toggleJobStatus('${j.id}','${j.status === 'activo' ? 'pausado' : 'activo'}')">${j.status === 'activo' ? 'Pausar' : 'Activar'}</button>
+        <button class="filt-btn" style="padding:4px 10px;font-size:11px;background:var(--coral)" onclick="deleteJob('${j.id}','${j.titulo.replace(/'/g,"\\'")}')">Eliminar</button>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function openJobModal(job) {
+  if (typeof job === 'string') job = JSON.parse(job);
+  const isEdit = job && job.id;
+  document.getElementById('modal-title').textContent = isEdit ? 'Editar aviso' : 'Publicar nuevo aviso';
+  document.getElementById('modal-sub').textContent   = isEdit ? job.titulo : 'El aviso aparecerá en el portal de candidatos';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="mf-grid">
+      <div class="mf-fg full"><label>Título del puesto *</label><input id="j-titulo" value="${escHtml(job?.titulo||'')}" placeholder="Ej: Analista de Control de Calidad Sr."></div>
+      <div class="mf-fg"><label>Área *</label>
+        <select id="j-area">
+          ${['Control de Calidad','Producción','Regulatorio','Validaciones','I+D','Logística','Seguridad e Higiene','Ensayos Clínicos','Tecnología'].map(a=>`<option ${(job?.area||'')=== a?'selected':''}>${a}</option>`).join('')}
+        </select>
+      </div>
+      <div class="mf-fg"><label>Empresa</label><input id="j-empresa" value="${escHtml(job?.empresa || CUR_RECRUITER.empresa)}"></div>
+      <div class="mf-fg"><label>Ubicación</label><input id="j-ubicacion" value="${escHtml(job?.ubicacion||'Buenos Aires, GBA')}"></div>
+      <div class="mf-fg"><label>Modalidad</label>
+        <select id="j-modalidad">
+          ${['Presencial','Híbrido','Remoto'].map(m=>`<option ${(job?.modalidad||'')=== m?'selected':''}>${m}</option>`).join('')}
+        </select>
+      </div>
+      <div class="mf-fg"><label>Salario (opcional)</label><input id="j-salario" value="${escHtml(job?.salario||'')}" placeholder="Ej: $1.2M – $1.6M bruto/mes"></div>
+      <div class="mf-fg full"><label>Descripción del puesto *</label><textarea id="j-desc" style="min-height:120px" placeholder="Responsabilidades, perfil buscado, beneficios...">${escHtml(job?.descripcion||'')}</textarea></div>
+      <div class="mf-fg full"><label>Requisitos clave</label><textarea id="j-req" placeholder="GMP, HPLC, 3+ años de experiencia...">${escHtml(job?.requisitos||'')}</textarea></div>
+      <div class="mf-fg full"><label>Link para postularse (opcional)</label><input id="j-url" value="${escHtml(job?.url||'')}" placeholder="https://... (vacío = postulación vía TalentLab)"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:8px;border-top:1.5px solid var(--g2)">
+      <button class="filt-btn out" onclick="closeModal()">Cancelar</button>
+      <button class="mf-save" id="btn-save-job" onclick="saveJob(${isEdit ? `'${job.id}'` : 'null'})">${isEdit ? 'Guardar cambios' : 'Publicar aviso'} →</button>
+    </div>`;
+  openModal();
+}
+
+async function saveJob(jobId) {
+  const titulo = document.getElementById('j-titulo').value.trim();
+  const desc   = document.getElementById('j-desc').value.trim();
+  if (!titulo || !desc) { toast('Completá título y descripción ⚠'); return; }
+  const btn = document.getElementById('btn-save-job');
+  btn.textContent = jobId ? 'Guardando...' : 'Publicando...'; btn.disabled = true;
+  const payload = {
+    titulo,
+    area:        document.getElementById('j-area').value,
+    empresa:     document.getElementById('j-empresa').value || CUR_RECRUITER.empresa,
+    ubicacion:   document.getElementById('j-ubicacion').value,
+    modalidad:   document.getElementById('j-modalidad').value,
+    salario:     document.getElementById('j-salario').value || null,
+    descripcion: desc,
+    requisitos:  document.getElementById('j-req').value || null,
+    url:         document.getElementById('j-url').value.trim() || null,
+    recruiter_id:    CUR_USER.id,
+    recruiter_email: CUR_USER.email,
+  };
+  let error;
+  if (jobId) {
+    ({ error } = await sb.from('jobs').update(payload).eq('id', jobId).eq('recruiter_id', CUR_USER.id));
+  } else {
+    payload.id = 'TL-' + Date.now();
+    payload.status = 'activo';
+    ({ error } = await sb.from('jobs').insert(payload));
+  }
+  btn.textContent = jobId ? 'Guardar cambios →' : 'Publicar aviso →'; btn.disabled = false;
+  if (error) { toast('Error: ' + error.message); return; }
+  closeModal();
+  ALL_JOBS = [];
+  loadJobs(true);
+  toast(jobId ? 'Aviso actualizado ✓' : 'Aviso publicado ✓');
+}
+
+async function toggleJobStatus(id, newStatus) {
+  await sb.from('jobs').update({ status: newStatus }).eq('id', id).eq('recruiter_id', CUR_USER.id);
+  const idx = ALL_JOBS.findIndex(j => j.id === id);
+  if (idx > -1) ALL_JOBS[idx].status = newStatus;
+  renderJobs();
+  toast('Estado: ' + newStatus + ' ✓');
+}
+
+async function deleteJob(id, titulo) {
+  if (!confirm(`¿Eliminár el aviso "${titulo}"?\nEsta acción no se puede deshacer.`)) return;
+  const { error } = await sb.from('jobs').delete().eq('id', id).eq('recruiter_id', CUR_USER.id);
+  if (error) { toast('Error: ' + error.message); return; }
+  ALL_JOBS = ALL_JOBS.filter(j => j.id !== id);
+  renderJobs();
+  toast('Aviso eliminado ✓');
+}
+
+// ══════════════════════════════════════════════════════════
+// APPLICATIONS
+// ══════════════════════════════════════════════════════════
+async function loadApplications(force) {
+  if (ALL_APPS.length && !force) { renderApps(); populateJobFilter(); return; }
+  document.getElementById('apps-tbody').innerHTML = '<tr class="empty-row"><td colspan="5"><div class="spinner" style="margin:0 auto"></div></td></tr>';
+
+  // Obtener jobs del reclutador si no los tenemos
+  if (!ALL_JOBS.length) {
+    const { data } = await sb.from('jobs').select('id,titulo').eq('recruiter_id', CUR_USER.id);
+    ALL_JOBS = data || [];
+  }
+  const myJobIds = ALL_JOBS.map(j => j.id);
+  if (!myJobIds.length) {
+    document.getElementById('apps-tbody').innerHTML = '<tr class="empty-row"><td colspan="5">Publicá un aviso para recibir postulaciones</td></tr>';
+    return;
+  }
+
+  const { data } = await sb.from('applications').select('*').in('job_id', myJobIds).order('created_at', { ascending: false });
+  ALL_APPS = data || [];
+  populateJobFilter();
+  renderApps();
+}
+
+function populateJobFilter() {
+  const sel = document.getElementById('f-app-job');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Todos los avisos</option>' +
+    ALL_JOBS.map(j => `<option value="${j.id}" ${cur === j.id ? 'selected' : ''}>${j.titulo}</option>`).join('');
+}
+
+function filterApps() {
+  const q   = document.getElementById('f-app-search').value.toLowerCase();
+  const job = document.getElementById('f-app-job').value;
+  const st  = document.getElementById('f-app-status').value;
+  const list = ALL_APPS.filter(a => {
+    if (q  && !(a.candidate_name || '').toLowerCase().includes(q) && !(a.job_title || '').toLowerCase().includes(q) && !(a.candidate_email || '').toLowerCase().includes(q)) return false;
+    if (job && a.job_id !== job) return false;
+    if (st  && a.status !== st)  return false;
+    return true;
+  });
+  renderApps(list);
+}
+
+function renderApps(data) {
+  const tbody = document.getElementById('apps-tbody');
+  const list  = data || ALL_APPS;
+  if (!list.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Sin postulaciones con esos filtros</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(a => `<tr>
+    <td>
+      <div style="font-weight:700">${a.candidate_name || a.candidate_email}</div>
+      <div style="font-size:11px;color:var(--muted)">${a.candidate_email}</div>
+    </td>
+    <td>
+      <div style="font-weight:600;font-size:13px">${a.job_title || '—'}</div>
+      ${a.job_url ? `<a href="${a.job_url}" target="_blank" style="font-size:11px;color:var(--teal)">Ver original ↗</a>` : ''}
+    </td>
+    <td style="font-size:11px;color:var(--muted)">${fmtDate(a.created_at)}</td>
+    <td>
+      <select style="border:1.5px solid var(--border);border-radius:6px;padding:3px 7px;font-size:11px;outline:none;cursor:pointer;background:#fff" onchange="updateAppStatus('${a.id}',this.value)">
+        ${['Pendiente','En revisión','Entrevista','Contratado','Descartado'].map(s => `<option ${a.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+      </select>
+    </td>
+    <td><button class="filt-btn out" style="font-size:11px;padding:4px 10px" onclick="openCandByEmail('${a.candidate_email}')">Ver perfil</button></td>
+  </tr>`).join('');
+}
+
+async function updateAppStatus(id, status) {
+  const { error } = await sb.from('applications').update({ status }).eq('id', id);
+  if (error) { toast('Error: ' + error.message); return; }
+  const idx = ALL_APPS.findIndex(a => a.id === id);
+  if (idx > -1) ALL_APPS[idx].status = status;
+  toast('Estado: ' + status + ' ✓');
+}
+
+// ══════════════════════════════════════════════════════════
+// CANDIDATES
+// ══════════════════════════════════════════════════════════
+async function loadCandidates(force) {
+  if (ALL_CANDS.length && !force) { renderCands(); return; }
+  document.getElementById('cands-tbody').innerHTML = '<tr class="empty-row"><td colspan="7"><div class="spinner" style="margin:0 auto 8px"></div>Cargando...</td></tr>';
+  const { data } = await sb.from('profiles').select('*').order('score', { ascending: false });
+  ALL_CANDS = (data || []).map(parseProfile);
+  document.getElementById('cands-count').textContent = `(${ALL_CANDS.length})`;
+  renderCands();
+}
+
+function filterCands() {
+  const q     = document.getElementById('f-cand-search').value.toLowerCase();
+  const area  = document.getElementById('f-cand-area').value.toLowerCase();
+  const minSc = parseInt(document.getElementById('f-cand-score').value) || 0;
+  const sort  = document.getElementById('f-cand-sort').value;
+  let list = ALL_CANDS.filter(c => {
+    if (q    && !c.name.toLowerCase().includes(q)
+             && !c.email.toLowerCase().includes(q)
+             && !(c.titulo || '').toLowerCase().includes(q)
+             && !(c.skills || []).some(s => s.name.toLowerCase().includes(q))) return false;
+    if (area && !(c.titulo || '').toLowerCase().includes(area)
+             && !(c.skills || []).some(s => s.name.toLowerCase().includes(area))) return false;
+    if (minSc && parseInt(c.score || 0) < minSc) return false;
+    return true;
+  });
+  if (sort === 'score') list.sort((a, b) => parseInt(b.score || 0) - parseInt(a.score || 0));
+  else if (sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
+  else list.sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0));
+  renderCands(list);
+}
+
+function renderCands(data) {
+  const tbody = document.getElementById('cands-tbody');
+  const list  = data || ALL_CANDS;
+  if (!list.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Sin candidatos con esos filtros</td></tr>'; return; }
+  tbody.innerHTML = list.map(c => {
+    const sc = parseInt(c.score || 0);
+    return `<tr onclick="openCandDetail(${escJson(c)})">
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${c.foto_url
+            ? `<img src="${c.foto_url}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0">`
+            : `<div style="width:32px;height:32px;border-radius:50%;background:${colorFor(c.email)};color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${initials(c.name)}</div>`}
+          <div><div style="font-weight:700">${c.name}</div><div style="font-size:11px;color:var(--muted)">${c.email}</div></div>
+        </div>
+      </td>
+      <td>${c.titulo || '<span style="color:var(--muted)">—</span>'}</td>
+      <td style="max-width:220px">
+        ${(c.skills || []).slice(0, 4).map(s => `<span class="skill-tag">${s.name}</span>`).join('')}
+        ${(c.skills || []).length > 4 ? `<span style="font-size:10px;color:var(--muted)"> +${(c.skills||[]).length - 4}</span>` : ''}
+      </td>
+      <td>${scoreBadge(sc)}</td>
+      <td>${(c.exp || []).length ? `${(c.exp||[]).length} pos.` : '<span style="color:var(--muted)">—</span>'}</td>
+      <td>${(c.idiomas || []).map(i => `<span class="pill pb">${i.name}</span>`).join(' ') || '<span style="color:var(--muted)">—</span>'}</td>
+      <td onclick="event.stopPropagation()">
+        <button class="filt-btn" style="padding:4px 10px;font-size:11px" onclick="openCandDetail(${escJson(c)})">Ver perfil</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openCandDetail(c) {
+  if (typeof c === 'string') c = JSON.parse(c);
+  const sc = parseInt(c.score || 0);
+  const lbl = sc >= 85 ? { txt: 'Perfil destacado', cls: 'pg' }
+            : sc >= 70 ? { txt: 'Perfil completo',   cls: 'pb' }
+            : sc >= 50 ? { txt: 'En desarrollo',      cls: 'pa' }
+            :            { txt: 'Incompleto',          cls: 'pr' };
+  document.getElementById('modal-title').textContent = c.name;
+  document.getElementById('modal-sub').textContent   = c.titulo || c.email;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="prof-header">
+      ${c.foto_url
+        ? `<div class="prof-av"><img src="${c.foto_url}"></div>`
+        : `<div class="prof-av" style="background:${colorFor(c.email)}">${initials(c.name)}</div>`}
+      <div style="flex:1">
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--dark);margin-bottom:2px">${c.name}</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px">${c.titulo || ''}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${scoreBadge(sc)}
+          <span class="pill ${lbl.cls}">${lbl.txt}</span>
+          ${c.ubicacion ? `<span class="pill pm">📍 ${c.ubicacion}</span>` : ''}
+          ${c.tel       ? `<span class="pill pm">📱 ${c.tel}</span>`       : ''}
+        </div>
+      </div>
+    </div>
+    ${c.resumen ? `<div class="prof-section"><div class="prof-section-title">Resumen</div><div style="font-size:13px;color:var(--muted);line-height:1.65">${c.resumen}</div></div>` : ''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="prof-section">
+        <div class="prof-section-title">Skills (${(c.skills || []).length})</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">
+          ${(c.skills || []).map(s => `<span class="skill-tag">${s.name} <span style="opacity:.7">${s.nivel}</span></span>`).join('') || '<span style="color:var(--muted);font-size:12px">Sin skills</span>'}
+        </div>
+      </div>
+      <div class="prof-section">
+        <div class="prof-section-title">Idiomas</div>
+        ${(c.idiomas || []).map(i => `<div class="pill pb" style="margin:2px">${i.name} · ${i.nivel}</div>`).join('') || '<span style="color:var(--muted);font-size:12px">—</span>'}
+      </div>
+    </div>
+    ${(c.exp || []).length ? `<div class="prof-section"><div class="prof-section-title">Experiencia</div>${(c.exp||[]).map(e=>`<div class="prof-item"><div class="prof-item-title">${e.cargo}</div><div class="prof-item-sub">${e.empresa} · ${e.desde}${e.hasta ? '–' + e.hasta : ' → Presente'}</div>${e.logros ? `<div class="prof-item-desc">${e.logros}</div>` : ''}</div>`).join('')}</div>` : ''}
+    ${(c.edu || []).length ? `<div class="prof-section"><div class="prof-section-title">Formación</div>${(c.edu||[]).map(e=>`<div class="prof-item"><div class="prof-item-title">${e.titulo}</div><div class="prof-item-sub">${e.inst} · ${e.desde}${e.hasta ? '–' + e.hasta : ' → En curso'}</div></div>`).join('')}</div>` : ''}
+    ${(c.certs || []).length ? `<div class="prof-section"><div class="prof-section-title">Certificaciones</div>${(c.certs||[]).map(ct=>`<div class="prof-item"><div class="prof-item-title">${ct.nombre}</div><div class="prof-item-sub">${ct.inst || ''}${ct.anio ? ' · ' + ct.anio : ''}</div></div>`).join('')}</div>` : ''}
+    <div style="display:flex;gap:8px;padding-top:10px;border-top:1.5px solid var(--g2);flex-wrap:wrap">
+      ${c.linkedin ? `<a href="https://${c.linkedin.replace(/^https?:\/\//,'')}" target="_blank"><button class="filt-btn sec" style="font-size:12px">LinkedIn ↗</button></a>` : ''}
+      <button class="filt-btn" style="font-size:12px" onclick="navigator.clipboard?.writeText('${c.email}');toast('Email copiado ✓')">Copiar email</button>
+      ${c.tel ? `<a href="https://wa.me/${c.tel.replace(/\D/g,'')}" target="_blank"><button class="filt-btn" style="font-size:12px;background:#25d366">WhatsApp ↗</button></a>` : ''}
+    </div>`;
+  openModal();
+}
+
+function openCandByEmail(email) {
+  if (!ALL_CANDS.length) { toast('Cargá la lista de candidatos primero'); return; }
+  const c = ALL_CANDS.find(x => x.email === email);
+  if (c) openCandDetail(c);
+  else toast('Perfil no encontrado');
+}
+
+// ══════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════
+function parseProfile(p) {
+  ['skills','idiomas','exp','edu','certs'].forEach(f => {
+    if (typeof p[f] === 'string') { try { p[f] = JSON.parse(p[f]); } catch { p[f] = []; } }
+    if (!Array.isArray(p[f])) p[f] = [];
+  });
+  return p;
+}
+
+function openModal()  { document.getElementById('ov').classList.add('open');    document.body.style.overflow = 'hidden'; }
+function closeModal() { document.getElementById('ov').classList.remove('open'); document.body.style.overflow = ''; }
+
+function initials(n)      { return (n || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(); }
+function colorFor(email)  { const cols = ['#1b9e74','#1653a8','#4a3fa0','#b83232','#c97d00','#064d38','#0c1f3d']; let h = 0; for (const c of (email || '')) h = (h * 31 + c.charCodeAt(0)) % cols.length; return cols[h]; }
+function fmtDate(d)       { if (!d) return '—'; try { return new Date(d).toLocaleDateString('es-AR', { day:'2-digit', month:'short', year:'numeric' }); } catch { return d; } }
+function escJson(obj)     { return JSON.stringify(obj).replace(/\\/g, '\\\\').replace(/"/g, '\\"'); }
+function escHtml(s)       { return String(s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+function scoreBadge(sc)   {
+  const col = sc >= 85 ? 'var(--teal)' : sc >= 70 ? 'var(--blue)' : sc >= 50 ? 'var(--amber)' : 'var(--coral)';
+  const bg  = sc >= 85 ? 'var(--tl)'   : sc >= 70 ? 'var(--bl)'   : sc >= 50 ? 'var(--al)'    : 'var(--cl)';
+  return `<span style="background:${bg};color:${col};font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;border:1.5px solid ${col}40">${sc}/100</span>`;
+}
+function statusClass(s) {
+  return s === 'Contratado' ? 'pg' : s === 'Entrevista' ? 'pb' : s === 'Descartado' ? 'pr' : s === 'En revisión' ? 'pa' : 'pm';
+}
+let _tt;
+function toast(m) { const e = document.getElementById('toast'); e.textContent = m; e.classList.add('show'); clearTimeout(_tt); _tt = setTimeout(() => e.classList.remove('show'), 3200); }
+
+</script>
+</body>
+</html>
+</body>
+</html>
