@@ -822,7 +822,7 @@ function renderJobs() {
     return;
   }
   el.innerHTML = `<table class="tbl"><thead><tr><th>Aviso</th><th>Área</th><th>Ubicación</th><th>Modalidad</th><th>Postulantes</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
-    ${ALL_JOBS.map(j => `<tr onclick="openJobView(${escJson(j)})">
+    ${ALL_JOBS.map(j => `<tr onclick="openJobById('${j.id}')">
       <td><div style="font-weight:700">${j.titulo}</div>${j.salario ? `<div style="font-size:11px;color:var(--teal)">${j.salario}</div>` : ''}</td>
       <td><span class="pill pm">${j.area || '—'}</span></td>
       <td style="font-size:12px">${j.ubicacion || 'Argentina'}</td>
@@ -853,10 +853,11 @@ function openJobView(job) {
     ${job.requisitos ? `<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px">Requisitos clave</div><div style="font-size:13px;color:var(--dark);line-height:1.65;white-space:pre-wrap">${escHtml(job.requisitos)}</div></div>` : ''}
     ${job.url ? `<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px">Link externo</div><a href="${escHtml(job.url)}" target="_blank" style="color:var(--teal);font-size:13px">${escHtml(job.url)} ↗</a></div>` : ''}
     <div style="display:flex;gap:8px;padding-top:10px;border-top:1.5px solid var(--g2);flex-wrap:wrap">
-      <button class="filt-btn" onclick="openJobModal(${escJson(job)})">✏ Editar aviso</button>
+      <button class="filt-btn" id="btn-edit-job-view">✏ Editar aviso</button>
       <button class="filt-btn out" onclick="showPanel('applications');closeModal()">Ver postulantes</button>
       <button class="filt-btn out" onclick="closeModal()">Cerrar</button>
     </div>`;
+  document.getElementById('btn-edit-job-view').onclick = () => openJobModal(job);
   openModal();
 }
 
@@ -1115,7 +1116,7 @@ function renderPipeline(data) {
     }).join('');
     return `<div class="pipeline-col">
       <div class="pipeline-col-head ${st.cls}">${st.label}<span style="background:rgba(0,0,0,.1);padding:1px 7px;border-radius:20px">${items.length}</span></div>
-      <div class="pipeline-col-body" ondragover="dragOverCol(event,this)" ondragleave="dragLeaveCol(this)" ondrop="dropApp(event,'${st.key}',this)">${cards || '<div style="font-size:11px;color:var(--muted);text-align:center;padding:16px">Sin postulaciones</div>'}</div>
+      <div class="pipeline-col-body" ondragover="dragOverCol(event,this)" ondragleave="dragLeaveCol(event,this)" ondrop="dropApp(event,'${st.key}',this)">${cards || '<div style="font-size:11px;color:var(--muted);text-align:center;padding:16px">Sin postulaciones</div>'}</div>
     </div>`;
   }).join('');
 }
@@ -1125,13 +1126,16 @@ let DRAG_APP_ID = null;
 function dragStartApp(e, id) {
   DRAG_APP_ID = id;
   e.dataTransfer.effectAllowed = 'move';
-  setTimeout(() => { const el = document.querySelector(`[ondragstart*="'${id}'"]`); if (el) el.classList.add('dragging'); }, 0);
+  e.target.closest('.pipeline-card').classList.add('dragging');
 }
 function dragOverCol(e, col) {
   e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
   col.closest('.pipeline-col').classList.add('drag-over');
 }
-function dragLeaveCol(col) {
+function dragLeaveCol(e, col) {
+  const related = e.relatedTarget;
+  if (related && col.closest('.pipeline-col').contains(related)) return;
   col.closest('.pipeline-col').classList.remove('drag-over');
 }
 async function dropApp(e, newStatus, col) {
