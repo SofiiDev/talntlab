@@ -53,15 +53,27 @@ a{color:inherit;text-decoration:none}
 .setup-card p{font-size:12px;color:var(--muted);margin-bottom:22px;line-height:1.55}
 
 /* ── TOP BAR ── */
-.top-bar{background:var(--navy);height:52px;display:flex;align-items:center;padding:0 24px;gap:10px;position:sticky;top:0;z-index:100}
+.top-bar{background:var(--navy);height:52px;display:flex;align-items:center;padding:0 20px;gap:10px;position:fixed;top:0;left:0;right:0;z-index:200}
 .top-logo{font-family:'DM Serif Display',serif;font-size:19px;color:#fff;display:flex;align-items:baseline;gap:4px}
 .top-logo em{color:#6ee7be;font-style:normal}
 .top-logo span{font-size:10px;color:rgba(255,255,255,.4);font-family:'DM Sans',sans-serif}
-.top-co{font-size:12px;color:rgba(255,255,255,.55);margin-left:8px;padding-left:8px;border-left:1px solid rgba(255,255,255,.15)}
-.top-tabs{display:flex;gap:2px;margin-left:auto}
-.ttab{padding:5px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.6);background:none;border:1.5px solid transparent;transition:all .15s}
-.ttab.on{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.15)}
-.ttab:hover:not(.on){background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+.top-co{font-size:12px;color:rgba(255,255,255,.55);margin-left:8px;padding-left:8px;border-left:1px solid rgba(255,255,255,.15);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;top:52px;left:0;bottom:0;width:220px;background:#0e2244;display:flex;flex-direction:column;z-index:150;overflow-y:auto}
+.side-nav{flex:1;padding:10px 0}
+.snav{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;color:rgba(255,255,255,.55);font-size:13px;font-weight:600;border-left:3px solid transparent;transition:all .15s;white-space:nowrap;border-right:none;border-top:none;border-bottom:none;background:none;width:100%;text-align:left}
+.snav:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.snav.on{background:rgba(27,158,116,.15);color:#6ee7be;border-left-color:#1b9e74}
+.snav svg{flex-shrink:0;opacity:.7}
+.snav.on svg{opacity:1}
+.snav-sep{height:1px;background:rgba(255,255,255,.07);margin:8px 16px}
+.snav-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.25);padding:12px 18px 4px}
+.sidebar-foot{padding:12px 14px;border-top:1px solid rgba(255,255,255,.07)}
+
+/* ── BODY LAYOUT ── */
+.body-wrap{display:flex;min-height:100vh;padding-top:52px}
+.panels{flex:1;margin-left:220px;padding:24px;background:var(--gray);min-height:calc(100vh - 52px)}
 .logout-btn{margin-left:8px;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.6);background:none;border:1.5px solid rgba(255,255,255,.18);transition:all .15s}
 .logout-btn:hover{background:rgba(255,255,255,.08);color:#fff}
 .top-logo-av{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:border-color .15s;margin-left:6px}
@@ -70,9 +82,8 @@ a{color:inherit;text-decoration:none}
 .top-logo-av svg{opacity:.55}
 
 /* ── PANELS ── */
-.main-wrap{display:none;min-height:100vh;flex-direction:column}
-.panels{flex:1;padding:24px;max-width:1200px;margin:0 auto;width:100%}
-.panel{display:none;animation:fi .2s ease}
+.main-wrap{display:none;flex-direction:column}
+.panel{display:none;animation:fi .2s ease;max-width:1100px}
 .panel.on{display:block}
 
 /* ── STATS ── */
@@ -155,6 +166,34 @@ a{color:inherit;text-decoration:none}
 .plan-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:var(--al);color:var(--amber);border:1px solid rgba(201,125,0,.2)}
 .plan-badge.pro{background:var(--tl);color:var(--td);border-color:rgba(27,158,116,.2)}
 
+/* ── COMPARE ── */
+.cmp-col{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);flex:1;min-width:260px;overflow:hidden}
+.cmp-head{background:var(--navy);padding:14px 16px;text-align:center}
+.cmp-av{width:60px;height:60px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;font-family:'DM Serif Display',serif;overflow:hidden;border:2px solid rgba(255,255,255,.2)}
+.cmp-av img{width:100%;height:100%;object-fit:cover}
+.cmp-name{font-family:'DM Serif Display',serif;font-size:16px;color:#fff;margin-bottom:2px}
+.cmp-title{font-size:11px;color:rgba(255,255,255,.6)}
+.cmp-body{padding:14px}
+.cmp-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--g2);font-size:12px}
+.cmp-row:last-child{border-bottom:none}
+.cmp-key{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:10px;letter-spacing:.04em}
+.cmp-val{font-weight:700;color:var(--dark);text-align:right;max-width:60%}
+.cmp-winner{border-color:var(--teal);box-shadow:0 0 0 2px rgba(27,158,116,.2)}
+.cmp-check{accent-color:var(--teal);width:16px;height:16px;cursor:pointer}
+
+/* ── AGENDA ── */
+.ag-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:10px;padding:14px 18px;display:flex;align-items:flex-start;gap:14px}
+.ag-date{width:48px;flex-shrink:0;text-align:center;background:var(--navy);border-radius:8px;padding:6px 4px;color:#fff}
+.ag-date-day{font-family:'DM Serif Display',serif;font-size:22px;line-height:1}
+.ag-date-mon{font-size:9px;font-weight:700;text-transform:uppercase;opacity:.65}
+.ag-body{flex:1}
+.ag-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:5px}
+.ag-type.entrevista{background:var(--bl);color:var(--blue)}
+.ag-type.prueba{background:var(--al);color:var(--amber)}
+.ag-title{font-weight:700;font-size:14px;color:var(--dark);margin-bottom:2px}
+.ag-meta{font-size:12px;color:var(--muted)}
+.ag-actions{display:flex;gap:6px;align-items:center;flex-shrink:0;flex-wrap:wrap}
+
 /* ── EMPTY STATE ── */
 .empty-state{padding:40px;text-align:center}
 .empty-state-icon{font-size:32px;margin-bottom:12px}
@@ -171,11 +210,14 @@ a{color:inherit;text-decoration:none}
   .stats-row{grid-template-columns:1fr 1fr}
   .mf-grid{grid-template-columns:1fr}
 }
-@media(max-width:600px){
-  .panels{padding:14px}
-  .top-tabs{display:none}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-220px);transition:transform .2s}
+  .sidebar.open{transform:none}
+  .panels{margin-left:0;padding:14px}
   .top-co{display:none}
+  .mob-menu-btn{display:flex}
 }
+.mob-menu-btn{display:none;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.1);border:none;cursor:pointer;color:#fff}
 </style>
 </head>
 <body>
@@ -240,22 +282,60 @@ a{color:inherit;text-decoration:none}
 <!-- ══ MAIN PANEL ════════════════════════════════════════════ -->
 <div id="main-wrap" class="main-wrap">
 
+  <!-- TOP BAR -->
   <div class="top-bar">
+    <button class="mob-menu-btn" onclick="toggleSidebar()" title="Menú">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div class="top-logo">Talent<em>Lab</em><span>Reclutador</span></div>
     <span class="top-co" id="top-empresa">—</span>
-    <div id="top-logo-av" class="top-logo-av" onclick="openLogoUpload()" title="Subir logo de empresa">
+    <div id="top-logo-av" class="top-logo-av" onclick="openLogoUpload()" title="Subir logo de empresa" style="margin-left:auto">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-    </div>
-    <div class="top-tabs">
-      <button class="ttab on" onclick="showPanel('dashboard',this)">Dashboard</button>
-      <button class="ttab" onclick="showPanel('jobs',this)">Mis avisos</button>
-      <button class="ttab" onclick="showPanel('applications',this)">Postulaciones</button>
-      <button class="ttab" onclick="showPanel('candidates',this)">Candidatos</button>
     </div>
     <button class="logout-btn" onclick="doLogout()">Salir</button>
   </div>
 
-  <div class="panels">
+  <!-- BODY: sidebar + content -->
+  <div class="body-wrap">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+      <div class="side-nav">
+        <div class="snav-lbl">Principal</div>
+        <button class="snav on" id="snav-dashboard" onclick="showPanel('dashboard',this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        </button>
+        <button class="snav" id="snav-jobs" onclick="showPanel('jobs',this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          Mis avisos
+        </button>
+        <button class="snav" id="snav-applications" onclick="showPanel('applications',this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Postulaciones
+        </button>
+        <button class="snav" id="snav-candidates" onclick="showPanel('candidates',this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          Candidatos
+        </button>
+        <div class="snav-sep"></div>
+        <div class="snav-lbl">Herramientas</div>
+        <button class="snav" id="snav-compare" onclick="showPanel('compare',this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+          Comparar perfiles
+        </button>
+        <button class="snav" id="snav-agenda" onclick="showPanel('agenda',this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Agenda
+        </button>
+      </div>
+      <div class="sidebar-foot">
+        <div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center">TalentLab · Panel Reclutador</div>
+      </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <div class="panels">
 
     <!-- DASHBOARD -->
     <div class="panel on" id="panel-dashboard">
@@ -271,14 +351,14 @@ a{color:inherit;text-decoration:none}
         <div class="card">
           <div class="card-head">
             <div class="card-title">Mis avisos</div>
-            <button class="filt-btn" style="padding:5px 12px;font-size:11px" onclick="showPanel('jobs',document.querySelector('.ttab:nth-child(2)'))">Ver todos</button>
+            <button class="filt-btn" style="padding:5px 12px;font-size:11px" onclick="showPanel('jobs')">Ver todos</button>
           </div>
           <div class="card-body" id="dash-jobs-list"><div class="loading-wrap" style="padding:20px"><div class="spinner"></div></div></div>
         </div>
         <div class="card">
           <div class="card-head">
             <div class="card-title">Últimas postulaciones</div>
-            <button class="filt-btn" style="padding:5px 12px;font-size:11px" onclick="showPanel('applications',document.querySelector('.ttab:nth-child(3)'))">Ver todas</button>
+            <button class="filt-btn" style="padding:5px 12px;font-size:11px" onclick="showPanel('applications')">Ver todas</button>
           </div>
           <div class="card-body" id="dash-apps-list"><div class="loading-wrap" style="padding:20px"><div class="spinner"></div></div></div>
         </div>
@@ -330,6 +410,11 @@ a{color:inherit;text-decoration:none}
     <div class="panel" id="panel-candidates">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
         <h2 style="font-size:22px;color:var(--navy)">Candidatos <span id="cands-count" style="font-size:14px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400"></span></h2>
+        <div id="compare-bar" style="display:none;align-items:center;gap:10px;background:var(--tl);border:1.5px solid rgba(27,158,116,.3);border-radius:var(--r);padding:8px 14px">
+          <span id="compare-bar-txt" style="font-size:13px;font-weight:700;color:var(--td)">0 seleccionados</span>
+          <button class="filt-btn" style="padding:5px 14px;font-size:12px" onclick="showPanel('compare')">Comparar →</button>
+          <button class="filt-btn out" style="padding:5px 10px;font-size:12px" onclick="clearCompare()">✕</button>
+        </div>
       </div>
       <div class="card">
         <div class="card-head">
@@ -356,14 +441,52 @@ a{color:inherit;text-decoration:none}
         </div>
         <div class="tbl-wrap">
           <table class="tbl">
-            <thead><tr><th>Candidato</th><th>Cargo</th><th>Skills</th><th>Score</th><th>Exp.</th><th>Idiomas</th><th>Acciones</th></tr></thead>
-            <tbody id="cands-tbody"><tr class="empty-row"><td colspan="7">Cargando...</td></tr></tbody>
+            <thead><tr><th style="width:32px"><input type="checkbox" style="display:none"></th><th>Candidato</th><th>Cargo</th><th>Skills</th><th>Score</th><th>Exp.</th><th>Idiomas</th><th>Acciones</th></tr></thead>
+            <tbody id="cands-tbody"><tr class="empty-row"><td colspan="8">Cargando...</td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
 
-  </div><!-- /panels -->
+    <!-- COMPARAR PERFILES -->
+    <div class="panel" id="panel-compare">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div>
+          <h2 style="font-size:22px;color:var(--navy)">Comparar perfiles</h2>
+          <p style="font-size:12px;color:var(--muted);margin-top:2px">Seleccioná hasta 3 candidatos desde la tabla de Candidatos y compará lado a lado</p>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="filt-btn out" onclick="clearCompare()">Limpiar selección</button>
+          <button class="filt-btn" onclick="showPanel('candidates')">+ Agregar candidatos</button>
+        </div>
+      </div>
+      <div id="compare-empty" class="empty-state" style="background:#fff;border:1.5px solid var(--border);border-radius:var(--r)">
+        <div class="empty-state-icon">⚖️</div>
+        <div class="empty-state-title">No hay candidatos seleccionados</div>
+        <div class="empty-state-sub">Andá a Candidatos, marcá hasta 3 perfiles con el checkbox y volvé aquí</div>
+        <button class="filt-btn" onclick="showPanel('candidates')">Ir a Candidatos</button>
+      </div>
+      <div id="compare-grid" style="display:none;gap:14px;align-items:flex-start"></div>
+    </div>
+
+    <!-- AGENDA -->
+    <div class="panel" id="panel-agenda">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <h2 style="font-size:22px;color:var(--navy)">Agenda</h2>
+        <button class="filt-btn" onclick="openScheduleModal()">+ Programar entrevista</button>
+      </div>
+      <!-- Tabs dentro de agenda -->
+      <div style="display:flex;gap:4px;margin-bottom:16px;border-bottom:2px solid var(--border);padding-bottom:0">
+        <button class="atab on" id="ag-tab-upcoming" onclick="switchAgendaTab('upcoming',this)">Próximas</button>
+        <button class="atab" id="ag-tab-past" onclick="switchAgendaTab('past',this)">Realizadas</button>
+        <button class="atab" id="ag-tab-all" onclick="switchAgendaTab('all',this)">Todas</button>
+      </div>
+      <div id="agenda-list"><div class="loading-wrap"><div class="spinner"></div></div></div>
+    </div>
+
+    </div><!-- /panels -->
+
+  </div><!-- /body-wrap -->
 </div><!-- /main-wrap -->
 
 <!-- ══ MODAL ═════════════════════════════════════════════════ -->
@@ -392,7 +515,9 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 let CUR_USER = null;
 let CUR_RECRUITER = null;
-let ALL_JOBS = [], ALL_APPS = [], ALL_CANDS = [];
+let ALL_JOBS = [], ALL_APPS = [], ALL_CANDS = [], ALL_INTERVIEWS = [];
+let COMPARE_SET = new Map();
+let AGENDA_TAB = 'upcoming';
 
 // ── BOOT ──────────────────────────────────────────────────
 (async () => {
@@ -510,12 +635,22 @@ async function doLogout() {
 // ── PANELS ────────────────────────────────────────────────
 function showPanel(name, el) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
-  document.querySelectorAll('.ttab').forEach(t => t.classList.remove('on'));
-  document.getElementById('panel-' + name).classList.add('on');
-  if (el) el.classList.add('on');
+  document.querySelectorAll('.snav').forEach(t => t.classList.remove('on'));
+  document.getElementById('panel-' + name)?.classList.add('on');
+  // activate sidebar button
+  const btn = document.getElementById('snav-' + name);
+  if (btn) btn.classList.add('on');
+  else if (el) el.classList.add('on');
+  // close mobile sidebar
+  document.getElementById('sidebar')?.classList.remove('open');
   if (name === 'jobs')         loadJobs();
   if (name === 'applications') loadApplications();
   if (name === 'candidates')   loadCandidates();
+  if (name === 'compare')      renderCompare();
+  if (name === 'agenda')       loadAgenda();
+}
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
 }
 
 // ══════════════════════════════════════════════════════════
@@ -784,7 +919,7 @@ async function updateAppStatus(id, status) {
 // ══════════════════════════════════════════════════════════
 async function loadCandidates(force) {
   if (ALL_CANDS.length && !force) { renderCands(); return; }
-  document.getElementById('cands-tbody').innerHTML = '<tr class="empty-row"><td colspan="7"><div class="spinner" style="margin:0 auto 8px"></div>Cargando...</td></tr>';
+  document.getElementById('cands-tbody').innerHTML = '<tr class="empty-row"><td colspan="8"><div class="spinner" style="margin:0 auto 8px"></div>Cargando...</td></tr>';
   const { data } = await sb.from('profiles').select('*').order('score', { ascending: false });
   ALL_CANDS = (data || []).map(parseProfile);
   document.getElementById('cands-count').textContent = `(${ALL_CANDS.length})`;
@@ -815,10 +950,14 @@ function filterCands() {
 function renderCands(data) {
   const tbody = document.getElementById('cands-tbody');
   const list  = data || ALL_CANDS;
-  if (!list.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Sin candidatos con esos filtros</td></tr>'; return; }
+  if (!list.length) { tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Sin candidatos con esos filtros</td></tr>'; return; }
   tbody.innerHTML = list.map(c => {
     const sc = parseInt(c.score || 0);
+    const sel = COMPARE_SET.has(c.email);
     return `<tr onclick="openCandDetail(${escJson(c)})">
+      <td onclick="event.stopPropagation()">
+        <input type="checkbox" class="cmp-check" ${sel ? 'checked' : ''} onchange="toggleCompare(${escJson(c)},this.checked)" title="Seleccionar para comparar">
+      </td>
       <td>
         <div style="display:flex;align-items:center;gap:8px">
           ${c.foto_url
@@ -828,15 +967,18 @@ function renderCands(data) {
         </div>
       </td>
       <td>${c.titulo || '<span style="color:var(--muted)">—</span>'}</td>
-      <td style="max-width:220px">
-        ${(c.skills || []).slice(0, 4).map(s => `<span class="skill-tag">${s.name}</span>`).join('')}
-        ${(c.skills || []).length > 4 ? `<span style="font-size:10px;color:var(--muted)"> +${(c.skills||[]).length - 4}</span>` : ''}
+      <td style="max-width:200px">
+        ${(c.skills || []).slice(0, 3).map(s => `<span class="skill-tag">${s.name}</span>`).join('')}
+        ${(c.skills || []).length > 3 ? `<span style="font-size:10px;color:var(--muted)"> +${(c.skills||[]).length - 3}</span>` : ''}
       </td>
       <td>${scoreBadge(sc)}</td>
       <td>${(c.exp || []).length ? `${(c.exp||[]).length} pos.` : '<span style="color:var(--muted)">—</span>'}</td>
       <td>${(c.idiomas || []).map(i => `<span class="pill pb">${i.name}</span>`).join(' ') || '<span style="color:var(--muted)">—</span>'}</td>
       <td onclick="event.stopPropagation()">
-        <button class="filt-btn" style="padding:4px 10px;font-size:11px" onclick="openCandDetail(${escJson(c)})">Ver perfil</button>
+        <div style="display:flex;gap:4px">
+          <button class="filt-btn" style="padding:4px 10px;font-size:11px" onclick="openCandDetail(${escJson(c)})">Ver</button>
+          <button class="filt-btn out" style="padding:4px 10px;font-size:11px" onclick="openScheduleModal('${c.email}','${escHtml(c.name)}')">📅</button>
+        </div>
       </td>
     </tr>`;
   }).join('');
@@ -883,12 +1025,38 @@ function openCandDetail(c) {
     ${(c.exp || []).length ? `<div class="prof-section"><div class="prof-section-title">Experiencia</div>${(c.exp||[]).map(e=>`<div class="prof-item"><div class="prof-item-title">${e.cargo}</div><div class="prof-item-sub">${e.empresa} · ${e.desde}${e.hasta ? '–' + e.hasta : ' → Presente'}</div>${e.logros ? `<div class="prof-item-desc">${e.logros}</div>` : ''}</div>`).join('')}</div>` : ''}
     ${(c.edu || []).length ? `<div class="prof-section"><div class="prof-section-title">Formación</div>${(c.edu||[]).map(e=>`<div class="prof-item"><div class="prof-item-title">${e.titulo}</div><div class="prof-item-sub">${e.inst} · ${e.desde}${e.hasta ? '–' + e.hasta : ' → En curso'}</div></div>`).join('')}</div>` : ''}
     ${(c.certs || []).length ? `<div class="prof-section"><div class="prof-section-title">Certificaciones</div>${(c.certs||[]).map(ct=>`<div class="prof-item"><div class="prof-item-title">${ct.nombre}</div><div class="prof-item-sub">${ct.inst || ''}${ct.anio ? ' · ' + ct.anio : ''}</div></div>`).join('')}</div>` : ''}
+
+    <!-- NOTAS DEL RECLUTADOR -->
+    <div class="prof-section" id="notes-section-${c.email.replace(/[@.]/g,'_')}">
+      <div class="prof-section-title" style="display:flex;justify-content:space-between;align-items:center">
+        Notas internas
+        <span style="font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">Solo visibles para vos</span>
+      </div>
+      <div id="notes-list-${c.email.replace(/[@.]/g,'_')}" style="margin-bottom:8px"><div style="font-size:12px;color:var(--muted)">Cargando notas...</div></div>
+      <div style="display:flex;gap:6px">
+        <input id="note-input-${c.email.replace(/[@.]/g,'_')}" type="text" placeholder="Agregar nota..." style="flex:1;border:1.5px solid var(--border);border-radius:var(--r);padding:7px 10px;font-size:13px;outline:none" onkeydown="if(event.key==='Enter')addNote('${c.email}')">
+        <button class="filt-btn" style="padding:6px 14px;font-size:12px" onclick="addNote('${c.email}')">Agregar</button>
+      </div>
+    </div>
+
+    <!-- MENSAJES PRE-ESCRITOS -->
+    <div class="prof-section">
+      <div class="prof-section-title">Enviar mensaje</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+        <button class="filt-btn" style="background:var(--tl);color:var(--td);border:1.5px solid rgba(27,158,116,.3);font-size:12px;padding:5px 12px" onclick="openMsgModal('${c.email}','${escHtml(c.name)}','aceptacion')">✓ Mensaje de aceptación</button>
+        <button class="filt-btn" style="background:var(--cl);color:var(--coral);border:1.5px solid rgba(184,50,50,.3);font-size:12px;padding:5px 12px" onclick="openMsgModal('${c.email}','${escHtml(c.name)}','rechazo')">✕ Mensaje de rechazo</button>
+        <button class="filt-btn out" style="font-size:12px;padding:5px 12px" onclick="openMsgModal('${c.email}','${escHtml(c.name)}','entrevista')">📅 Invitación a entrevista</button>
+      </div>
+    </div>
+
     <div style="display:flex;gap:8px;padding-top:10px;border-top:1.5px solid var(--g2);flex-wrap:wrap">
       ${c.linkedin ? `<a href="https://${c.linkedin.replace(/^https?:\/\//,'')}" target="_blank"><button class="filt-btn sec" style="font-size:12px">LinkedIn ↗</button></a>` : ''}
       <button class="filt-btn" style="font-size:12px" onclick="navigator.clipboard?.writeText('${c.email}');toast('Email copiado ✓')">Copiar email</button>
       ${c.tel ? `<a href="https://wa.me/${c.tel.replace(/\D/g,'')}" target="_blank"><button class="filt-btn" style="font-size:12px;background:#25d366">WhatsApp ↗</button></a>` : ''}
+      <button class="filt-btn out" style="font-size:12px" onclick="openScheduleModal('${c.email}','${escHtml(c.name)}')">📅 Agendar</button>
     </div>`;
   openModal();
+  loadCandNotes(c.email);
 }
 
 function openCandByEmail(email) {
@@ -928,6 +1096,386 @@ function statusClass(s) {
 }
 let _tt;
 function toast(m) { const e = document.getElementById('toast'); e.textContent = m; e.classList.add('show'); clearTimeout(_tt); _tt = setTimeout(() => e.classList.remove('show'), 3200); }
+
+// ══════════════════════════════════════════════════════════
+// COMPARAR PERFILES
+// ══════════════════════════════════════════════════════════
+
+function toggleCompare(c, checked) {
+  if (typeof c === 'string') c = JSON.parse(c);
+  if (checked) {
+    if (COMPARE_SET.size >= 3) { toast('Máximo 3 candidatos para comparar ⚠'); renderCands(); return; }
+    COMPARE_SET.set(c.email, c);
+  } else {
+    COMPARE_SET.delete(c.email);
+  }
+  updateCompareBar();
+}
+
+function updateCompareBar() {
+  const bar = document.getElementById('compare-bar');
+  const txt = document.getElementById('compare-bar-txt');
+  if (!bar) return;
+  if (COMPARE_SET.size === 0) { bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+  txt.textContent = `${COMPARE_SET.size} seleccionado${COMPARE_SET.size > 1 ? 's' : ''}`;
+}
+
+function clearCompare() {
+  COMPARE_SET.clear();
+  updateCompareBar();
+  renderCands();
+  renderCompare();
+}
+
+function renderCompare() {
+  const grid  = document.getElementById('compare-grid');
+  const empty = document.getElementById('compare-empty');
+  if (!grid) return;
+  const cands = [...COMPARE_SET.values()];
+  if (!cands.length) { grid.style.display = 'none'; if(empty) empty.style.display = 'block'; return; }
+  if(empty) empty.style.display = 'none';
+  const maxSc = Math.max(...cands.map(c => parseInt(c.score || 0)));
+
+  grid.style.display = 'grid';
+  grid.style.gridTemplateColumns = `repeat(${cands.length},1fr)`;
+
+  grid.innerHTML = cands.map(c => {
+    const sc   = parseInt(c.score || 0);
+    const isWinner = sc === maxSc;
+    const expYears = (c.exp || []).reduce((acc, e) => {
+      const from = parseInt((e.desde || '').split('/').pop()) || 0;
+      const to   = e.hasta ? parseInt(e.hasta.split('/').pop()) || new Date().getFullYear() : new Date().getFullYear();
+      return acc + Math.max(0, to - from);
+    }, 0);
+    return `
+    <div class="cmp-col ${isWinner ? 'cmp-winner' : ''}">
+      <div class="cmp-head">
+        ${isWinner ? '<div style="font-size:10px;font-weight:700;color:#6ee7be;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">⭐ Mejor match</div>' : ''}
+        <div class="cmp-av" style="background:${colorFor(c.email)}">
+          ${c.foto_url ? `<img src="${c.foto_url}">` : initials(c.name)}
+        </div>
+        <div class="cmp-name">${c.name}</div>
+        <div class="cmp-title">${c.titulo || '—'}</div>
+      </div>
+      <div class="cmp-body">
+        <div class="cmp-row"><span class="cmp-key">Score TalentLab</span><span class="cmp-val" style="color:${sc>=80?'var(--teal)':sc>=65?'var(--blue)':'var(--amber)'}">${sc}/100</span></div>
+        <div class="cmp-row"><span class="cmp-key">Exp. estimada</span><span class="cmp-val">${expYears ? expYears + ' año' + (expYears > 1 ? 's' : '') : '—'}</span></div>
+        <div class="cmp-row"><span class="cmp-key">Posiciones</span><span class="cmp-val">${(c.exp||[]).length || '—'}</span></div>
+        <div class="cmp-row"><span class="cmp-key">Skills</span><span class="cmp-val">${(c.skills||[]).length}</span></div>
+        <div class="cmp-row"><span class="cmp-key">Idiomas</span><span class="cmp-val">${(c.idiomas||[]).map(i=>i.name).join(', ') || '—'}</span></div>
+        <div class="cmp-row"><span class="cmp-key">Formación</span><span class="cmp-val">${(c.edu||[]).map(e=>e.titulo).join(', ').slice(0,40) || '—'}</span></div>
+        <div class="cmp-row"><span class="cmp-key">Ubicación</span><span class="cmp-val">${c.ubicacion || '—'}</span></div>
+        <div style="margin-top:10px">
+          <div class="cmp-key" style="margin-bottom:6px">Top skills</div>
+          <div style="display:flex;flex-wrap:wrap;gap:3px">
+            ${(c.skills||[]).slice(0,6).map(s=>`<span class="skill-tag" style="font-size:10px">${s.name}</span>`).join('')}
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="filt-btn" style="font-size:11px;padding:4px 10px;flex:1" onclick="openCandDetail(${escJson(c)})">Ver perfil</button>
+          <button class="filt-btn out" style="font-size:11px;padding:4px 10px" onclick="openScheduleModal('${c.email}','${escHtml(c.name)}')">📅</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════
+// AGENDA DE ENTREVISTAS
+// ══════════════════════════════════════════════════════════
+
+async function loadAgenda(force) {
+  if (ALL_INTERVIEWS.length && !force) { renderAgenda(); return; }
+  document.getElementById('agenda-list').innerHTML = '<div class="loading-wrap"><div class="spinner"></div></div>';
+  const { data } = await sb.from('interviews').select('*').eq('recruiter_id', CUR_USER.id).order('scheduled_at', { ascending: true });
+  ALL_INTERVIEWS = data || [];
+  renderAgenda();
+}
+
+function switchAgendaTab(tab, el) {
+  AGENDA_TAB = tab;
+  document.querySelectorAll('#panel-agenda .atab').forEach(t => t.classList.remove('on'));
+  if (el) el.classList.add('on');
+  renderAgenda();
+}
+
+function renderAgenda() {
+  const el = document.getElementById('agenda-list');
+  if (!el) return;
+  const now = new Date();
+  let list = ALL_INTERVIEWS;
+  if (AGENDA_TAB === 'upcoming') list = list.filter(i => new Date(i.scheduled_at) >= now && i.status !== 'Cancelada');
+  else if (AGENDA_TAB === 'past') list = list.filter(i => new Date(i.scheduled_at) < now || i.status === 'Realizada');
+
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state" style="background:#fff;border:1.5px solid var(--border);border-radius:var(--r)">
+      <div class="empty-state-icon">📅</div>
+      <div class="empty-state-title">${AGENDA_TAB === 'upcoming' ? 'Sin eventos próximos' : 'Sin eventos pasados'}</div>
+      <div class="empty-state-sub">Programá una entrevista o prueba técnica</div>
+      <button class="filt-btn" onclick="openScheduleModal()">+ Programar</button>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(i => {
+    const d   = new Date(i.scheduled_at);
+    const day = d.getDate();
+    const mon = d.toLocaleDateString('es-AR', { month: 'short' }).replace('.', '');
+    const time = d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    const typeClass = i.type === 'Entrevista' ? 'entrevista' : 'prueba';
+    const isPast = d < now;
+    return `<div class="ag-card ${isPast ? 'style="opacity:.7"' : ''}">
+      <div class="ag-date" style="${isPast ? 'background:var(--muted)' : ''}">
+        <div class="ag-date-day">${day}</div>
+        <div class="ag-date-mon">${mon}</div>
+      </div>
+      <div class="ag-body">
+        <span class="ag-type ${typeClass}">${i.type}</span>
+        <div class="ag-title">${i.candidate_name || i.candidate_email}</div>
+        <div class="ag-meta">
+          ${i.job_title ? `📋 ${i.job_title} · ` : ''}⏰ ${time}${i.location ? ` · 📍 ${i.location}` : ''}
+        </div>
+        ${i.notes ? `<div style="font-size:12px;color:var(--muted);margin-top:4px;font-style:italic">${i.notes}</div>` : ''}
+      </div>
+      <div class="ag-actions">
+        <span class="pill ${i.status === 'Realizada' ? 'pg' : i.status === 'Cancelada' ? 'pr' : 'pb'}">${i.status}</span>
+        <button class="filt-btn out" style="padding:4px 10px;font-size:11px" onclick="editInterview(${escJson(i)})">Editar</button>
+        <button class="filt-btn" style="padding:4px 10px;font-size:11px;background:var(--coral)" onclick="deleteInterview('${i.id}')">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openScheduleModal(email, name, jobId, jobTitle) {
+  const jobOptions = ALL_JOBS.map(j => `<option value="${j.id}" data-title="${escHtml(j.titulo)}" ${jobId===j.id?'selected':''}>${j.titulo}</option>`).join('');
+  document.getElementById('modal-title').textContent = 'Programar entrevista / prueba técnica';
+  document.getElementById('modal-sub').textContent   = name ? `Para: ${name}` : 'Completá los datos';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="mf-grid">
+      <div class="mf-fg full"><label>Candidato (email) *</label><input id="ag-email" value="${email || ''}" placeholder="candidato@email.com"></div>
+      <div class="mf-fg full"><label>Nombre del candidato</label><input id="ag-name" value="${name || ''}" placeholder="Nombre Apellido"></div>
+      <div class="mf-fg"><label>Tipo *</label>
+        <select id="ag-type">
+          <option>Entrevista</option>
+          <option>Prueba Técnica</option>
+          <option>Entrevista técnica</option>
+          <option>Entrevista RRHH</option>
+        </select>
+      </div>
+      <div class="mf-fg"><label>Aviso relacionado</label>
+        <select id="ag-job"><option value="">Sin aviso</option>${jobOptions}</select>
+      </div>
+      <div class="mf-fg"><label>Fecha y hora *</label><input type="datetime-local" id="ag-date"></div>
+      <div class="mf-fg"><label>Link / Lugar</label><input id="ag-location" placeholder="https://meet.google.com/... o dirección"></div>
+      <div class="mf-fg full"><label>Notas internas</label><textarea id="ag-notes" placeholder="Temas a tratar, documentos a revisar..."></textarea></div>
+      <div class="mf-fg"><label>Estado</label>
+        <select id="ag-status">
+          <option>Programada</option><option>Realizada</option><option>Cancelada</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:8px;border-top:1.5px solid var(--g2)">
+      <button class="filt-btn out" onclick="closeModal()">Cancelar</button>
+      <button class="mf-save" id="btn-save-ag" onclick="saveInterview(null)">Guardar →</button>
+    </div>`;
+  openModal();
+}
+
+function editInterview(i) {
+  if (typeof i === 'string') i = JSON.parse(i);
+  openScheduleModal(i.candidate_email, i.candidate_name, i.job_id, i.job_title);
+  // prefill
+  setTimeout(() => {
+    const d = new Date(i.scheduled_at);
+    const local = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,16);
+    document.getElementById('ag-date').value     = local;
+    document.getElementById('ag-location').value = i.location || '';
+    document.getElementById('ag-notes').value    = i.notes || '';
+    document.getElementById('ag-type').value     = i.type;
+    document.getElementById('ag-status').value   = i.status;
+    document.getElementById('btn-save-ag').onclick = () => saveInterview(i.id);
+    document.getElementById('modal-title').textContent = 'Editar evento';
+  }, 0);
+}
+
+async function saveInterview(existingId) {
+  const email = document.getElementById('ag-email').value.trim();
+  const dt    = document.getElementById('ag-date').value;
+  if (!email || !dt) { toast('Completá email y fecha ⚠'); return; }
+  const btn = document.getElementById('btn-save-ag');
+  btn.textContent = 'Guardando...'; btn.disabled = true;
+  const jobSel = document.getElementById('ag-job');
+  const jobTitle = jobSel.options[jobSel.selectedIndex]?.dataset.title || '';
+  const payload = {
+    recruiter_id:    CUR_USER.id,
+    candidate_email: email,
+    candidate_name:  document.getElementById('ag-name').value.trim() || null,
+    type:            document.getElementById('ag-type').value,
+    job_id:          document.getElementById('ag-job').value || null,
+    job_title:       jobTitle || null,
+    scheduled_at:    new Date(dt).toISOString(),
+    location:        document.getElementById('ag-location').value.trim() || null,
+    notes:           document.getElementById('ag-notes').value.trim() || null,
+    status:          document.getElementById('ag-status').value,
+  };
+  let error;
+  if (existingId) {
+    ({ error } = await sb.from('interviews').update(payload).eq('id', existingId));
+  } else {
+    ({ error } = await sb.from('interviews').insert(payload));
+  }
+  btn.textContent = 'Guardar →'; btn.disabled = false;
+  if (error) { toast('Error: ' + error.message); return; }
+  closeModal();
+  ALL_INTERVIEWS = [];
+  await loadAgenda(true);
+  toast(existingId ? 'Evento actualizado ✓' : 'Entrevista agendada ✓');
+}
+
+async function deleteInterview(id) {
+  if (!confirm('¿Eliminar este evento?')) return;
+  const { error } = await sb.from('interviews').delete().eq('id', id);
+  if (error) { toast('Error: ' + error.message); return; }
+  ALL_INTERVIEWS = ALL_INTERVIEWS.filter(i => i.id !== id);
+  renderAgenda();
+  toast('Evento eliminado ✓');
+}
+
+// ══════════════════════════════════════════════════════════
+// NOTAS DE CANDIDATOS
+// ══════════════════════════════════════════════════════════
+async function loadCandNotes(email) {
+  const key = email.replace(/[@.]/g, '_');
+  const el  = document.getElementById('notes-list-' + key);
+  if (!el) return;
+  const { data } = await sb.from('candidate_notes')
+    .select('*').eq('recruiter_id', CUR_USER.id).eq('candidate_email', email)
+    .order('created_at', { ascending: false });
+  const notes = data || [];
+  if (!notes.length) { el.innerHTML = '<div style="font-size:12px;color:var(--muted);font-style:italic">Sin notas aún</div>'; return; }
+  el.innerHTML = notes.map(n => `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--g2);gap:8px">
+      <div>
+        <div style="font-size:13px;color:var(--dark)">${escHtml(n.note)}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">${fmtDate(n.created_at)}</div>
+      </div>
+      <button onclick="deleteNote('${n.id}','${email}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;flex-shrink:0;padding:0 4px" title="Eliminar">×</button>
+    </div>`).join('');
+}
+
+async function addNote(email) {
+  const key   = email.replace(/[@.]/g, '_');
+  const input = document.getElementById('note-input-' + key);
+  if (!input) return;
+  const note  = input.value.trim();
+  if (!note) return;
+  const { error } = await sb.from('candidate_notes').insert({
+    recruiter_id:    CUR_USER.id,
+    candidate_email: email,
+    note,
+  });
+  if (error) { toast('Error: ' + error.message); return; }
+  input.value = '';
+  await loadCandNotes(email);
+  toast('Nota guardada ✓');
+}
+
+async function deleteNote(id, email) {
+  const { error } = await sb.from('candidate_notes').delete().eq('id', id);
+  if (error) { toast('Error: ' + error.message); return; }
+  await loadCandNotes(email);
+}
+
+// ══════════════════════════════════════════════════════════
+// MENSAJES PRE-ESCRITOS
+// ══════════════════════════════════════════════════════════
+const MSG_TEMPLATES = {
+  aceptacion: {
+    label: 'Mensaje de aceptación',
+    color: 'var(--teal)',
+    bg:    'var(--tl)',
+    text:  (name, empresa) =>
+`Hola ${name},
+
+Nos complace comunicarte que, tras revisar tu perfil, hemos decidido avanzar con tu candidatura para la posición que tenemos disponible en ${empresa}.
+
+Nos gustaría coordinar una entrevista para conocerte mejor. ¿Estás disponible en los próximos días? Por favor, respondé este email o escribinos para acordar un horario.
+
+Quedamos a disposición para cualquier consulta.
+
+Saludos,
+El equipo de ${empresa}`,
+  },
+  rechazo: {
+    label: 'Mensaje de rechazo',
+    color: 'var(--coral)',
+    bg:    'var(--cl)',
+    text:  (name, empresa) =>
+`Hola ${name},
+
+Agradecemos el tiempo que dedicaste a postularte en ${empresa} y el interés en sumarte a nuestro equipo.
+
+Luego de evaluar cuidadosamente tu perfil, en esta oportunidad hemos decidido avanzar con otros candidatos cuyas competencias se ajustan mejor al perfil que buscamos para esta posición.
+
+Te animamos a seguir aplicando a futuros procesos de selección en nuestra empresa, ya que tu perfil puede ser de interés para otras posiciones.
+
+Muchas gracias y éxitos en tu búsqueda laboral.
+
+Saludos,
+El equipo de ${empresa}`,
+  },
+  entrevista: {
+    label: 'Invitación a entrevista',
+    color: 'var(--blue)',
+    bg:    'var(--bl)',
+    text:  (name, empresa) =>
+`Hola ${name},
+
+Te contactamos desde ${empresa} porque tu perfil ha captado nuestra atención y nos gustaría invitarte a participar de una entrevista.
+
+La entrevista se realizará en [FECHA] a las [HORA] mediante [modalidad / link / dirección].
+
+Por favor, confirmá tu disponibilidad respondiendo este mensaje. Si la fecha no te resulta conveniente, con gusto podemos buscar otra opción.
+
+¡Esperamos conocerte pronto!
+
+Saludos,
+El equipo de ${empresa}`,
+  },
+};
+
+function openMsgModal(email, name, type) {
+  const tpl   = MSG_TEMPLATES[type];
+  const texto = tpl.text(name, CUR_RECRUITER.empresa);
+  document.getElementById('modal-title').textContent = tpl.label;
+  document.getElementById('modal-sub').textContent   = `Para: ${name} (${email})`;
+  document.getElementById('modal-body').innerHTML = `
+    <div style="background:${tpl.bg};border-radius:var(--r);padding:10px 14px;margin-bottom:14px;font-size:12px;color:${tpl.color};font-weight:600">${tpl.label}</div>
+    <span id="msg-subject" data-subject="${tpl.label} — ${CUR_RECRUITER.empresa}" style="display:none"></span>
+    <div class="mf-fg full">
+      <label>Mensaje (editá antes de enviar)</label>
+      <textarea id="msg-body" style="min-height:220px;font-size:13px;line-height:1.6">${texto}</textarea>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:8px;border-top:1.5px solid var(--g2);flex-wrap:wrap">
+      <button class="filt-btn out" onclick="closeModal()">Cancelar</button>
+      <button class="filt-btn sec" onclick="copyMsg()">Copiar texto</button>
+      <button class="mf-save" onclick="openMailto('${email}')">Abrir en email →</button>
+    </div>`;
+  openModal();
+}
+
+function copyMsg() {
+  const txt = document.getElementById('msg-body')?.value;
+  if (!txt) return;
+  navigator.clipboard?.writeText(txt).then(() => toast('Texto copiado ✓')).catch(() => toast('No se pudo copiar'));
+}
+
+function openMailto(email) {
+  const body    = document.getElementById('msg-body')?.value || '';
+  const subject = document.getElementById('msg-subject')?.dataset.subject || '';
+  window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 
 // ── LOGO DE EMPRESA ────────────────────────────────────────
 function updateTopLogo(logoUrl) {

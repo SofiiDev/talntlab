@@ -203,4 +203,39 @@ create policy "Actualizar logo propio" on storage.objects
     and auth.uid()::text = split_part(storage.filename(name), '.', 1)
   );
 
+-- ═══════════════════════════════════════════════════
+-- AGENDA DE ENTREVISTAS Y PRUEBAS TÉCNICAS
+-- ═══════════════════════════════════════════════════
+
+-- 13. TABLA DE ENTREVISTAS
+create table if not exists interviews (
+  id              uuid primary key default gen_random_uuid(),
+  recruiter_id    uuid references auth.users on delete cascade not null,
+  candidate_email text not null,
+  candidate_name  text,
+  job_id          text references jobs(id) on delete set null,
+  job_title       text,
+  type            text not null default 'Entrevista',
+  scheduled_at    timestamptz not null,
+  location        text,
+  notes           text,
+  status          text not null default 'Programada',
+  created_at      timestamptz default now()
+);
+alter table interviews enable row level security;
+create policy "Recruiter own interviews" on interviews
+  for all using (auth.uid() = recruiter_id);
+
+-- 14. TABLA DE NOTAS DE CANDIDATOS
+create table if not exists candidate_notes (
+  id              uuid primary key default gen_random_uuid(),
+  recruiter_id    uuid references auth.users on delete cascade not null,
+  candidate_email text not null,
+  note            text not null,
+  created_at      timestamptz default now()
+);
+alter table candidate_notes enable row level security;
+create policy "Recruiter own notes" on candidate_notes
+  for all using (auth.uid() = recruiter_id);
+
 -- ¡Listo! Ahora configurá las variables en index.html y admin.html
