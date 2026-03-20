@@ -238,4 +238,28 @@ alter table candidate_notes enable row level security;
 create policy "Recruiter own notes" on candidate_notes
   for all using (auth.uid() = recruiter_id);
 
+-- ═══════════════════════════════════════════════════════
+-- NUEVAS TABLAS v2 — Evaluaciones de entrevistas
+-- Ejecutar con el botón SQL Editor en Supabase
+-- ═══════════════════════════════════════════════════════
+
+-- Evaluaciones / tests asignados a candidatos en proceso
+create table if not exists interview_evaluations (
+  id               uuid primary key default gen_random_uuid(),
+  recruiter_id     uuid references auth.users on delete cascade not null,
+  candidate_email  text not null,
+  job_id           text,
+  titulo           text not null,
+  descripcion      text,
+  tipo             text default 'Técnica', -- 'Técnica', 'Psicológica', 'Idiomas', 'Otro'
+  fecha_limite     date,
+  resultado        text,
+  puntaje          integer,
+  status           text default 'Pendiente', -- 'Pendiente', 'Completada', 'Cancelada'
+  created_at       timestamptz default now()
+);
+alter table interview_evaluations enable row level security;
+create policy "Recruiter own evaluations" on interview_evaluations
+  for all using (auth.uid() = recruiter_id);
+
 -- ¡Listo! Ahora configurá las variables en index.html y admin.html

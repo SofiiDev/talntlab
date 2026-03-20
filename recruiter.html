@@ -206,6 +206,59 @@ a{color:inherit;text-decoration:none}
 .jrow-title{font-size:13px;font-weight:700;color:var(--dark)}
 .jrow-meta{font-size:11px;color:var(--muted);margin-top:2px}
 
+/* ── KANBAN PIPELINE ── */
+.pipeline-wrap{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;min-height:300px;align-items:flex-start}
+.pipeline-col{background:var(--gray);border:1.5px solid var(--border);border-radius:var(--r);min-width:210px;flex:1;display:flex;flex-direction:column;overflow:hidden}
+.pipeline-col-head{padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid transparent}
+.pipeline-col-head.cl-pendiente{background:#f0efe9;border-bottom-color:var(--muted);color:var(--muted)}
+.pipeline-col-head.cl-revision{background:var(--al);border-bottom-color:var(--amber);color:var(--amber)}
+.pipeline-col-head.cl-entrevista{background:var(--bl);border-bottom-color:var(--blue);color:var(--blue)}
+.pipeline-col-head.cl-oferta{background:#efe8ff;border-bottom-color:#7c3aed;color:#7c3aed}
+.pipeline-col-head.cl-contratado{background:var(--tl);border-bottom-color:var(--teal);color:var(--td)}
+.pipeline-col-head.cl-descartado{background:var(--cl);border-bottom-color:var(--coral);color:var(--coral)}
+.pipeline-col-body{padding:8px;display:flex;flex-direction:column;gap:7px;flex:1}
+.pipeline-card{background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:10px 11px;cursor:pointer;transition:border-color .12s,box-shadow .12s;position:relative}
+.pipeline-card:hover{border-color:var(--teal);box-shadow:0 2px 8px rgba(27,158,116,.12)}
+.pipeline-card-name{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.pipeline-card-job{font-size:11px;color:var(--muted);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pipeline-card-foot{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.pipeline-card-av{width:26px;height:26px;border-radius:50%;object-fit:cover;border:1.5px solid var(--border);flex-shrink:0}
+.pipeline-card-av-ph{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.view-toggle{display:flex;gap:3px;background:var(--g2);border-radius:7px;padding:3px}
+.view-toggle button{border:none;background:none;padding:4px 10px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);transition:all .12s}
+.view-toggle button.on{background:#fff;color:var(--dark);box-shadow:var(--sh)}
+
+/* ── ENTREVISTAS PIPELINE ── */
+.interview-pipeline{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;align-items:flex-start}
+.int-col{background:var(--gray);border:1.5px solid var(--border);border-radius:var(--r);min-width:220px;flex:1;overflow:hidden}
+.int-col-head{padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;display:flex;justify-content:space-between;align-items:center}
+.int-col-head.ph-rrhh{background:var(--bl);color:var(--blue)}
+.int-col-head.ph-tec{background:var(--al);color:var(--amber)}
+.int-col-head.ph-final{background:#efe8ff;color:#7c3aed}
+.int-col-head.ph-realizada{background:var(--tl);color:var(--td)}
+.int-col-head.ph-cancelada{background:var(--cl);color:var(--coral)}
+.int-col-body{padding:8px;display:flex;flex-direction:column;gap:7px;min-height:80px}
+.int-card{background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:11px;cursor:pointer;transition:all .12s}
+.int-card:hover{border-color:var(--teal);box-shadow:0 2px 8px rgba(27,158,116,.12)}
+.int-card-name{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px}
+.int-card-meta{font-size:11px;color:var(--muted)}
+.int-card-date{font-size:10px;font-weight:700;color:var(--blue);margin-top:5px}
+
+/* ── INTERVIEW DETAIL MODAL ── */
+.int-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.int-step{border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden}
+.int-step-head{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;background:var(--gray);cursor:pointer}
+.int-step-head-left{display:flex;align-items:center;gap:8px}
+.int-step-num{width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.int-step-body{padding:12px 14px;border-top:1.5px solid var(--g2)}
+.eval-card{background:var(--gray);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.eval-card-title{font-size:13px;font-weight:700;color:var(--dark)}
+.eval-card-meta{font-size:11px;color:var(--muted);margin-top:1px}
+.decision-bar{display:flex;gap:10px;padding:14px 0 0;border-top:2px solid var(--g2);margin-top:12px}
+.decision-bar button{flex:1;padding:11px;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s}
+.btn-aceptar{background:var(--teal);color:#fff}.btn-aceptar:hover{background:var(--td)}
+.btn-rechazar{background:var(--coral);color:#fff}.btn-rechazar:hover{background:#8b1e1e}
+
 @media(max-width:900px){
   .stats-row{grid-template-columns:1fr 1fr}
   .mf-grid{grid-template-columns:1fr}
@@ -326,7 +379,7 @@ a{color:inherit;text-decoration:none}
         </button>
         <button class="snav" id="snav-agenda" onclick="showPanel('agenda',this)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          Agenda
+          Entrevistas
         </button>
       </div>
       <div class="sidebar-foot">
@@ -378,11 +431,17 @@ a{color:inherit;text-decoration:none}
 
     <!-- POSTULACIONES -->
     <div class="panel" id="panel-applications">
-      <h2 style="font-size:22px;color:var(--navy);margin-bottom:14px">Postulaciones</h2>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <h2 style="font-size:22px;color:var(--navy)">Postulaciones <span id="apps-count" style="font-size:14px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400"></span></h2>
+        <div class="view-toggle">
+          <button id="btn-view-table" class="on" onclick="setAppsView('table')">☰ Tabla</button>
+          <button id="btn-view-pipeline" onclick="setAppsView('pipeline')">⬛ Pipeline</button>
+        </div>
+      </div>
       <div class="card">
-        <div class="card-head">
+        <div class="card-head" style="flex-direction:column;align-items:flex-start;gap:8px">
           <div class="filters">
-            <input class="filt" id="f-app-search" placeholder="🔍 Candidato o aviso..." style="min-width:200px" oninput="filterApps()">
+            <input class="filt" id="f-app-search" placeholder="🔍 Candidato, skill..." style="min-width:180px" oninput="filterApps()">
             <select class="filt" id="f-app-job" onchange="filterApps()">
               <option value="">Todos los avisos</option>
             </select>
@@ -391,17 +450,32 @@ a{color:inherit;text-decoration:none}
               <option>Pendiente</option>
               <option>En revisión</option>
               <option>Entrevista</option>
+              <option>Oferta</option>
               <option>Contratado</option>
               <option>Descartado</option>
             </select>
+            <select class="filt" id="f-app-score" onchange="filterApps()">
+              <option value="">Cualquier score</option>
+              <option value="85">Score ≥ 85</option>
+              <option value="70">Score ≥ 70</option>
+              <option value="50">Score ≥ 50</option>
+            </select>
+            <input class="filt" id="f-app-ubi" placeholder="📍 Ubicación..." style="min-width:130px" oninput="filterApps()">
             <button class="filt-btn out" onclick="loadApplications(true)">↺ Actualizar</button>
           </div>
         </div>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <thead><tr><th>Candidato</th><th>Aviso</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
-            <tbody id="apps-tbody"><tr class="empty-row"><td colspan="5">Cargando...</td></tr></tbody>
-          </table>
+        <!-- Vista tabla -->
+        <div id="apps-table-view">
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Candidato</th><th>Score</th><th>Aviso</th><th>Skills</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+              <tbody id="apps-tbody"><tr class="empty-row"><td colspan="7">Cargando...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Vista pipeline/kanban -->
+        <div id="apps-pipeline-view" style="display:none;padding:12px">
+          <div class="pipeline-wrap" id="pipeline-wrap"></div>
         </div>
       </div>
     </div>
@@ -469,16 +543,21 @@ a{color:inherit;text-decoration:none}
       <div id="compare-grid" style="display:none;gap:14px;align-items:flex-start"></div>
     </div>
 
-    <!-- AGENDA -->
+    <!-- ENTREVISTAS (ex-Agenda) -->
     <div class="panel" id="panel-agenda">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-        <h2 style="font-size:22px;color:var(--navy)">Agenda</h2>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:8px">
+        <div>
+          <h2 style="font-size:22px;color:var(--navy)">Entrevistas</h2>
+          <p style="font-size:12px;color:var(--muted);margin-top:2px">Gestioná el proceso de selección por candidato: etapas, notas, evaluaciones y decisión final</p>
+        </div>
         <button class="filt-btn" onclick="openScheduleModal()">+ Programar entrevista</button>
       </div>
-      <!-- Tabs dentro de agenda -->
-      <div style="display:flex;gap:4px;margin-bottom:16px;border-bottom:2px solid var(--border);padding-bottom:0">
-        <button class="atab on" id="ag-tab-upcoming" onclick="switchAgendaTab('upcoming',this)">Próximas</button>
-        <button class="atab" id="ag-tab-past" onclick="switchAgendaTab('past',this)">Realizadas</button>
+
+      <!-- Tabs: Pipeline / Lista / Por candidato -->
+      <div style="display:flex;gap:4px;margin-bottom:16px;border-bottom:2px solid var(--border);padding-bottom:0;margin-top:14px">
+        <button class="atab on" id="ag-tab-pipeline" onclick="switchAgendaTab('pipeline',this)">🗂 Pipeline</button>
+        <button class="atab" id="ag-tab-upcoming" onclick="switchAgendaTab('upcoming',this)">📅 Próximas</button>
+        <button class="atab" id="ag-tab-past" onclick="switchAgendaTab('past',this)">✅ Realizadas</button>
         <button class="atab" id="ag-tab-all" onclick="switchAgendaTab('all',this)">Todas</button>
       </div>
       <div id="agenda-list"><div class="loading-wrap"><div class="spinner"></div></div></div>
@@ -517,7 +596,9 @@ let CUR_USER = null;
 let CUR_RECRUITER = null;
 let ALL_JOBS = [], ALL_APPS = [], ALL_CANDS = [], ALL_INTERVIEWS = [];
 let COMPARE_SET = new Map();
-let AGENDA_TAB = 'upcoming';
+let AGENDA_TAB = 'pipeline';
+let APPS_VIEW = 'table';
+let CAND_MAP = {}; // email -> profile (para enriquecer postulaciones)
 
 // ── BOOT ──────────────────────────────────────────────────
 (async () => {
@@ -841,7 +922,7 @@ async function deleteJob(id, titulo) {
 // ══════════════════════════════════════════════════════════
 async function loadApplications(force) {
   if (ALL_APPS.length && !force) { renderApps(); populateJobFilter(); return; }
-  document.getElementById('apps-tbody').innerHTML = '<tr class="empty-row"><td colspan="5"><div class="spinner" style="margin:0 auto"></div></td></tr>';
+  document.getElementById('apps-tbody').innerHTML = '<tr class="empty-row"><td colspan="7"><div class="spinner" style="margin:0 auto"></div></td></tr>';
 
   // Obtener jobs del reclutador si no los tenemos
   if (!ALL_JOBS.length) {
@@ -850,12 +931,20 @@ async function loadApplications(force) {
   }
   const myJobIds = ALL_JOBS.map(j => j.id);
   if (!myJobIds.length) {
-    document.getElementById('apps-tbody').innerHTML = '<tr class="empty-row"><td colspan="5">Publicá un aviso para recibir postulaciones</td></tr>';
+    document.getElementById('apps-tbody').innerHTML = '<tr class="empty-row"><td colspan="7">Publicá un aviso para recibir postulaciones</td></tr>';
     return;
   }
 
-  const { data } = await sb.from('applications').select('*').in('job_id', myJobIds).order('created_at', { ascending: false });
-  ALL_APPS = data || [];
+  // Cargar postulaciones y perfiles en paralelo
+  const [appsRes, profsRes] = await Promise.all([
+    sb.from('applications').select('*').in('job_id', myJobIds).order('created_at', { ascending: false }),
+    ALL_CANDS.length ? Promise.resolve({ data: ALL_CANDS })
+      : sb.from('profiles').select('id,email,name,titulo,score,skills,ubicacion,foto_url').order('score', { ascending: false }),
+  ]);
+  ALL_APPS = appsRes.data || [];
+  if (!ALL_CANDS.length && profsRes.data) ALL_CANDS = profsRes.data.map(parseProfile);
+  CAND_MAP = Object.fromEntries(ALL_CANDS.map(c => [c.email, c]));
+  document.getElementById('apps-count').textContent = ALL_APPS.length ? `(${ALL_APPS.length})` : '';
   populateJobFilter();
   renderApps();
 }
@@ -868,42 +957,133 @@ function populateJobFilter() {
 }
 
 function filterApps() {
-  const q   = document.getElementById('f-app-search').value.toLowerCase();
-  const job = document.getElementById('f-app-job').value;
-  const st  = document.getElementById('f-app-status').value;
+  const q     = document.getElementById('f-app-search').value.toLowerCase();
+  const job   = document.getElementById('f-app-job').value;
+  const st    = document.getElementById('f-app-status').value;
+  const minSc = parseInt(document.getElementById('f-app-score').value) || 0;
+  const ubi   = document.getElementById('f-app-ubi').value.toLowerCase();
   const list = ALL_APPS.filter(a => {
-    if (q  && !(a.candidate_name || '').toLowerCase().includes(q) && !(a.job_title || '').toLowerCase().includes(q) && !(a.candidate_email || '').toLowerCase().includes(q)) return false;
-    if (job && a.job_id !== job) return false;
-    if (st  && a.status !== st)  return false;
+    const prof = CAND_MAP[a.candidate_email] || {};
+    if (q) {
+      const skills = (prof.skills || []).map(s => s.name.toLowerCase()).join(' ');
+      if (!(a.candidate_name || '').toLowerCase().includes(q)
+       && !(a.job_title || '').toLowerCase().includes(q)
+       && !(a.candidate_email || '').toLowerCase().includes(q)
+       && !skills.includes(q)) return false;
+    }
+    if (job   && a.job_id !== job)                               return false;
+    if (st    && a.status !== st)                                return false;
+    if (minSc && parseInt(prof.score || 0) < minSc)             return false;
+    if (ubi   && !(prof.ubicacion || '').toLowerCase().includes(ubi)) return false;
     return true;
   });
   renderApps(list);
 }
 
+function setAppsView(v) {
+  APPS_VIEW = v;
+  document.getElementById('btn-view-table').classList.toggle('on', v === 'table');
+  document.getElementById('btn-view-pipeline').classList.toggle('on', v === 'pipeline');
+  document.getElementById('apps-table-view').style.display    = v === 'table'    ? '' : 'none';
+  document.getElementById('apps-pipeline-view').style.display = v === 'pipeline' ? '' : 'none';
+  filterApps();
+}
+
 function renderApps(data) {
+  const list = data !== undefined ? data : ALL_APPS;
+  if (APPS_VIEW === 'pipeline') { renderPipeline(list); return; }
   const tbody = document.getElementById('apps-tbody');
-  const list  = data || ALL_APPS;
   if (!list.length) {
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Sin postulaciones con esos filtros</td></tr>';
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Sin postulaciones con esos filtros</td></tr>';
     return;
   }
-  tbody.innerHTML = list.map(a => `<tr>
-    <td>
-      <div style="font-weight:700">${a.candidate_name || a.candidate_email}</div>
-      <div style="font-size:11px;color:var(--muted)">${a.candidate_email}</div>
-    </td>
-    <td>
-      <div style="font-weight:600;font-size:13px">${a.job_title || '—'}</div>
-      ${a.job_url ? `<a href="${a.job_url}" target="_blank" style="font-size:11px;color:var(--teal)">Ver original ↗</a>` : ''}
-    </td>
-    <td style="font-size:11px;color:var(--muted)">${fmtDate(a.created_at)}</td>
-    <td>
-      <select style="border:1.5px solid var(--border);border-radius:6px;padding:3px 7px;font-size:11px;outline:none;cursor:pointer;background:#fff" onchange="updateAppStatus('${a.id}',this.value)">
-        ${['Pendiente','En revisión','Entrevista','Contratado','Descartado'].map(s => `<option ${a.status === s ? 'selected' : ''}>${s}</option>`).join('')}
-      </select>
-    </td>
-    <td><button class="filt-btn out" style="font-size:11px;padding:4px 10px" onclick="openCandByEmail('${a.candidate_email}')">Ver perfil</button></td>
-  </tr>`).join('');
+  tbody.innerHTML = list.map(a => {
+    const prof = CAND_MAP[a.candidate_email] || {};
+    const sc   = parseInt(prof.score || 0);
+    const avEl = prof.foto_url
+      ? `<img src="${prof.foto_url}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0">`
+      : `<div style="width:30px;height:30px;border-radius:50%;background:${colorFor(a.candidate_email)};color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${initials(a.candidate_name || a.candidate_email)}</div>`;
+    const skills = (prof.skills || []).slice(0, 2).map(s => `<span class="skill-tag" style="font-size:9px">${s.name}</span>`).join('');
+    return `<tr onclick="openCandByEmail('${a.candidate_email}')">
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${avEl}
+          <div>
+            <div style="font-weight:700">${a.candidate_name || a.candidate_email}</div>
+            <div style="font-size:11px;color:var(--muted)">${prof.ubicacion || a.candidate_email}</div>
+          </div>
+        </div>
+      </td>
+      <td>${sc ? scoreBadge(sc) : '<span style="color:var(--muted);font-size:11px">—</span>'}</td>
+      <td>
+        <div style="font-weight:600;font-size:13px">${a.job_title || '—'}</div>
+        ${a.job_url ? `<a href="${a.job_url}" target="_blank" style="font-size:11px;color:var(--teal)" onclick="event.stopPropagation()">↗</a>` : ''}
+      </td>
+      <td onclick="event.stopPropagation()" style="max-width:150px">${skills || '<span style="color:var(--muted);font-size:11px">—</span>'}</td>
+      <td style="font-size:11px;color:var(--muted)">${fmtDate(a.created_at)}</td>
+      <td onclick="event.stopPropagation()">
+        <select style="border:1.5px solid var(--border);border-radius:6px;padding:3px 7px;font-size:11px;outline:none;cursor:pointer;background:#fff" onchange="updateAppStatus('${a.id}',this.value)">
+          ${['Pendiente','En revisión','Entrevista','Oferta','Contratado','Descartado'].map(s => `<option ${a.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td onclick="event.stopPropagation()">
+        <div style="display:flex;gap:4px">
+          <button class="filt-btn out" style="font-size:11px;padding:4px 10px" onclick="openCandByEmail('${a.candidate_email}')">Ver perfil</button>
+          <button class="filt-btn" style="font-size:11px;padding:4px 10px;background:var(--blue)" onclick="openScheduleModal('${a.candidate_email}','${escHtml(a.candidate_name || '')}','${a.job_id}','')">📅</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+const PIPELINE_STAGES = [
+  { key: 'Pendiente',   label: 'Pendiente',   cls: 'cl-pendiente' },
+  { key: 'En revisión', label: 'En revisión', cls: 'cl-revision'  },
+  { key: 'Entrevista',  label: 'Entrevista',  cls: 'cl-entrevista'},
+  { key: 'Oferta',      label: 'Oferta',      cls: 'cl-oferta'    },
+  { key: 'Contratado',  label: 'Contratado',  cls: 'cl-contratado'},
+  { key: 'Descartado',  label: 'Descartado',  cls: 'cl-descartado'},
+];
+
+function renderPipeline(data) {
+  const list = data !== undefined ? data : ALL_APPS;
+  const wrap = document.getElementById('pipeline-wrap');
+  if (!wrap) return;
+  const grouped = {};
+  PIPELINE_STAGES.forEach(s => grouped[s.key] = []);
+  list.forEach(a => {
+    if (grouped[a.status] !== undefined) grouped[a.status].push(a);
+    else grouped['Pendiente'].push(a);
+  });
+  wrap.innerHTML = PIPELINE_STAGES.map(st => {
+    const items = grouped[st.key] || [];
+    const cards = items.map(a => {
+      const prof = CAND_MAP[a.candidate_email] || {};
+      const sc   = parseInt(prof.score || 0);
+      const avEl = prof.foto_url
+        ? `<img src="${prof.foto_url}" class="pipeline-card-av">`
+        : `<div class="pipeline-card-av-ph" style="background:${colorFor(a.candidate_email)}">${initials(a.candidate_name || a.candidate_email)}</div>`;
+      return `<div class="pipeline-card" onclick="openCandByEmail('${a.candidate_email}')">
+        <div class="pipeline-card-name">
+          ${avEl}
+          <span>${a.candidate_name || a.candidate_email}</span>
+        </div>
+        <div class="pipeline-card-job">${a.job_title || '—'}</div>
+        <div class="pipeline-card-foot">
+          ${sc ? scoreBadge(sc) : ''}
+          <div style="display:flex;gap:4px" onclick="event.stopPropagation()">
+            <select style="border:1.5px solid var(--border);border-radius:5px;padding:2px 5px;font-size:10px;outline:none;cursor:pointer;background:#fff" onchange="updateAppStatus('${a.id}',this.value);filterApps()">
+              ${PIPELINE_STAGES.map(s => `<option ${a.status === s.key ? 'selected' : ''}>${s.key}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="pipeline-col">
+      <div class="pipeline-col-head ${st.cls}">${st.label}<span style="background:rgba(0,0,0,.1);padding:1px 7px;border-radius:20px">${items.length}</span></div>
+      <div class="pipeline-col-body">${cards || '<div style="font-size:11px;color:var(--muted);text-align:center;padding:16px">Sin postulaciones</div>'}</div>
+    </div>`;
+  }).join('');
 }
 
 async function updateAppStatus(id, status) {
@@ -1059,11 +1239,28 @@ function openCandDetail(c) {
   loadCandNotes(c.email);
 }
 
-function openCandByEmail(email) {
-  if (!ALL_CANDS.length) { toast('Cargá la lista de candidatos primero'); return; }
-  const c = ALL_CANDS.find(x => x.email === email);
+async function openCandByEmail(email) {
+  let c = ALL_CANDS.find(x => x.email === email) || CAND_MAP[email];
+  if (!c) {
+    const { data } = await sb.from('profiles').select('*').eq('email', email).single();
+    if (data) { c = parseProfile(data); ALL_CANDS.push(c); CAND_MAP[email] = c; }
+  }
   if (c) openCandDetail(c);
-  else toast('Perfil no encontrado');
+  else toast('Perfil no encontrado en TalentLab');
+}
+
+async function moveToEntrevista(email, name) {
+  // Encontrar postulaciones activas del candidato
+  const apps = ALL_APPS.filter(a => a.candidate_email === email && a.status !== 'Contratado' && a.status !== 'Descartado');
+  if (apps.length) {
+    // Mover la postulación más reciente a "Entrevista"
+    const app = apps[0];
+    await updateAppStatus(app.id, 'Entrevista');
+    ALL_APPS.forEach(a => { if (a.id === app.id) a.status = 'Entrevista'; });
+    toast(`${name} movido a Entrevista ✓`);
+  }
+  // Abrir modal de agendado
+  openScheduleModal(email, name);
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1176,6 +1373,9 @@ function renderCompare() {
           <button class="filt-btn" style="font-size:11px;padding:4px 10px;flex:1" onclick="openCandDetail(${escJson(c)})">Ver perfil</button>
           <button class="filt-btn out" style="font-size:11px;padding:4px 10px" onclick="openScheduleModal('${c.email}','${escHtml(c.name)}')">📅</button>
         </div>
+        <div style="margin-top:6px">
+          <button class="filt-btn" style="font-size:11px;padding:6px 10px;width:100%;background:var(--blue)" onclick="moveToEntrevista('${c.email}','${escHtml(c.name)}')">→ Mover a Entrevistas</button>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -1188,8 +1388,14 @@ function renderCompare() {
 async function loadAgenda(force) {
   if (ALL_INTERVIEWS.length && !force) { renderAgenda(); return; }
   document.getElementById('agenda-list').innerHTML = '<div class="loading-wrap"><div class="spinner"></div></div>';
-  const { data } = await sb.from('interviews').select('*').eq('recruiter_id', CUR_USER.id).order('scheduled_at', { ascending: true });
-  ALL_INTERVIEWS = data || [];
+  const [intRes, profsRes] = await Promise.all([
+    sb.from('interviews').select('*').eq('recruiter_id', CUR_USER.id).order('scheduled_at', { ascending: false }),
+    ALL_CANDS.length ? Promise.resolve({ data: ALL_CANDS })
+      : sb.from('profiles').select('id,email,name,titulo,score,skills,ubicacion,foto_url'),
+  ]);
+  ALL_INTERVIEWS = intRes.data || [];
+  if (!ALL_CANDS.length && profsRes.data) ALL_CANDS = profsRes.data.map(parseProfile);
+  if (!Object.keys(CAND_MAP).length) CAND_MAP = Object.fromEntries(ALL_CANDS.map(c => [c.email, c]));
   renderAgenda();
 }
 
@@ -1200,11 +1406,82 @@ function switchAgendaTab(tab, el) {
   renderAgenda();
 }
 
+function renderAgendaPipeline(interviews) {
+  // Agrupa por candidato y muestra pipeline de etapas
+  const byCandidate = {};
+  interviews.forEach(i => {
+    const key = i.candidate_email;
+    if (!byCandidate[key]) byCandidate[key] = { email: key, name: i.candidate_name || key, job: i.job_title, interviews: [] };
+    byCandidate[key].interviews.push(i);
+  });
+  const el = document.getElementById('agenda-list');
+  if (!Object.keys(byCandidate).length) {
+    el.innerHTML = `<div class="empty-state" style="background:#fff;border:1.5px solid var(--border);border-radius:var(--r)">
+      <div class="empty-state-icon">📅</div>
+      <div class="empty-state-title">Sin entrevistas programadas</div>
+      <div class="empty-state-sub">Programá una entrevista o moví un candidato a esta etapa desde Postulaciones</div>
+      <button class="filt-btn" onclick="openScheduleModal()">+ Programar entrevista</button>
+    </div>`;
+    return;
+  }
+  el.innerHTML = Object.values(byCandidate).map(cd => {
+    const prof = CAND_MAP[cd.email] || {};
+    const sc   = parseInt(prof.score || 0);
+    const avEl = prof.foto_url
+      ? `<img src="${prof.foto_url}" style="width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid var(--border)">`
+      : `<div style="width:42px;height:42px;border-radius:50%;background:${colorFor(cd.email)};color:#fff;font-family:'DM Serif Display',serif;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${initials(cd.name)}</div>`;
+    const stepHtml = cd.interviews.map((i, idx) => {
+      const d = new Date(i.scheduled_at);
+      const isPast = d < new Date();
+      const statusCol = i.status === 'Realizada' ? 'var(--teal)' : i.status === 'Cancelada' ? 'var(--coral)' : 'var(--blue)';
+      return `<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;${idx < cd.interviews.length - 1 ? 'border-bottom:1px solid var(--g2)' : ''}">
+        <div style="width:7px;height:7px;border-radius:50%;background:${statusCol};margin-top:5px;flex-shrink:0"></div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+            <div>
+              <span class="ag-type ${i.type === 'Entrevista' ? 'entrevista' : 'prueba'}" style="font-size:9px;padding:1px 7px">${i.type}</span>
+              <div style="font-size:12px;font-weight:700;color:var(--dark);margin-top:3px">${fmtDate(i.scheduled_at)} ${new Date(i.scheduled_at).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}</div>
+              ${i.location ? `<div style="font-size:11px;color:var(--muted)">📍 ${i.location}</div>` : ''}
+              ${i.notes ? `<div style="font-size:11px;color:var(--muted);font-style:italic;margin-top:2px">${i.notes}</div>` : ''}
+            </div>
+            <div style="display:flex;gap:4px;flex-shrink:0">
+              <span class="pill ${i.status === 'Realizada' ? 'pg' : i.status === 'Cancelada' ? 'pr' : 'pb'}" style="font-size:9px">${i.status}</span>
+              <button class="filt-btn out" style="padding:2px 8px;font-size:10px" onclick="editInterview(${escJson(i)})">Editar</button>
+              <button class="filt-btn" style="padding:2px 8px;font-size:10px;background:var(--coral)" onclick="deleteInterview('${i.id}')">✕</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="card" style="margin-bottom:12px">
+      <div class="card-head" style="gap:12px">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer" onclick="openCandByEmail('${cd.email}')">
+          ${avEl}
+          <div>
+            <div style="font-weight:700;font-size:14px;color:var(--dark)">${cd.name}</div>
+            <div style="font-size:11px;color:var(--muted)">${cd.job || cd.email}</div>
+            ${sc ? `<div style="margin-top:3px">${scoreBadge(sc)}</div>` : ''}
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
+          <button class="filt-btn" style="font-size:11px;padding:5px 12px" onclick="openCandByEmail('${cd.email}')">Ver perfil</button>
+          <button class="filt-btn out" style="font-size:11px;padding:5px 12px" onclick="openScheduleModal('${cd.email}','${escHtml(cd.name)}')">+ Etapa</button>
+          <button class="filt-btn out" style="font-size:11px;padding:5px 12px" onclick="openEvalModal('${cd.email}','${escHtml(cd.name)}')">📝 Tests</button>
+          <button class="filt-btn" style="font-size:11px;padding:5px 12px;background:var(--teal)" onclick="openDecisionModal('${cd.email}','${escHtml(cd.name)}','aceptar')">✓ Aceptar</button>
+          <button class="filt-btn" style="font-size:11px;padding:5px 12px;background:var(--coral)" onclick="openDecisionModal('${cd.email}','${escHtml(cd.name)}','rechazar')">✕ Rechazar</button>
+        </div>
+      </div>
+      <div class="card-body" style="padding:10px 16px">${stepHtml}</div>
+    </div>`;
+  }).join('');
+}
+
 function renderAgenda() {
   const el = document.getElementById('agenda-list');
   if (!el) return;
   const now = new Date();
   let list = ALL_INTERVIEWS;
+  if (AGENDA_TAB === 'pipeline') { renderAgendaPipeline(list); return; }
   if (AGENDA_TAB === 'upcoming') list = list.filter(i => new Date(i.scheduled_at) >= now && i.status !== 'Cancelada');
   else if (AGENDA_TAB === 'past') list = list.filter(i => new Date(i.scheduled_at) < now || i.status === 'Realizada');
 
@@ -1248,19 +1525,26 @@ function renderAgenda() {
 }
 
 function openScheduleModal(email, name, jobId, jobTitle) {
+  // Intentar obtener el job_id desde las postulaciones si no se pasó explícitamente
+  if (!jobId && email) {
+    const app = ALL_APPS.find(a => a.candidate_email === email);
+    if (app) { jobId = app.job_id; jobTitle = app.job_title; }
+  }
   const jobOptions = ALL_JOBS.map(j => `<option value="${j.id}" data-title="${escHtml(j.titulo)}" ${jobId===j.id?'selected':''}>${j.titulo}</option>`).join('');
-  document.getElementById('modal-title').textContent = 'Programar entrevista / prueba técnica';
+  document.getElementById('modal-title').textContent = 'Programar etapa de entrevista';
   document.getElementById('modal-sub').textContent   = name ? `Para: ${name}` : 'Completá los datos';
   document.getElementById('modal-body').innerHTML = `
     <div class="mf-grid">
       <div class="mf-fg full"><label>Candidato (email) *</label><input id="ag-email" value="${email || ''}" placeholder="candidato@email.com"></div>
       <div class="mf-fg full"><label>Nombre del candidato</label><input id="ag-name" value="${name || ''}" placeholder="Nombre Apellido"></div>
-      <div class="mf-fg"><label>Tipo *</label>
+      <div class="mf-fg"><label>Tipo de etapa *</label>
         <select id="ag-type">
-          <option>Entrevista</option>
-          <option>Prueba Técnica</option>
-          <option>Entrevista técnica</option>
           <option>Entrevista RRHH</option>
+          <option>Entrevista técnica</option>
+          <option>Entrevista final</option>
+          <option>Prueba Técnica</option>
+          <option>Assessment</option>
+          <option>Entrevista</option>
         </select>
       </div>
       <div class="mf-fg"><label>Aviso relacionado</label>
@@ -1268,7 +1552,7 @@ function openScheduleModal(email, name, jobId, jobTitle) {
       </div>
       <div class="mf-fg"><label>Fecha y hora *</label><input type="datetime-local" id="ag-date"></div>
       <div class="mf-fg"><label>Link / Lugar</label><input id="ag-location" placeholder="https://meet.google.com/... o dirección"></div>
-      <div class="mf-fg full"><label>Notas internas</label><textarea id="ag-notes" placeholder="Temas a tratar, documentos a revisar..."></textarea></div>
+      <div class="mf-fg full"><label>Notas / temas a tratar</label><textarea id="ag-notes" placeholder="Temas a evaluar, documentos a revisar, puntos clave..."></textarea></div>
       <div class="mf-fg"><label>Estado</label>
         <select id="ag-status">
           <option>Programada</option><option>Realizada</option><option>Cancelada</option>
@@ -1277,7 +1561,7 @@ function openScheduleModal(email, name, jobId, jobTitle) {
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:8px;border-top:1.5px solid var(--g2)">
       <button class="filt-btn out" onclick="closeModal()">Cancelar</button>
-      <button class="mf-save" id="btn-save-ag" onclick="saveInterview(null)">Guardar →</button>
+      <button class="mf-save" id="btn-save-ag" onclick="saveInterview(null)">Guardar etapa →</button>
     </div>`;
   openModal();
 }
@@ -1517,6 +1801,148 @@ function previewLogo(input) {
     if (prev) prev.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:contain">`;
   };
   reader.readAsDataURL(file);
+}
+
+// ══════════════════════════════════════════════════════════
+// EVALUACIONES (tests asignados a candidatos)
+// ══════════════════════════════════════════════════════════
+function openEvalModal(email, name) {
+  document.getElementById('modal-title').textContent = 'Evaluaciones y tests';
+  document.getElementById('modal-sub').textContent   = name;
+  document.getElementById('modal-body').innerHTML = `
+    <div id="evals-list-${email.replace(/[@.]/g,'_')}" style="margin-bottom:14px">
+      <div style="font-size:12px;color:var(--muted)">Cargando...</div>
+    </div>
+    <div style="border-top:1.5px solid var(--g2);padding-top:14px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px">Asignar nueva evaluación</div>
+      <div class="mf-grid">
+        <div class="mf-fg full"><label>Título *</label><input id="eval-titulo" placeholder="Ej: Prueba técnica GMP, Test de inglés..."></div>
+        <div class="mf-fg"><label>Tipo</label>
+          <select id="eval-tipo">
+            <option>Técnica</option><option>Psicológica</option><option>Idiomas</option><option>Excel/Ofimática</option><option>Otro</option>
+          </select>
+        </div>
+        <div class="mf-fg"><label>Fecha límite</label><input type="date" id="eval-fecha"></div>
+        <div class="mf-fg full"><label>Descripción / instrucciones</label><textarea id="eval-desc" placeholder="Instrucciones o descripción de la evaluación..." style="min-height:60px"></textarea></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="filt-btn out" onclick="closeModal()">Cerrar</button>
+        <button class="mf-save" onclick="saveEval('${email}','${escHtml(name)}')">Asignar evaluación →</button>
+      </div>
+    </div>`;
+  openModal();
+  loadEvals(email);
+}
+
+async function loadEvals(email) {
+  const key = email.replace(/[@.]/g,'_');
+  const el  = document.getElementById('evals-list-' + key);
+  if (!el) return;
+  const { data } = await sb.from('interview_evaluations')
+    .select('*').eq('recruiter_id', CUR_USER.id).eq('candidate_email', email)
+    .order('created_at', { ascending: false });
+  const evals = data || [];
+  if (!evals.length) { el.innerHTML = '<div style="font-size:12px;color:var(--muted);font-style:italic">Sin evaluaciones asignadas aún</div>'; return; }
+  el.innerHTML = evals.map(ev => `
+    <div class="eval-card">
+      <div style="flex:1">
+        <div class="eval-card-title">${escHtml(ev.titulo)}</div>
+        <div class="eval-card-meta">${ev.tipo}${ev.fecha_limite ? ` · Límite: ${fmtDate(ev.fecha_limite)}` : ''}</div>
+        ${ev.descripcion ? `<div style="font-size:11px;color:var(--muted);margin-top:3px">${escHtml(ev.descripcion)}</div>` : ''}
+        ${ev.resultado ? `<div style="font-size:11px;font-weight:700;color:var(--teal);margin-top:3px">Resultado: ${escHtml(ev.resultado)}${ev.puntaje ? ` · ${ev.puntaje} pts` : ''}</div>` : ''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
+        <span class="pill ${ev.status === 'Completada' ? 'pg' : ev.status === 'Cancelada' ? 'pr' : 'pm'}">${ev.status}</span>
+        <button onclick="deleteEval('${ev.id}','${email}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px">×</button>
+      </div>
+    </div>`).join('');
+}
+
+async function saveEval(email, name) {
+  const titulo = document.getElementById('eval-titulo')?.value?.trim();
+  if (!titulo) { toast('Ingresá un título ⚠'); return; }
+  const payload = {
+    recruiter_id:    CUR_USER.id,
+    candidate_email: email,
+    titulo,
+    tipo:            document.getElementById('eval-tipo')?.value,
+    descripcion:     document.getElementById('eval-desc')?.value?.trim() || null,
+    fecha_limite:    document.getElementById('eval-fecha')?.value || null,
+  };
+  // Asociar al job si está disponible
+  const app = ALL_APPS.find(a => a.candidate_email === email);
+  if (app) payload.job_id = app.job_id;
+  const { error } = await sb.from('interview_evaluations').insert(payload);
+  if (error) { toast('Error: ' + error.message); return; }
+  document.getElementById('eval-titulo').value = '';
+  document.getElementById('eval-desc').value   = '';
+  document.getElementById('eval-fecha').value  = '';
+  await loadEvals(email);
+  toast('Evaluación asignada ✓');
+}
+
+async function deleteEval(id, email) {
+  const { error } = await sb.from('interview_evaluations').delete().eq('id', id);
+  if (error) { toast('Error: ' + error.message); return; }
+  await loadEvals(email);
+}
+
+// ══════════════════════════════════════════════════════════
+// DECISIÓN FINAL (aceptar / rechazar candidato)
+// ══════════════════════════════════════════════════════════
+function openDecisionModal(email, name, decision) {
+  const isAceptar = decision === 'aceptar';
+  document.getElementById('modal-title').textContent = isAceptar ? `✓ Aceptar candidato` : `✕ Rechazar candidato`;
+  document.getElementById('modal-sub').textContent   = name;
+  document.getElementById('modal-body').innerHTML = `
+    <div style="background:${isAceptar ? 'var(--tl)' : 'var(--cl)'};border-radius:var(--r);padding:12px 16px;margin-bottom:16px;font-size:13px;color:${isAceptar ? 'var(--td)' : 'var(--coral)'};font-weight:600">
+      ${isAceptar ? '🎉 Estás por marcar a este candidato como Contratado. Se actualizará el estado de su postulación.' : '⚠ Estás por descartar a este candidato. Se actualizará el estado de su postulación.'}
+    </div>
+    <div class="mf-fg">
+      <label>Nota interna (opcional)</label>
+      <textarea id="decision-note" placeholder="Ej: Excelente candidato, incorporación el 01/04..." style="min-height:80px"></textarea>
+    </div>
+    ${isAceptar ? `
+    <div class="mf-fg">
+      <label>Enviar email de notificación</label>
+      <div style="display:flex;gap:8px">
+        <button class="filt-btn" style="background:var(--tl);color:var(--td);border:1.5px solid rgba(27,158,116,.3);font-size:12px;padding:6px 14px;flex:1" onclick="openMsgModal('${email}','${name}','aceptacion');saveDecision('${email}','${decision}')">Ver mensaje de aceptación →</button>
+      </div>
+    </div>` : `
+    <div class="mf-fg">
+      <label>Enviar email de notificación</label>
+      <div style="display:flex;gap:8px">
+        <button class="filt-btn" style="background:var(--cl);color:var(--coral);border:1.5px solid rgba(184,50,50,.3);font-size:12px;padding:6px 14px;flex:1" onclick="openMsgModal('${email}','${name}','rechazo');saveDecision('${email}','${decision}')">Ver mensaje de rechazo →</button>
+      </div>
+    </div>`}
+    <div class="decision-bar">
+      <button class="filt-btn out" onclick="closeModal()">Cancelar</button>
+      <button class="${isAceptar ? 'btn-aceptar' : 'btn-rechazar'} filt-btn" onclick="saveDecision('${email}','${decision}')">
+        ${isAceptar ? '✓ Confirmar contratación' : '✕ Confirmar descarte'}
+      </button>
+    </div>`;
+  openModal();
+}
+
+async function saveDecision(email, decision) {
+  const newStatus = decision === 'aceptar' ? 'Contratado' : 'Descartado';
+  const note = document.getElementById('decision-note')?.value?.trim();
+  // Actualizar todas las postulaciones del candidato para este reclutador
+  const myJobIds = new Set(ALL_JOBS.map(j => j.id));
+  const appIds   = ALL_APPS.filter(a => a.candidate_email === email && myJobIds.has(a.job_id)).map(a => a.id);
+  if (appIds.length) {
+    await sb.from('applications').update({ status: newStatus }).in('id', appIds);
+    ALL_APPS.forEach(a => { if (appIds.includes(a.id)) a.status = newStatus; });
+  }
+  // Guardar nota si la hay
+  if (note) {
+    await sb.from('candidate_notes').insert({ recruiter_id: CUR_USER.id, candidate_email: email, note: `[${newStatus}] ${note}` });
+  }
+  closeModal();
+  toast(`Candidato marcado como ${newStatus} ✓`);
+  // Refresco entrevistas y apps
+  ALL_INTERVIEWS = [];
+  await loadAgenda(true);
 }
 
 async function saveLogo() {
