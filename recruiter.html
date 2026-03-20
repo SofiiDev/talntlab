@@ -64,6 +64,10 @@ a{color:inherit;text-decoration:none}
 .ttab:hover:not(.on){background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
 .logout-btn{margin-left:8px;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.6);background:none;border:1.5px solid rgba(255,255,255,.18);transition:all .15s}
 .logout-btn:hover{background:rgba(255,255,255,.08);color:#fff}
+.top-logo-av{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:border-color .15s;margin-left:6px}
+.top-logo-av:hover{border-color:rgba(255,255,255,.5)}
+.top-logo-av img{width:100%;height:100%;object-fit:cover}
+.top-logo-av svg{opacity:.55}
 
 /* ── PANELS ── */
 .main-wrap{display:none;min-height:100vh;flex-direction:column}
@@ -239,6 +243,9 @@ a{color:inherit;text-decoration:none}
   <div class="top-bar">
     <div class="top-logo">Talent<em>Lab</em><span>Reclutador</span></div>
     <span class="top-co" id="top-empresa">—</span>
+    <div id="top-logo-av" class="top-logo-av" onclick="openLogoUpload()" title="Subir logo de empresa">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    </div>
     <div class="top-tabs">
       <button class="ttab on" onclick="showPanel('dashboard',this)">Dashboard</button>
       <button class="ttab" onclick="showPanel('jobs',this)">Mis avisos</button>
@@ -487,6 +494,7 @@ function showMain() {
   document.getElementById('setup-screen').style.display = 'none';
   document.getElementById('main-wrap').style.display    = 'flex';
   document.getElementById('top-empresa').textContent    = CUR_RECRUITER.empresa;
+  updateTopLogo(CUR_RECRUITER.logo_url || null);
   loadDashboard();
 }
 
@@ -658,6 +666,7 @@ async function saveJob(jobId) {
     url:         document.getElementById('j-url').value.trim() || null,
     recruiter_id:    CUR_USER.id,
     recruiter_email: CUR_USER.email,
+    logo_url:        CUR_RECRUITER.logo_url || null,
   };
   let error;
   if (jobId) {
@@ -920,8 +929,67 @@ function statusClass(s) {
 let _tt;
 function toast(m) { const e = document.getElementById('toast'); e.textContent = m; e.classList.add('show'); clearTimeout(_tt); _tt = setTimeout(() => e.classList.remove('show'), 3200); }
 
+// ── LOGO DE EMPRESA ────────────────────────────────────────
+function updateTopLogo(logoUrl) {
+  const av = document.getElementById('top-logo-av');
+  if (!av) return;
+  if (logoUrl) {
+    av.innerHTML = `<img src="${logoUrl}" alt="Logo">`;
+    av.title = 'Cambiar logo de empresa';
+  } else {
+    av.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+    av.title = 'Subir logo de empresa';
+  }
+}
+
+function openLogoUpload() {
+  document.getElementById('modal-title').textContent = 'Logo de empresa';
+  document.getElementById('modal-sub').textContent   = 'Aparece en tus avisos de empleo (PNG/JPG, máx. 1MB)';
+  const cur = CUR_RECRUITER?.logo_url;
+  document.getElementById('modal-body').innerHTML = `
+    <div style="text-align:center;margin-bottom:18px">
+      <div id="logo-preview" style="width:80px;height:80px;border-radius:12px;background:var(--g2);margin:0 auto 12px;overflow:hidden;display:flex;align-items:center;justify-content:center;border:2px solid var(--border)">
+        ${cur ? `<img src="${cur}" style="width:100%;height:100%;object-fit:contain">` : '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--g3)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'}
+      </div>
+    </div>
+    <div class="mf-fg"><label>Seleccioná el logo</label><input type="file" id="logo-file" accept="image/*" onchange="previewLogo(this)" style="border:none;padding:0;font-size:13px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:12px;border-top:1.5px solid var(--g2)">
+      <button class="filt-btn out" onclick="closeModal()">Cancelar</button>
+      <button class="mf-save" id="btn-save-logo" onclick="saveLogo()">Guardar logo →</button>
+    </div>`;
+  openModal();
+}
+
+function previewLogo(input) {
+  const file = input.files[0]; if (!file) return;
+  if (file.size > 1 * 1024 * 1024) { toast('El logo no puede superar 1MB ⚠'); input.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById('logo-preview');
+    if (prev) prev.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:contain">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveLogo() {
+  const input = document.getElementById('logo-file');
+  if (!input || !input.files || !input.files[0]) { toast('Seleccioná un logo primero ⚠'); return; }
+  const btn = document.getElementById('btn-save-logo');
+  if (btn) { btn.textContent = 'Subiendo...'; btn.disabled = true; }
+  const file = input.files[0];
+  const ext  = file.name.split('.').pop();
+  const path = `${CUR_USER.id}.${ext}`;
+  const { error: upErr } = await sb.storage.from('logos').upload(path, file, { upsert: true });
+  if (upErr) { toast('Error al subir logo: ' + upErr.message); if (btn) { btn.textContent = 'Guardar logo →'; btn.disabled = false; } return; }
+  const { data: { publicUrl } } = sb.storage.from('logos').getPublicUrl(path);
+  const { error: dbErr } = await sb.from('recruiters').update({ logo_url: publicUrl }).eq('user_id', CUR_USER.id);
+  if (dbErr) { toast('Error al guardar: ' + dbErr.message); if (btn) { btn.textContent = 'Guardar logo →'; btn.disabled = false; } return; }
+  CUR_RECRUITER.logo_url = publicUrl;
+  updateTopLogo(publicUrl);
+  closeModal();
+  toast('Logo actualizado ✓');
+}
+
 </script>
-</body>
-</html>
 </body>
 </html>

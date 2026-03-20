@@ -124,6 +124,8 @@ create policy "Actualizar avatar propio" on storage.objects
 
 -- MIGRACIÓN: agregar columna url si no existe (ejecutar si la tabla ya fue creada sin ella)
 alter table jobs add column if not exists url text;
+-- MIGRACIÓN: agregar columna logo_url a jobs (ejecutar si la tabla ya existe)
+alter table jobs add column if not exists logo_url text;
 
 -- ═══════════════════════════════════════════════════
 -- PANEL DE RECLUTADOR — Ejecutar para habilitar
@@ -171,6 +173,34 @@ create policy "Recruiters update own job apps" on applications
       where j.id = applications.job_id
         and j.recruiter_id = auth.uid()
     )
+  );
+
+-- 12. LOGO DE EMPRESA PARA RECLUTADORES
+alter table recruiters add column if not exists logo_url text;
+
+-- Bucket para logos de empresa
+insert into storage.buckets (id, name, public)
+  values ('logos', 'logos', true)
+  on conflict (id) do update set public = true;
+
+-- Lectura pública de logos
+create policy "Logos públicos" on storage.objects
+  for select using (bucket_id = 'logos');
+
+-- Reclutadores pueden subir su propio logo
+create policy "Subir logo propio" on storage.objects
+  for insert to authenticated
+  with check (
+    bucket_id = 'logos'
+    and auth.uid()::text = split_part(storage.filename(name), '.', 1)
+  );
+
+-- Reclutadores pueden actualizar su propio logo
+create policy "Actualizar logo propio" on storage.objects
+  for update to authenticated
+  using (
+    bucket_id = 'logos'
+    and auth.uid()::text = split_part(storage.filename(name), '.', 1)
   );
 
 -- ¡Listo! Ahora configurá las variables en index.html y admin.html
