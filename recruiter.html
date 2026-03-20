@@ -259,6 +259,11 @@ a{color:inherit;text-decoration:none}
 .btn-aceptar{background:var(--teal);color:#fff}.btn-aceptar:hover{background:var(--td)}
 .btn-rechazar{background:var(--coral);color:#fff}.btn-rechazar:hover{background:#8b1e1e}
 
+/* ── DRAG & DROP ── */
+.pipeline-col.drag-over{border-color:var(--teal);background:rgba(27,158,116,.07)}
+.pipeline-col.drag-over .pipeline-col-body{background:rgba(27,158,116,.05)}
+.pipeline-card.dragging{opacity:.35;pointer-events:none}
+
 @media(max-width:900px){
   .stats-row{grid-template-columns:1fr 1fr}
   .mf-grid{grid-template-columns:1fr}
@@ -817,7 +822,7 @@ function renderJobs() {
     return;
   }
   el.innerHTML = `<table class="tbl"><thead><tr><th>Aviso</th><th>Área</th><th>Ubicación</th><th>Modalidad</th><th>Postulantes</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
-    ${ALL_JOBS.map(j => `<tr onclick="openJobModal(${escJson(j)})">
+    ${ALL_JOBS.map(j => `<tr onclick="openJobView(${escJson(j)})">
       <td><div style="font-weight:700">${j.titulo}</div>${j.salario ? `<div style="font-size:11px;color:var(--teal)">${j.salario}</div>` : ''}</td>
       <td><span class="pill pm">${j.area || '—'}</span></td>
       <td style="font-size:12px">${j.ubicacion || 'Argentina'}</td>
@@ -830,6 +835,35 @@ function renderJobs() {
       </td>
     </tr>`).join('')}
   </tbody></table>`;
+}
+
+function openJobView(job) {
+  if (typeof job === 'string') job = JSON.parse(job);
+  document.getElementById('modal-title').textContent = job.titulo;
+  document.getElementById('modal-sub').textContent   = `${job.empresa} · ${job.area || ''} · ${job.ubicacion || ''}`;
+  document.getElementById('modal-body').innerHTML = `
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
+      <span class="pill pm">📂 ${job.area || '—'}</span>
+      <span class="pill pm">📍 ${job.ubicacion || 'Argentina'}</span>
+      <span class="pill pm">🏢 ${job.modalidad || '—'}</span>
+      ${job.salario ? `<span class="pill pg">💰 ${job.salario}</span>` : ''}
+      <span class="pill ${job.status === 'activo' ? 'pg' : 'pm'}">● ${job.status}</span>
+    </div>
+    ${job.descripcion ? `<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px">Descripción</div><div style="font-size:13px;color:var(--dark);line-height:1.65;white-space:pre-wrap">${escHtml(job.descripcion)}</div></div>` : ''}
+    ${job.requisitos ? `<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px">Requisitos clave</div><div style="font-size:13px;color:var(--dark);line-height:1.65;white-space:pre-wrap">${escHtml(job.requisitos)}</div></div>` : ''}
+    ${job.url ? `<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px">Link externo</div><a href="${escHtml(job.url)}" target="_blank" style="color:var(--teal);font-size:13px">${escHtml(job.url)} ↗</a></div>` : ''}
+    <div style="display:flex;gap:8px;padding-top:10px;border-top:1.5px solid var(--g2);flex-wrap:wrap">
+      <button class="filt-btn" onclick="openJobModal(${escJson(job)})">✏ Editar aviso</button>
+      <button class="filt-btn out" onclick="showPanel('applications');closeModal()">Ver postulantes</button>
+      <button class="filt-btn out" onclick="closeModal()">Cerrar</button>
+    </div>`;
+  openModal();
+}
+
+function openJobById(id) {
+  const job = ALL_JOBS.find(j => j.id === id);
+  if (job) openJobView(job);
+  else toast('Aviso no disponible');
 }
 
 function openJobModal(job) {
@@ -1015,8 +1049,8 @@ function renderApps(data) {
         </div>
       </td>
       <td>${sc ? scoreBadge(sc) : '<span style="color:var(--muted);font-size:11px">—</span>'}</td>
-      <td>
-        <div style="font-weight:600;font-size:13px">${a.job_title || '—'}</div>
+      <td onclick="event.stopPropagation()">
+        <div style="font-weight:600;font-size:13px;cursor:pointer;color:var(--blue)" onclick="openJobById('${a.job_id}')">${a.job_title || '—'}</div>
         ${a.job_url ? `<a href="${a.job_url}" target="_blank" style="font-size:11px;color:var(--teal)" onclick="event.stopPropagation()">↗</a>` : ''}
       </td>
       <td onclick="event.stopPropagation()" style="max-width:150px">${skills || '<span style="color:var(--muted);font-size:11px">—</span>'}</td>
@@ -1063,7 +1097,7 @@ function renderPipeline(data) {
       const avEl = prof.foto_url
         ? `<img src="${prof.foto_url}" class="pipeline-card-av">`
         : `<div class="pipeline-card-av-ph" style="background:${colorFor(a.candidate_email)}">${initials(a.candidate_name || a.candidate_email)}</div>`;
-      return `<div class="pipeline-card" onclick="openCandByEmail('${a.candidate_email}')">
+      return `<div class="pipeline-card" draggable="true" ondragstart="dragStartApp(event,'${a.id}')" ondragend="this.classList.remove('dragging')" onclick="openCandByEmail('${a.candidate_email}')">
         <div class="pipeline-card-name">
           ${avEl}
           <span>${a.candidate_name || a.candidate_email}</span>
@@ -1081,9 +1115,34 @@ function renderPipeline(data) {
     }).join('');
     return `<div class="pipeline-col">
       <div class="pipeline-col-head ${st.cls}">${st.label}<span style="background:rgba(0,0,0,.1);padding:1px 7px;border-radius:20px">${items.length}</span></div>
-      <div class="pipeline-col-body">${cards || '<div style="font-size:11px;color:var(--muted);text-align:center;padding:16px">Sin postulaciones</div>'}</div>
+      <div class="pipeline-col-body" ondragover="dragOverCol(event,this)" ondragleave="dragLeaveCol(this)" ondrop="dropApp(event,'${st.key}',this)">${cards || '<div style="font-size:11px;color:var(--muted);text-align:center;padding:16px">Sin postulaciones</div>'}</div>
     </div>`;
   }).join('');
+}
+
+// ── DRAG & DROP (KANBAN) ───────────────────────────────────
+let DRAG_APP_ID = null;
+function dragStartApp(e, id) {
+  DRAG_APP_ID = id;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => { const el = document.querySelector(`[ondragstart*="'${id}'"]`); if (el) el.classList.add('dragging'); }, 0);
+}
+function dragOverCol(e, col) {
+  e.preventDefault();
+  col.closest('.pipeline-col').classList.add('drag-over');
+}
+function dragLeaveCol(col) {
+  col.closest('.pipeline-col').classList.remove('drag-over');
+}
+async function dropApp(e, newStatus, col) {
+  e.preventDefault();
+  col.closest('.pipeline-col').classList.remove('drag-over');
+  if (!DRAG_APP_ID) return;
+  const app = ALL_APPS.find(a => a.id === DRAG_APP_ID);
+  DRAG_APP_ID = null;
+  if (!app || app.status === newStatus) return;
+  await updateAppStatus(app.id, newStatus);
+  filterApps();
 }
 
 async function updateAppStatus(id, status) {
