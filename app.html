@@ -639,7 +639,7 @@ async function buscar(){
     ALL_JOBS.push({
       id:++EXT_ID,src:'TalentLab',srcClass:'tl',isTL:true,tlId:j.id,
       title:j.titulo,company:j.empresa||'TalentLab',location:j.ubicacion||'Argentina',
-      url:j.url||'',posted:fmtPosted(j.created_at),salary:j.salario||'',
+      url:j.url||'',posted:fmtPosted(j.created_at),salary:j.salario||'',logo:j.logo_url||'',
       modality:j.modalidad||'',description:fullDesc,requisitos:j.requisitos||'',
       match:calcMatch(j.titulo,fullDesc),prov:provFrom(j.ubicacion),
       mod:modFrom(j.modalidad),timestamp:new Date(j.created_at).getTime()
@@ -801,7 +801,7 @@ function jobCard(j){
       ${isNew?'<span class="jcard-new">Nuevo</span>':'<div class="jcard-date">'+j.posted+'</div>'}
     </div>
     <div class="jcard-title">${j.title}</div>
-    <div class="jcard-co">${j.company}${j.location?' · '+j.location.split(',')[0]:''}</div>
+    <div class="jcard-co" style="display:flex;align-items:center;gap:6px">${j.logo?`<img src="${j.logo}" style="width:18px;height:18px;border-radius:4px;object-fit:contain;flex-shrink:0" onerror="this.style.display='none'">`:''}${j.company}${j.location?' · '+j.location.split(',')[0]:''}</div>
     ${desc?`<div class="jcard-desc">${desc}</div>`:''}
     <div class="jcard-tags">${tlBadge}${modTag}${j.salary?`<span class="tag tg">${j.salary}</span>`:''}</div>
     <div class="jcard-foot">
@@ -828,6 +828,7 @@ function openJob(id){
   document.getElementById('sh-content').innerHTML=`
     <div class="sh-head">
       <button class="sh-close" onclick="closeSheet()">✕</button>
+      ${j.logo?`<img src="${j.logo}" style="width:40px;height:40px;border-radius:8px;object-fit:contain;background:#fff;padding:4px;margin-bottom:8px;display:block" onerror="this.style.display='none'">`:''}
       <div class="sh-title">${j.title}</div>
       <div class="sh-sub">${j.company}${j.location?' · '+j.location:''}</div>
     </div>
